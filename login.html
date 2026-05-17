@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso al Sistema - Calzado Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen font-sans px-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
+        <h2 id="auth-titulo" class="text-2xl font-bold text-gray-800 text-center mb-2">Iniciar Sesión</h2>
+        <p id="auth-subtitulo" class="text-xs text-gray-500 text-center mb-6">Ingresa tus credenciales para acceder a tu cuenta.</p>
+
+        <form id="form-auth" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Correo Electrónico / WhatsApp</label>
+                <input type="email" id="auth-email" placeholder="ejemplo@correo.com" required class="mt-1 block w-full p-3 border rounded-xl shadow-sm text-gray-950 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Contraseña</label>
+                <input type="password" id="auth-password" placeholder="••••••" required class="mt-1 block w-full p-3 border rounded-xl shadow-sm text-gray-950 focus:ring-blue-500 focus:border-blue-500">
+                <p id="info-temporal" class="text-[11px] text-amber-600 mt-1 hidden font-medium">⚠️ Esta será tu clave temporal. El sistema te pedirá cambiarla al entrar.</p>
+            </div>
+            <button type="submit" id="btn-auth-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                Ingresar al Sistema
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-sm border-t pt-4">
+            <button onclick="alternarModoAuth()" id="btn-cambiar-modo" class="text-blue-600 hover:underline font-medium">
+                ¿Eres cliente nuevo? Regístrate aquí
+            </button>
+        </div>
+        <div class="text-center mt-3">
+            <a href="index.html" class="text-xs text-gray-400 hover:text-gray-600 underline">Volver al catálogo público</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
+          authDomain: "ventas-dcc22.firebaseapp.com",
+          projectId: "ventas-dcc22",
+          storageBucket: "ventas-dcc22.firebasestorage.app",
+          messagingSenderId: "789904237680",
+          appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // CORREO DEL ADMINISTRADOR DEL NEGOCIO
+        const CORREO_ADMINISTRADOR = "jandry@admin.com"; // <<-- CAMBIA POR TU CORREO REAL DE ACCESO
+        let esModoRegistro = false;
+
+        document.getElementById('form-auth').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-password').value;
+
+            try {
+                if (esModoRegistro) {
+                    // Flujo Registro Cliente
+                    await createUserWithEmailAndPassword(auth, email, pass);
+                    localStorage.setItem('requiereCambioClave', 'true'); // Forzar cambio de clave temporal
+                    alert("¡Cuenta de Cliente creada con éxito! Por seguridad, actualiza tu clave.");
+                    window.location.href = "index.html";
+                } else {
+                    // Flujo de Inicio de Sesión
+                    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                    const usuario = userCredential.user;
+
+                    if (usuario.email === CORREO_ADMINISTRADOR) {
+                        // SI ES EL ADMIN: Redirige automáticamente adentro de la carpeta secreta
+                        window.location.href = "jadiventas/admin.html";
+                    } else {
+                        // SI ES UN CLIENTE: Redirige a la vitrina de compras en la raíz
+                        window.location.href = "index.html";
+                    }
+                }
+            } catch (err) {
+                alert("Error de credenciales: " + err.message);
+            }
+        });
+
+        window.alternarModoAuth = () => {
+            esModoRegistro = !esModoRegistro;
+            document.getElementById('auth-titulo').innerText = esModoRegistro ? "Crear Cuenta de Cliente" : "Iniciar Sesión";
+            document.getElementById('auth-subtitulo').innerText = esModoRegistro ? "Regístrate para personalizar tu calzado y gestionar tu carrito." : "Ingresa tus credenciales para acceder a tu cuenta.";
+            document.getElementById('btn-auth-submit').innerText = esModoRegistro ? "Registrarse y Comprar" : "Ingresar al Sistema";
+            document.getElementById('info-temporal').classList.toggle('hidden', !esModoRegistro);
+            document.getElementById('btn-cambiar-modo').innerText = esModoRegistro ? "¿Ya tienes una cuenta? Inicia sesión" : "¿Eres cliente nuevo? Regístrate aquí";
+        };
+    </script>
+</body>
+</html>
