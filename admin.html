@@ -3,66 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Calzado</title>
+    <title>Panel de Pedidos - Administrador</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
 
-    <nav class="bg-gray-800 text-white p-4 shadow-lg">
+    <nav class="bg-gray-800 p-4 border-b border-gray-700 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider text-yellow-500">PANEL ADMINISTRATIVO</h1>
-            <a href="index.html" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm transition">Ver Catálogo</a>
+            <h1 class="text-xl font-bold tracking-wider text-amber-500">📥 PANEL DE PEDIDOS SOLICITADOS</h1>
+            <div class="flex gap-4">
+                <a href="index.html" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm transition">Ver Tienda</a>
+                <a href="catalogo.html" class="bg-indigo-700 hover:bg-indigo-600 px-4 py-2 rounded text-sm transition">Gestionar Vitrina</a>
+            </div>
         </div>
     </nav>
 
-    <main class="container mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <main class="container mx-auto p-4">
+        <h2 class="text-lg font-semibold mb-4 text-gray-400">Cola de Producción y Solicitudes Recientes</h2>
         
-        <section class="bg-white p-6 rounded-lg shadow-md h-fit">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Agregar Nuevo Calzado</h2>
-            <form id="form-producto" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Nombre del Modelo</label>
-                    <input type="text" id="nombre" required class="mt-1 block w-full p-2 border rounded-md shadow-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Precio ($)</label>
-                    <input type="number" id="precio" step="0.01" required class="mt-1 block w-full p-2 border rounded-md shadow-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">URL de Imagen (Cloudinary)</label>
-                    <input type="url" id="imagen" placeholder="https://res.cloudinary.com/..." required class="mt-1 block w-full p-2 border rounded-md shadow-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Descripción</label>
-                    <textarea id="descripcion" rows="3" class="mt-1 block w-full p-2 border rounded-md shadow-sm"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">
-                    Guardar Calzado
-                </button>
-            </form>
-        </section>
-
-        <section class="lg:col-span-2 bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Modelos en Base de Datos</h2>
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+        <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-lg border border-gray-700">
+            <table class="min-w-full divide-y divide-gray-700 text-sm">
+                <thead class="bg-gray-800">
                     <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Cliente (Email)</th>
+                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Detalle del Calzado / Talla / Color</th>
+                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Fecha</th>
+                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Estado</th>
+                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Acción</th>
                     </tr>
                 </thead>
-                <tbody id="tabla-productos" class="bg-white divide-y divide-gray-200">
+                <tbody id="lista-pedidos" class="divide-y divide-gray-700">
                     </tbody>
             </table>
-        </section>
+        </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-        // Tus credenciales oficiales aplicadas
         const firebaseConfig = {
           apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
           authDomain: "ventas-dcc22.firebaseapp.com",
@@ -74,59 +53,55 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const listaPedidos = document.getElementById('lista-pedidos');
 
-        const formProducto = document.getElementById('form-producto');
-        const tablaProductos = document.getElementById('tabla-productos');
-
-        onSnapshot(collection(db, "calzado"), (snapshot) => {
-            tablaProductos.innerHTML = '';
+        onSnapshot(collection(db, "pedidos"), (snapshot) => {
+            listaPedidos.innerHTML = '';
             if(snapshot.empty) {
-                tablaProductos.innerHTML = '<tr><td colspan="3" class="p-4 text-sm text-gray-500 text-center">No hay productos en Firestore.</td></tr>';
+                listaPedidos.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">No hay pedidos pendientes en la base de datos.</td></tr>';
                 return;
             }
-            snapshot.forEach((doc) => {
-                const prod = doc.data();
-                const id = doc.id;
+
+            snapshot.forEach((documento) => {
+                const pedido = documento.data();
+                const id = documento.id;
+                
+                // Construcción de la celda de artículos solicitados con sus detalles de confección
+                let detalleArticulos = '<ul class="space-y-1 list-disc list-inside text-gray-300">';
+                pedido.articulos.forEach(art => {
+                    detalleArticulos += `<li><strong>${art.nombre}</strong> - <span class="text-yellow-400 font-bold">Talla: ${art.talla}</span> | Color: ${art.color}</li>`;
+                });
+                detalleArticulos += '</ul>';
+
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50";
+                tr.className = "hover:bg-gray-750 transition duration-150";
                 tr.innerHTML = `
-                    <td class="px-4 py-4 whitespace-nowrap">
-                        <div class="flex items-center">
-                            <img class="h-10 w-10 rounded object-cover mr-3 border" src="${prod.imagen}" alt="">
-                            <div class="text-sm font-medium text-gray-900">${prod.nombre}</div>
-                        </div>
+                    <td class="px-6 py-4 font-medium text-gray-200 whitespace-nowrap">${pedido.clienteEmail}</td>
+                    <td class="px-6 py-4">${detalleArticulos}</td>
+                    <td class="px-6 py-4 text-gray-400 whitespace-nowrap">${pedido.fecha}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2.5 py-1 text-xs font-bold rounded-full ${pedido.estado === 'Pendiente' ? 'bg-amber-900 text-amber-300' : 'bg-green-900 text-green-300'}">
+                            ${pedido.estado}
+                        </span>
                     </td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">$${parseFloat(prod.precio).toFixed(2)}</td>
-                    <td class="px-4 py-4 whitespace-nowrap text-sm font-medium">
-                        <button class="text-red-600 hover:text-red-900 font-semibold btn-eliminar" data-id="${id}">Eliminar</button>
+                    <td class="px-6 py-4 whitespace-nowrap flex gap-2">
+                        ${pedido.estado === 'Pendiente' ? `<button onclick="marcarEntregado('${id}')" class="bg-green-600 hover:bg-green-700 text-white text-xs px-2.5 py-1.5 rounded font-bold transition">Listo</button>` : ''}
+                        <button onclick="eliminarPedido('${id}')" class="bg-red-600 hover:bg-red-700 text-white text-xs px-2.5 py-1.5 rounded font-bold transition">❌</button>
                     </td>
                 `;
-                tr.querySelector('.btn-eliminar').addEventListener('click', () => eliminarProducto(id));
-                tablaProductos.appendChild(tr);
+                listaPedidos.appendChild(tr);
             });
         });
 
-        formProducto.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            try {
-                await addDoc(collection(db, "calzado"), {
-                    nombre: document.getElementById('nombre').value,
-                    precio: parseFloat(document.getElementById('precio').value),
-                    imagen: document.getElementById('imagen').value, // URL de Cloudinary
-                    descripcion: document.getElementById('descripcion').value
-                });
-                formProducto.reset();
-                alert("¡Calzado guardado exitosamente!");
-            } catch (error) {
-                console.error("Error al guardar:", error);
-            }
-        });
+        window.marcarEntregado = async (id) => {
+            await updateDoc(doc(db, "pedidos", id), { estado: "Despachado" });
+        };
 
-        async function eliminarProducto(id) {
-            if(confirm("¿Deseas eliminar este calzado?")) {
-                await deleteDoc(doc(db, "calzado", id));
+        window.eliminarPedido = async (id) => {
+            if(confirm("¿Deseas eliminar este registro de pedido?")) {
+                await deleteDoc(doc(db, "pedidos", id));
             }
-        }
+        };
     </script>
 </body>
 </html>
