@@ -3,33 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso al Sistema - Calzado Store</title>
+    <title>Acceso Seguro - Calzado Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 flex items-center justify-center min-h-screen font-sans px-4">
 
     <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
-        <h2 id="auth-titulo" class="text-2xl font-bold text-gray-800 text-center mb-2">Iniciar Sesión</h2>
-        <p id="auth-subtitulo" class="text-xs text-gray-500 text-center mb-6">Ingresa tus credenciales para acceder a tu cuenta.</p>
+        <h2 id="auth-titulo" class="text-2xl font-bold text-gray-800 text-center mb-1">¡Te damos la bienvenida!</h2>
+        <p id="auth-subtitulo" class="text-xs text-gray-500 text-center mb-6">Elige tu método preferido para ingresar.</p>
+
+        <button type="button" id="btn-google" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl transition shadow-sm mb-6">
+            <svg class="w-5 h-5" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continuar con Google
+        </button>
+
+        <div class="flex items-center my-4">
+            <div class="flex-1 border-t border-gray-200"></div>
+            <span class="mx-4 text-xs text-gray-400 uppercase tracking-wider font-semibold">o usar correo</span>
+            <div class="flex-1 border-t border-gray-200"></div>
+        </div>
 
         <form id="form-auth" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Correo Electrónico / WhatsApp</label>
-                <input type="email" id="auth-email" placeholder="ejemplo@correo.com" required class="mt-1 block w-full p-3 border rounded-xl shadow-sm text-gray-950 focus:ring-blue-500 focus:border-blue-500">
+                <label class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+                <input type="email" id="auth-email" placeholder="ejemplo@correo.com" required class="mt-1 block w-full p-3 border rounded-xl text-gray-950 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700">Contraseña</label>
-                <input type="password" id="auth-password" placeholder="••••••" required class="mt-1 block w-full p-3 border rounded-xl shadow-sm text-gray-950 focus:ring-blue-500 focus:border-blue-500">
-                <p id="info-temporal" class="text-[11px] text-amber-600 mt-1 hidden font-medium">⚠️ Esta será tu clave temporal. El sistema te pedirá cambiarla al entrar.</p>
+                <input type="password" id="auth-password" placeholder="••••••" required class="mt-1 block w-full p-3 border rounded-xl text-gray-950 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                <p id="info-temporal" class="text-[11px] text-amber-600 mt-1 hidden font-medium">⚠️ Recuerda que si eres nuevo, esta clave servirá para tus futuros accesos.</p>
             </div>
             <button type="submit" id="btn-auth-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg">
-                Ingresar al Sistema
+                Ingresar con Correo
             </button>
         </form>
 
         <div class="mt-6 text-center text-sm border-t pt-4">
             <button onclick="alternarModoAuth()" id="btn-cambiar-modo" class="text-blue-600 hover:underline font-medium">
-                ¿Eres cliente nuevo? Regístrate aquí
+                ¿No tienes cuenta? Regístrate aquí
             </button>
         </div>
         <div class="text-center mt-3">
@@ -39,7 +55,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
@@ -52,11 +68,37 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
 
-        // CORREO DEL ADMINISTRADOR DEL NEGOCIO
-        const CORREO_ADMINISTRADOR = "jandry@admin.com"; // <<-- CAMBIA POR TU CORREO REAL DE ACCESO
+        // TU CORREO DE ADMINISTRADOR DEL NEGOCIO
+        const CORREO_ADMINISTRADOR = "jandry@admin.com"; // <<-- Asegúrate que este sea tu correo real
         let esModoRegistro = false;
 
+        // Función Central de Enrutamiento (Decide a dónde mandar al usuario según su correo)
+        function redireccionarPorRol(email) {
+            if (email.toLowerCase() === CORREO_ADMINISTRADOR.toLowerCase()) {
+                // Si eres tú (Dueño): Al panel secreto adentro de la carpeta
+                window.location.href = "jadiventas/admin.html";
+            } else {
+                // Si es cualquier otro usuario (Cliente): Al catálogo público
+                window.location.href = "index.html";
+            }
+        }
+
+        // --- ENTRAR CON GOOGLE (Un solo clic) ---
+        document.getElementById('btn-google').addEventListener('click', async () => {
+            try {
+                const resultado = await signInWithPopup(auth, googleProvider);
+                const usuario = resultado.user;
+                
+                // Redirecciona de inmediato según corresponda
+                redireccionarPorRol(usuario.email);
+            } catch (err) {
+                alert("Error al conectar con Google: " + err.message);
+            }
+        });
+
+        // --- ENTRAR CON FORMULARIO TRADICIONAL ---
         document.getElementById('form-auth').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
@@ -64,36 +106,28 @@
 
             try {
                 if (esModoRegistro) {
-                    // Flujo Registro Cliente
+                    // Si el usuario marca la opción de registrarse
                     await createUserWithEmailAndPassword(auth, email, pass);
-                    localStorage.setItem('requiereCambioClave', 'true'); // Forzar cambio de clave temporal
-                    alert("¡Cuenta de Cliente creada con éxito! Por seguridad, actualiza tu clave.");
+                    alert("¡Tu cuenta de cliente ha sido creada de forma segura!");
                     window.location.href = "index.html";
                 } else {
-                    // Flujo de Inicio de Sesión
+                    // Si el usuario ya está registrado e intenta iniciar sesión
                     const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-                    const usuario = userCredential.user;
-
-                    if (usuario.email === CORREO_ADMINISTRADOR) {
-                        // SI ES EL ADMIN: Redirige automáticamente adentro de la carpeta secreta
-                        window.location.href = "jadiventas/admin.html";
-                    } else {
-                        // SI ES UN CLIENTE: Redirige a la vitrina de compras en la raíz
-                        window.location.href = "index.html";
-                    }
+                    redireccionarPorRol(userCredential.user.email);
                 }
             } catch (err) {
-                alert("Error de credenciales: " + err.message);
+                alert("Error en los datos ingresados: " + err.message);
             }
         });
 
+        // Alternar visualmente el formulario entre Login y Registro
         window.alternarModoAuth = () => {
             esModoRegistro = !esModoRegistro;
-            document.getElementById('auth-titulo').innerText = esModoRegistro ? "Crear Cuenta de Cliente" : "Iniciar Sesión";
-            document.getElementById('auth-subtitulo').innerText = esModoRegistro ? "Regístrate para personalizar tu calzado y gestionar tu carrito." : "Ingresa tus credenciales para acceder a tu cuenta.";
-            document.getElementById('btn-auth-submit').innerText = esModoRegistro ? "Registrarse y Comprar" : "Ingresar al Sistema";
+            document.getElementById('auth-titulo').innerText = esModoRegistro ? "Crear Cuenta de Cliente" : "¡Te damos la bienvenida!";
+            document.getElementById('auth-subtitulo').innerText = esModoRegistro ? "Crea tu cuenta con correo para poder personalizar tus pedidos." : "Elige tu método preferido para ingresar.";
+            document.getElementById('btn-auth-submit').innerText = esModoRegistro ? "Registrarse como Cliente" : "Ingresar con Correo";
             document.getElementById('info-temporal').classList.toggle('hidden', !esModoRegistro);
-            document.getElementById('btn-cambiar-modo').innerText = esModoRegistro ? "¿Ya tienes una cuenta? Inicia sesión" : "¿Eres cliente nuevo? Regístrate aquí";
+            document.getElementById('btn-cambiar-modo').innerText = esModoRegistro ? "¿Ya tienes una cuenta? Inicia sesión aquí" : "¿No tienes cuenta? Regístrate aquí";
         };
     </script>
 </body>
