@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calzado Store - Catálogo y Club de Beneficios</title>
+    <title>Calzado Store - Vitrina Comercial</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans">
@@ -13,7 +13,7 @@
             <h1 class="text-2xl font-bold tracking-wider">CALZADO STORE</h1>
             <div class="flex items-center gap-4">
                 <div id="usuario-anonimo" class="block">
-                    <button onclick="abrirModalAuth()" class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded text-sm font-semibold transition">Iniciar Sesión / Registrarse</button>
+                    <a href="login.html" class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded text-sm font-semibold transition">🛒 Ingresar / Crear Cuenta</a>
                 </div>
                 <div id="usuario-autenticado" class="hidden flex items-center gap-3">
                     <span id="email-usuario" class="text-sm font-medium bg-blue-700 px-3 py-1 rounded"></span>
@@ -23,24 +23,26 @@
         </div>
     </nav>
 
-    <div class="bg-amber-500 text-white text-center py-2 px-4 text-sm font-bold shadow-inner">
-        🔥 ¡Por tu compra obtén Mantenimiento Gratis a los 3 meses y Costuras a los 4 meses! 🔥
+    <div class="bg-amber-500 text-white text-center py-2.5 px-4 text-sm font-bold shadow-inner">
+        🔥 BENEFICIO EXCLUSIVO: ¡Mantenimiento gratis a los 3 meses y ajuste de costuras a los 4 meses! 🔥
     </div>
 
     <main class="container mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <section class="lg:col-span-2">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Modelos Disponibles</h2>
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Modelos en Exhibición</h2>
             <div id="contenedor-catalogo" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 </div>
         </section>
 
         <section class="bg-white p-6 rounded-lg shadow-md h-fit sticky top-24">
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Tu Carrito de Compras</h2>
-            <p id="alerta-login-carrito" class="text-sm text-amber-600 font-medium mb-4">⚠️ Debes iniciar sesión para procesar un pedido.</p>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Tu Orden de Compra</h2>
+            <p id="alerta-login-carrito" class="text-sm text-amber-600 font-medium mb-4 bg-amber-50 p-2 rounded border border-amber-200">
+                ⚠️ Debes iniciar sesión para procesar y personalizar tu calzado.
+            </p>
             
             <div id="contenido-carrito" class="space-y-4 max-h-80 overflow-y-auto mb-4">
-                <p class="text-gray-500 text-center text-sm">El carrito está vacío.</p>
+                <p class="text-gray-500 text-center text-sm">No has agregado ningún modelo.</p>
             </div>
             
             <div class="border-t pt-4">
@@ -49,56 +51,16 @@
                     <span id="total-precio">$0.00</span>
                 </div>
                 <button onclick="procesarPedidoBaseDatos()" id="btn-confirmar-pedido" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition opacity-50 cursor-not-allowed" disabled>
-                    Confirmar y Guardar Pedido
+                    Confirmar Pedido de Fábrica
                 </button>
             </div>
         </section>
     </main>
 
-    <div id="modal-auth" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-2xl max-w-md w-full mx-4 relative">
-            <button onclick="cerrarModalAuth()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl">&times;</button>
-            
-            <h3 id="auth-titulo" class="text-xl font-bold text-gray-800 mb-4 text-center">Ingresar a mi Cuenta</h3>
-            
-            <form id="form-auth" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                    <input type="email" id="auth-email" required class="mt-1 block w-full p-2 border rounded shadow-sm">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Contraseña</label>
-                    <input type="password" id="auth-password" required class="mt-1 block w-full p-2 border rounded shadow-sm">
-                    <p id="info-registro" class="text-xs text-gray-400 mt-1 hidden">Si te registras por primera vez, esta será tu clave temporal.</p>
-                </div>
-                
-                <button type="submit" id="btn-auth-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded transition">Ingresar</button>
-            </form>
-
-            <div class="mt-4 text-center text-sm">
-                <button onclick="alternarModoAuth()" id="btn-cambiar-modo" class="text-blue-600 hover:underline">¿No tienes cuenta? Regístrate aquí</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="modal-cambio-clave" class="fixed inset-0 bg-gray-900 bg-opacity-70 flex items-center justify-center z-50 hidden">
-        <div class="bg-white p-6 rounded-lg shadow-2xl max-w-md w-full mx-4">
-            <h3 class="text-lg font-bold text-red-600 mb-2 text-center">🔒 Seguridad Requerida</h3>
-            <p class="text-xs text-gray-600 text-center mb-4">Has ingresado con una cuenta nueva o clave temporal. Por tu seguridad, cámbiala antes de continuar.</p>
-            <form id="form-cambio-clave" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Nueva Contraseña Definitiva</label>
-                    <input type="password" id="nueva-clave" required minlength="6" class="mt-1 block w-full p-2 border rounded">
-                </div>
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded transition">Actualizar y Activar Cuenta</button>
-            </form>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
@@ -116,84 +78,42 @@
         let productosDisponibles = [];
         let carrito = [];
         let usuarioActual = null;
-        let esModoRegistro = false;
 
-        // --- MANEJO DE AUTENTICACIÓN ---
-        const usuarioAnonimo = document.getElementById('usuario-anonimo');
-        const usuarioAutenticado = document.getElementById('usuario-autenticado');
-        const emailUsuario = document.getElementById('email-usuario');
-        const alertaLoginCarrito = document.getElementById('alerta-login-carrito');
-
+        // --- OBSERVAR ESTADO DEL CLIENTE ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 usuarioActual = user;
-                usuarioAnonimo.classList.add('hidden');
-                usuarioAutenticado.classList.remove('hidden');
-                emailUsuario.innerText = user.email;
-                alertaLoginCarrito.classList.add('hidden');
-                
-                // Si el usuario acaba de ser creado y guardado en localStorage como clave temporal
-                if(sessionStorage.getItem('requiereCambioClave') === 'true') {
-                    document.getElementById('modal-cambio-clave').classList.remove('hidden');
-                }
+                document.getElementById('usuario-anonimo').classList.add('hidden');
+                document.getElementById('usuario-autenticado').classList.remove('hidden');
+                document.getElementById('email-usuario').innerText = user.email;
+                document.getElementById('alerta-login-carrito').classList.add('hidden');
             } else {
                 usuarioActual = null;
-                usuarioAnonimo.classList.remove('hidden');
-                usuarioAutenticado.classList.add('hidden');
-                alertaLoginCarrito.classList.remove('hidden');
+                document.getElementById('usuario-anonimo').classList.remove('hidden');
+                document.getElementById('usuario-autenticado').classList.add('hidden');
+                document.getElementById('alerta-login-carrito').classList.remove('hidden');
             }
             actualizarInterfazCarrito();
         });
 
-        // Formulario Login / Registro
-        document.getElementById('form-auth').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-password').value;
+        window.cerrarSesion = () => signOut(auth).then(() => window.location.reload());
 
-            try {
-                if (esModoRegistro) {
-                    await createUserWithEmailAndPassword(auth, email, pass);
-                    sessionStorage.setItem('requiereCambioClave', 'true'); // Forzar cambio
-                    alert("Cuenta creada con clave temporal. Procede a cambiarla.");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                }
-                cerrarModalAuth();
-            } catch (err) {
-                alert("Error de autenticación: " + err.message);
-            }
-        });
-
-        // Cambio de clave temporal a definitiva
-        document.getElementById('form-cambio-clave').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const nuevaClave = document.getElementById('nueva-clave').value;
-            try {
-                if(auth.currentUser) {
-                    await updatePassword(auth.currentUser, nuevaClave);
-                    sessionStorage.removeItem('requiereCambioClave');
-                    document.getElementById('modal-cambio-clave').classList.add('hidden');
-                    alert("¡Contraseña actualizada con éxito!");
-                }
-            } catch (err) {
-                alert("Error al cambiar contraseña: " + err.message);
-            }
-        });
-
-        window.cerrarSesion = () => signOut(auth);
-
-        // --- CARGAR PRODUCTOS Y PUBLICIDAD ---
+        // --- LEER VITRINA (Gestionada desde catalogo.html) ---
         const contenedorCatalogo = document.getElementById('contenedor-catalogo');
 
         onSnapshot(collection(db, "calzado"), (snapshot) => {
             contenedorCatalogo.innerHTML = '';
             productosDisponibles = [];
+            
+            if(snapshot.empty) {
+                contenedorCatalogo.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-8">No hay modelos cargados en el catálogo en este momento.</p>';
+                return;
+            }
+
             snapshot.forEach(doc => {
                 const prod = { id: doc.id, ...doc.data() };
                 productosDisponibles.push(prod);
                 
-                // Renderizado de tarjetas con etiquetas promocionales postventa
                 const div = document.createElement('div');
                 div.className = "bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 p-4 flex flex-col justify-between";
                 div.innerHTML = `
@@ -201,20 +121,20 @@
                     <div>
                         <div class="flex justify-between items-start mb-1">
                             <h3 class="font-bold text-lg text-gray-900">${prod.nombre}</h3>
-                            ${prod.promocion ? `<span class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">${prod.promocion}</span>` : ''}
+                            ${prod.promocion ? `<span class="bg-red-500 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">${prod.promocion}</span>` : ''}
                         </div>
                         <p class="text-xs text-gray-500 mb-3">${prod.descripcion || ''}</p>
                         
                         <div class="bg-blue-50 p-2 rounded-lg space-y-1 text-[11px] text-blue-800 mb-4 font-medium">
-                            <div>🎁 Mantenimiento preventivo a los 3 meses (Gratis)</div>
-                            <div>🧵 Ajuste y costura a los 4 meses (Gratis)</div>
-                            <div>👟 Suela a mitad de precio en su ciclo medio</div>
+                            <div>🎁 Mantenimiento preventivo gratis (Mes 3)</div>
+                            <div>🧵 Ajuste de costuras gratis (Mes 4)</div>
+                            <div>👟 Suela a mitad de precio (Ciclo medio)</div>
                         </div>
                     </div>
                     <div class="flex justify-between items-center">
                         <span class="text-xl font-extrabold text-blue-600">$${parseFloat(prod.precio).toFixed(2)}</span>
                         <button onclick="agregarAlCarrito('${prod.id}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
-                            Agregar al Pedido
+                            Añadir al Carrito
                         </button>
                     </div>
                 `;
@@ -222,16 +142,15 @@
             });
         });
 
-        // --- GESTIÓN DEL CARRITO CON TALLA Y COLOR ---
+        // --- MANEJO DEL CARRITO (TALLAS Y COLORES) ---
         window.agregarAlCarrito = (id) => {
             const prod = productosDisponibles.find(p => p.id === id);
-            // Cada combinación de zapato, talla y color se maneja de forma independiente
             carrito.push({
                 id: prod.id,
                 nombre: prod.nombre,
                 precio: prod.precio,
-                talla: "38", // Talla inicial por defecto
-                color: "Negro", // Color inicial por defecto
+                talla: "38", 
+                color: "Negro", 
                 cantidad: 1
             });
             actualizarInterfazCarrito();
@@ -243,7 +162,6 @@
             const btnConfirmar = document.getElementById('btn-confirmar-pedido');
             
             contenido.innerHTML = '';
-            
             if(carrito.length === 0) {
                 contenido.innerHTML = '<p class="text-gray-500 text-center text-sm">El carrito está vacío.</p>';
                 totalTxt.innerText = "$0.00";
@@ -290,7 +208,6 @@
 
             totalTxt.innerText = `$${total.toFixed(2)}`;
             
-            // Habilitar botón solo si el cliente está logueado
             if (usuarioActual) {
                 btnConfirmar.disabled = false;
                 btnConfirmar.classList.remove('opacity-50', 'cursor-not-allowed');
@@ -300,45 +217,25 @@
             }
         }
 
-        window.cambiarEspecificacion = (index, propiedad, valor) => {
-            carrito[index][propiedad] = valor;
-        };
+        window.cambiarEspecificacion = (index, propiedad, valor) => { carrito[index][propiedad] = valor; };
+        window.removerDelCarrito = (index) => { carrito.splice(index, 1); actualizarInterfazCarrito(); };
 
-        window.removerDelCarrito = (index) => {
-            carrito.splice(index, 1);
-            actualizarInterfazCarrito();
-        };
-
-        // --- PROCESAR PEDIDO Y ENVIAR A FIRESTORE ---
+        // --- ENVIAR ORDEN A FIRESTORE ---
         window.procesarPedidoBaseDatos = async () => {
             if(!usuarioActual) return;
-
             try {
-                // Guardar la solicitud estructurada en la nueva colección "pedidos"
                 await addDoc(collection(db, "pedidos"), {
                     clienteEmail: usuarioActual.email,
                     articulos: carrito,
                     fecha: new Date().toLocaleString(),
-                    estado: "Pendiente" // Servirá para que lo gestiones en admin.html
+                    estado: "Pendiente"
                 });
-
-                alert("¡Tu pedido ha sido solicitado con éxito! El administrador revisará las tallas y colores.");
+                alert("¡Pedido guardado con éxito! Se ha mandado a tu panel de administración.");
                 carrito = [];
                 actualizarInterfazCarrito();
             } catch (err) {
-                alert("Error al enviar pedido: " + err.message);
+                alert("Error al procesar la compra: " + err.message);
             }
-        };
-
-        // --- CONTROL DE VENTANAS MODALES ---
-        window.abrirModalAuth = () => document.getElementById('modal-auth').classList.remove('hidden');
-        window.cerrarModalAuth = () => document.getElementById('modal-auth').classList.add('hidden');
-        window.alternarModoAuth = () => {
-            esModoRegistro = !esModoRegistro;
-            document.getElementById('auth-titulo').innerText = esModoRegistro ? "Crear Cuenta Nueva" : "Ingresar a mi Cuenta";
-            document.getElementById('btn-auth-submit').innerText = esModoRegistro ? "Registrarse" : "Ingresar";
-            document.getElementById('info-registro').classList.toggle('hidden', !esModoRegistro);
-            document.getElementById('btn-cambiar-modo').innerText = esModoRegistro ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate aquí";
         };
     </script>
 </body>
