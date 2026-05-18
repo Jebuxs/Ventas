@@ -3,52 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Pedidos - Administrador Seguro</title>
+    <title>Panel de Pedidos</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
+<body class="bg-gray-900 text-gray-100 min-h-screen">
 
     <div id="bloqueo-seguridad" class="fixed inset-0 bg-gray-950 flex items-center justify-center z-50">
         <div class="text-center">
             <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mx-auto mb-4"></div>
-            <p class="text-sm text-gray-400 font-medium">Validando credenciales de administrador...</p>
+            <p class="text-sm text-gray-400">Verificando nivel de rol en base de datos...</p>
         </div>
     </div>
 
     <nav class="bg-gray-800 p-4 border-b border-gray-700 shadow-md">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider text-amber-500">📥 PANEL DE PEDIDOS SOLICITADOS</h1>
+            <h1 class="text-xl font-bold text-amber-500">📥 PANEL DE PEDIDOS</h1>
             <div class="flex gap-4 items-center">
-                <a href="../index.html" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm transition">Ver Tienda</a>
-                <a href="catalogo.html" class="bg-indigo-700 hover:bg-indigo-600 px-4 py-2 rounded text-sm transition">Gestionar Vitrina</a>
-                <button onclick="cerrarSesionAdmin()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-2 rounded font-bold transition">Salir</button>
+                <a href="../index.html" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm">Ver Tienda</a>
+                <a href="catalogo.html" class="bg-indigo-700 hover:bg-indigo-600 px-4 py-2 rounded text-sm">Gestionar Vitrina</a>
+                <button onclick="cerrarSesionAdmin()" class="bg-red-600 text-xs px-3 py-2 rounded font-bold">Salir</button>
             </div>
         </div>
     </nav>
 
     <main class="container mx-auto p-4">
-        <h2 class="text-lg font-semibold mb-4 text-gray-400">Cola de Producción y Solicitudes Recientes</h2>
-        
-        <div class="overflow-x-auto bg-gray-800 rounded-xl shadow-lg border border-gray-700">
+        <div class="overflow-x-auto bg-gray-800 rounded-xl border border-gray-700 mt-4">
             <table class="min-w-full divide-y divide-gray-700 text-sm">
                 <thead class="bg-gray-800">
                     <tr>
-                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Cliente (Email)</th>
-                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Detalle del Calzado / Talla / Color</th>
-                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Fecha</th>
-                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Estado</th>
-                        <th class="px-6 py-4 text-left font-semibold text-amber-400">Acción</th>
+                        <th class="px-6 py-4 text-left text-amber-400">Cliente</th>
+                        <th class="px-6 py-4 text-left text-amber-400">Detalle / Talla / Color</th>
+                        <th class="px-6 py-4 text-left text-amber-400">Fecha</th>
+                        <th class="px-6 py-4 text-left text-amber-400">Estado</th>
+                        <th class="px-6 py-4 text-left text-amber-400">Acción</th>
                     </tr>
                 </thead>
-                <tbody id="lista-pedidos" class="divide-y divide-gray-700">
-                    </tbody>
+                <tbody id="lista-pedidos" class="divide-y divide-gray-700"></tbody>
             </table>
         </div>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -64,78 +61,47 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- GUARDIÁN DE SEGURIDAD POR ROL ---
-        const CORREO_ADMINISTRADOR = "jandry@admin.com"; // <<-- CAMBIA POR TU CORREO REAL
+        // --- CONTROLADOR DE ACCESO POR BASE DE DATOS ---
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "../login.html";
+                return;
+            }
+            const docRef = doc(db, "usuarios_registrados", user.uid);
+            const docSnap = await getDoc(docRef);
 
-        onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== CORREO_ADMINISTRADOR) {
-                alert("⛔ ACCESO DENEGADO: No tienes permisos de administrador.");
-                window.location.href = "../index.html"; // Expulsado a la raíz pública
+            if (docSnap.exists() && docSnap.data().rol === "admin") {
+                document.getElementById('bloqueo-seguridad').classList.add('hidden'); // Permitido
             } else {
-                // Si es el administrador legítimo, removemos la pantalla de bloqueo
-                document.getElementById('bloqueo-seguridad').classList.add('hidden');
+                alert("⛔ ACCESO RECHAZADO: No eres administrador en la Base de Datos.");
+                window.location.href = "../index.html"; // Expulsado
             }
         });
 
-        window.cerrarSesionAdmin = () => {
-            signOut(auth).then(() => window.location.href = "../index.html");
-        };
+        window.cerrarSesionAdmin = () => { signOut(auth).then(() => window.location.href = "../login.html"); };
 
-        // --- CARGA EN TIEMPO REAL DE PEDIDOS ---
+        // Carga de Pedidos en tiempo real
         const listaPedidos = document.getElementById('lista-pedidos');
-
         onSnapshot(collection(db, "pedidos"), (snapshot) => {
             listaPedidos.innerHTML = '';
-            if(snapshot.empty) {
-                listaPedidos.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-gray-500">No hay pedidos pendientes en la base de datos.</td></tr>';
-                return;
-            }
-
             snapshot.forEach((documento) => {
                 const pedido = documento.data();
                 const id = documento.id;
-                
-                let detalleArticulos = '<ul class="space-y-1 list-disc list-inside text-gray-300">';
-                pedido.articulos.forEach(art => {
-                    detalleArticulos += `<li><strong>${art.nombre}</strong> - <span class="text-yellow-400 font-bold">Talla: ${art.talla}</span> | Color: ${art.color}</li>`;
-                });
-                detalleArticulos += '</ul>';
+                let detalle = '<ul>';
+                pedido.articulos.forEach(art => { detalle += `<li>${art.nombre} - Talla: ${art.talla} | Color: ${art.color}</li>`; });
+                detalle += '</ul>';
 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-750 transition duration-150";
                 tr.innerHTML = `
-                    <td class="px-6 py-4 font-medium text-gray-200 whitespace-nowrap">${pedido.clienteEmail}</td>
-                    <td class="px-6 py-4">${detalleArticulos}</td>
-                    <td class="px-6 py-4 text-gray-400 whitespace-nowrap">${pedido.fecha}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2.5 py-1 text-xs font-bold rounded-full ${pedido.estado === 'Pendiente' ? 'bg-amber-900 text-amber-300' : 'bg-green-900 text-green-300'}">
-                            ${pedido.estado}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap flex gap-2">
-                        ${pedido.estado === 'Pendiente' ? `<button class="bg-green-600 hover:bg-green-700 text-white text-xs px-2.5 py-1.5 rounded font-bold transition btn-listo">Listo</button>` : ''}
-                        <button class="bg-red-600 hover:bg-red-700 text-white text-xs px-2.5 py-1.5 rounded font-bold transition btn-eliminar">❌</button>
-                    </td>
+                    <td class="px-6 py-4">${pedido.clienteEmail}</td>
+                    <td class="px-6 py-4">${detalle}</td>
+                    <td class="px-6 py-4">${pedido.fecha}</td>
+                    <td class="px-6 py-4">${pedido.estado}</td>
+                    <td class="px-6 py-4"><button onclick="eliminarPedido('${id}')">❌</button></td>
                 `;
-
-                // Listeners seguros de acciones
-                const btnListo = tr.querySelector('.btn-listo');
-                if(btnListo) btnListo.addEventListener('click', () => marcarEntregado(id));
-                tr.querySelector('.btn-eliminar').addEventListener('click', () => eliminarPedido(id));
-
                 listaPedidos.appendChild(tr);
             });
         });
-
-        async function marcarEntregado(id) {
-            await updateDoc(doc(db, "pedidos", id), { estado: "Despachado" });
-        }
-
-        async function eliminarPedido(id) {
-            if(confirm("¿Deseas eliminar este registro de pedido?")) {
-                await deleteDoc(doc(db, "pedidos", id));
-            }
-        }
     </script>
 </body>
 </html>
