@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Seguro - Calzado Store</title>
+    <title>Acceso Seguro y Registro de Garantías - Calzado Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 flex items-center justify-center min-h-screen font-sans px-4">
 
     <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
         <h2 id="auth-titulo" class="text-2xl font-bold text-gray-800 text-center mb-1">¡Te damos la bienvenida!</h2>
-        <p id="auth-subtitulo" class="text-xs text-gray-500 text-center mb-6">Elige tu método preferido para ingresar.</p>
+        <p id="auth-subtitulo" class="text-xs text-gray-500 text-center mb-6">Activa tu cuenta para registrar tus mantenimientos y garantías.</p>
 
         <button type="button" id="btn-google" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl transition shadow-sm mb-6">
             <svg class="w-5 h-5" viewBox="0 0 24 24">
@@ -36,7 +36,6 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700">Contraseña</label>
                 <input type="password" id="auth-password" placeholder="••••••" required class="mt-1 block w-full p-3 border rounded-xl text-gray-950 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                <p id="info-temporal" class="text-[11px] text-amber-600 mt-1 hidden font-medium">⚠️ Recuerda que si eres nuevo, esta clave servirá para tus futuros accesos.</p>
             </div>
             <button type="submit" id="btn-auth-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg">
                 Ingresar con Correo
@@ -55,6 +54,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -67,38 +67,63 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // TU CORREO DE ADMINISTRADOR DEL NEGOCIO
-        const CORREO_ADMINISTRADOR = "jandry@admin.com"; // <<-- Asegúrate que este sea tu correo real
+        // TU CORREO OFICIAL VERIFICADO COMO ADMINISTRADOR
+        const CORREO_ADMINISTRADOR = "villjebuxs@gmail.com"; 
         let esModoRegistro = false;
 
-        // Función Central de Enrutamiento (Decide a dónde mandar al usuario según su correo)
-        function redireccionarPorRol(email) {
-            if (email.toLowerCase() === CORREO_ADMINISTRADOR.toLowerCase()) {
-                // Si eres tú (Dueño): Al panel secreto adentro de la carpeta
-                window.location.href = "jadiventas/admin.html";
-            } else {
-                // Si es cualquier otro usuario (Cliente): Al catálogo público
-                window.location.href = "index.html";
+        // --- FUNCIÓN PARA CREAR EL EXPEDIENTE DEL CLIENTE SI NO EXISTE ---
+        async function registrarExpedienteCliente(uid, email, nombreCompleto) {
+            // Si el que entra es el administrador, no le creamos hoja de cliente
+            if (email.toLowerCase() === CORREO_ADMINISTRADOR.toLowerCase()) return;
+
+            const docRef = doc(db, "usuarios_registrados", uid);
+            const docSnap = await getDoc(docRef);
+
+            // Si es la primera vez que inicia sesión el cliente, creamos su ficha de postventa
+            if (!docSnap.exists()) {
+                await setDoc(docRef, {
+                    clienteEmail: email,
+                    nombre: nombreCompleto || "Cliente Registrado",
+                    fechaRegistro: new Date().toLocaleDateString(),
+                    garantiasYPostventa: {
+                        mantenimientoMes3: "Disponible",   // Estado inicial del beneficio
+                        ajusteCosturasMes4: "Disponible",  // Estado inicial del beneficio
+                        cambioSuelaPromocion: "Disponible" // Estado inicial del beneficio
+                    }
+                });
             }
         }
 
-        // --- ENTRAR CON GOOGLE (Un solo clic) ---
+        // --- DIRECCIONAMIENTO INTELIGENTE POR ROL ---
+        function redireccionarPorRol(email) {
+            if (email.toLowerCase() === CORREO_ADMINISTRADOR.toLowerCase()) {
+                window.location.href = "jadiventas/admin.html"; // Al panel de control seguro
+            } else {
+                window.location.href = "index.html"; // Al catálogo con carrito activo
+            }
+        }
+
+        // --- AUTENTICACIÓN CON GOOGLE ---
         document.getElementById('btn-google').addEventListener('click', async () => {
             try {
                 const resultado = await signInWithPopup(auth, googleProvider);
                 const usuario = resultado.user;
                 
-                // Redirecciona de inmediato según corresponda
+                // 1. Crea automáticamente el expediente técnico de garantías en Firestore
+                await registrarExpedienteCliente(usuario.uid, usuario.email, usuario.displayName);
+                
+                // 2. Redirecciona
                 redireccionarPorRol(usuario.email);
             } catch (err) {
                 alert("Error al conectar con Google: " + err.message);
             }
         });
 
-        // --- ENTRAR CON FORMULARIO TRADICIONAL ---
+        // --- AUTENTICACIÓN CON CORREO Y CONTRASEÑA ---
         document.getElementById('form-auth').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
@@ -106,27 +131,25 @@
 
             try {
                 if (esModoRegistro) {
-                    // Si el usuario marca la opción de registrarse
-                    await createUserWithEmailAndPassword(auth, email, pass);
-                    alert("¡Tu cuenta de cliente ha sido creada de forma segura!");
+                    const credenciales = await createUserWithEmailAndPassword(auth, email, pass);
+                    // Crea el expediente de postventa para el nuevo correo
+                    await registrarExpedienteCliente(credenciales.user.uid, email, "Cliente Correo");
+                    alert("¡Cuenta de cliente y ficha de mantenimiento activadas!");
                     window.location.href = "index.html";
                 } else {
-                    // Si el usuario ya está registrado e intenta iniciar sesión
                     const userCredential = await signInWithEmailAndPassword(auth, email, pass);
                     redireccionarPorRol(userCredential.user.email);
                 }
             } catch (err) {
-                alert("Error en los datos ingresados: " + err.message);
+                alert("Error en las credenciales: " + err.message);
             }
         });
 
-        // Alternar visualmente el formulario entre Login y Registro
         window.alternarModoAuth = () => {
             esModoRegistro = !esModoRegistro;
             document.getElementById('auth-titulo').innerText = esModoRegistro ? "Crear Cuenta de Cliente" : "¡Te damos la bienvenida!";
-            document.getElementById('auth-subtitulo').innerText = esModoRegistro ? "Crea tu cuenta con correo para poder personalizar tus pedidos." : "Elige tu método preferido para ingresar.";
-            document.getElementById('btn-auth-submit').innerText = esModoRegistro ? "Registrarse como Cliente" : "Ingresar con Correo";
-            document.getElementById('info-temporal').classList.toggle('hidden', !esModoRegistro);
+            document.getElementById('auth-subtitulo').innerText = esModoRegistro ? "Regístrate para asegurar tu cobertura de mantenimientos gratis." : "Activa tu cuenta para registrar tus mantenimientos y garantías.";
+            document.getElementById('btn-auth-submit').innerText = esModoRegistro ? "Registrarme y Activar Beneficios" : "Ingresar con Correo";
             document.getElementById('btn-cambiar-modo').innerText = esModoRegistro ? "¿Ya tienes una cuenta? Inicia sesión aquí" : "¿No tienes cuenta? Regístrate aquí";
         };
     </script>
