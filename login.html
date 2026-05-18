@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Seguro y Registro de Garantías - Calzado Store</title>
+    <title>Acceso Seguro - Calzado Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 flex items-center justify-center min-h-screen font-sans px-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
+    <div id="contenedor-login" class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full block">
         <h2 id="auth-titulo" class="text-2xl font-bold text-gray-800 text-center mb-1">¡Te damos la bienvenida!</h2>
         <p id="auth-subtitulo" class="text-xs text-gray-500 text-center mb-6">Activa tu cuenta para registrar tus mantenimientos y garantías.</p>
 
@@ -37,6 +37,12 @@
                 <label class="block text-sm font-medium text-gray-700">Contraseña</label>
                 <input type="password" id="auth-password" placeholder="••••••" required class="mt-1 block w-full p-3 border rounded-xl text-gray-950 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
             </div>
+            
+            <div id="wrapper-whatsapp-registro" class="hidden">
+                <label class="block text-sm font-medium text-amber-600 font-bold">Número de WhatsApp (Obligatorio)</label>
+                <input type="tel" id="auth-whatsapp-registro" placeholder="Ej: +593999999999" class="mt-1 block w-full p-3 border border-amber-300 rounded-xl text-gray-950 focus:ring-blue-500 focus:border-blue-500 shadow-sm bg-amber-50">
+            </div>
+
             <button type="submit" id="btn-auth-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg">
                 Ingresar con Correo
             </button>
@@ -52,9 +58,26 @@
         </div>
     </div>
 
+    <div id="modal-whatsapp" class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full hidden text-center animate-fade-in">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-10 h-10 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397 0 11.966 0c3.178.001 6.169 1.24 8.419 3.496 2.25 2.256 3.489 5.252 3.488 8.434-.004 6.619-5.34 11.967-11.91 11.967-1.992-.001-3.952-.5-5.688-1.453L0 24zm6.59-4.846c1.656.983 3.511 1.501 5.397 1.502 5.613 0 10.181-4.576 10.185-10.19.002-2.721-1.056-5.279-2.981-7.21C17.317 1.32 14.773.26 12.056.26c-5.62 0-10.19 4.577-10.194 10.192-.001 1.884.499 3.73 1.446 5.36L2.38 21.61l5.859-1.534.408.242z"/>
+            </svg>
+        </div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">¡Paso muy Importante!</h3>
+        <p class="text-sm text-gray-600 mb-6">Para poder activar tus <span class="font-bold text-blue-600">Mantenimientos Gratuitos</span> y coberturas de garantía, introduce tu número de WhatsApp de contacto.</p>
+        
+        <form id="form-whatsapp-confirmar" class="space-y-4">
+            <input type="tel" id="input-whatsapp-modal" placeholder="Ej: +593999999999" required class="block w-full p-3 border border-gray-300 rounded-xl text-center text-lg tracking-wider text-gray-950 font-semibold focus:ring-green-500 focus:border-green-500">
+            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                Activar Mis Garantías
+            </button>
+        </form>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -71,59 +94,86 @@
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // TU CORREO OFICIAL VERIFICADO COMO ADMINISTRADOR
         const CORREO_ADMINISTRADOR = "villjebuxs@gmail.com"; 
         let esModoRegistro = false;
+        let datosUsuarioTemporal = null; // Almacena el usuario de Google temporalmente mientras pone el WhatsApp
 
-        // --- FUNCIÓN PARA CREAR EL EXPEDIENTE DEL CLIENTE SI NO EXISTE ---
-        async function registrarExpedienteCliente(uid, email, nombreCompleto) {
-            // Si el que entra es el administrador, no le creamos hoja de cliente
-            if (email.toLowerCase() === CORREO_ADMINISTRADOR.toLowerCase()) return;
-
-            const docRef = doc(db, "usuarios_registrados", uid);
-            const docSnap = await getDoc(docRef);
-
-            // Si es la primera vez que inicia sesión el cliente, creamos su ficha de postventa
-            if (!docSnap.exists()) {
-                await setDoc(docRef, {
-                    clienteEmail: email,
-                    nombre: nombreCompleto || "Cliente Registrado",
-                    fechaRegistro: new Date().toLocaleDateString(),
-                    garantiasYPostventa: {
-                        mantenimientoMes3: "Disponible",   // Estado inicial del beneficio
-                        ajusteCosturasMes4: "Disponible",  // Estado inicial del beneficio
-                        cambioSuelaPromocion: "Disponible" // Estado inicial del beneficio
-                    }
-                });
-            }
-        }
-
-        // --- DIRECCIONAMIENTO INTELIGENTE POR ROL ---
+        // --- VALIDAR ROL Y REDIRECCIONAR ---
         function redireccionarPorRol(email) {
             if (email.toLowerCase() === CORREO_ADMINISTRADOR.toLowerCase()) {
-                window.location.href = "jadiventas/admin.html"; // Al panel de control seguro
+                window.location.href = "jadiventas/admin.html";
             } else {
-                window.location.href = "index.html"; // Al catálogo con carrito activo
+                window.location.href = "index.html";
             }
         }
 
-        // --- AUTENTICACIÓN CON GOOGLE ---
+        // --- VERIFICAR O CREAR EXPEDIENTE DEL CLIENTE ---
+        async function procesarIngresoCliente(user, nombrePorDefecto, whatsappManual = null) {
+            if (user.email.toLowerCase() === CORREO_ADMINISTRADOR.toLowerCase()) {
+                redireccionarPorRol(user.email);
+                return;
+            }
+
+            const docRef = doc(db, "usuarios_registrados", user.uid);
+            const docSnap = await getDoc(docRef);
+
+            if (!docSnap.exists()) {
+                // Si el usuario no existe y no tenemos el WhatsApp aún, guardamos sus datos y abrimos el modal
+                if (!whatsappManual) {
+                    datosUsuarioTemporal = user;
+                    document.getElementById('contenedor-login').classList.add('hidden');
+                    document.getElementById('modal-whatsapp').classList.remove('hidden');
+                    return; // Pausamos el flujo hasta que llene el modal
+                }
+
+                // Si ya tenemos el WhatsApp, creamos la hoja de vida técnica completa
+                await setDoc(docRef, {
+                    clienteEmail: user.email,
+                    nombre: user.displayName || nombrePorDefecto,
+                    whatsapp: whatsappManual,
+                    fechaRegistro: new Date().toLocaleDateString(),
+                    garantiasYPostventa: {
+                        mantenimientoMes3: "Disponible",
+                        ajusteCosturasMes4: "Disponible",
+                        cambioSuelaPromocion: "Disponible"
+                    }
+                });
+            } else {
+                // Si ya existía el usuario en la base de datos pero por algún motivo no tenía WhatsApp, se lo pedimos
+                const datosExistentes = docSnap.data();
+                if (!datosExistentes.whatsapp && !whatsappManual) {
+                    datosUsuarioTemporal = user;
+                    document.getElementById('contenedor-login').classList.add('hidden');
+                    document.getElementById('modal-whatsapp').classList.remove('hidden');
+                    return;
+                }
+            }
+            
+            redireccionarPorRol(user.email);
+        }
+
+        // --- ESCUCHA DEL FORMULARIO DEL MODAL (WHATSAPP PARA GOOGLE) ---
+        document.getElementById('form-whatsapp-confirmar').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const whatsappIngresado = document.getElementById('input-whatsapp-modal').value.trim();
+            
+            if (datosUsuarioTemporal) {
+                await procesarIngresoCliente(datosUsuarioTemporal, "Cliente Google", whatsappIngresado);
+                alert("¡WhatsApp guardado y beneficios activados!");
+            }
+        });
+
+        // --- INICIAR SESIÓN CON GOOGLE ---
         document.getElementById('btn-google').addEventListener('click', async () => {
             try {
                 const resultado = await signInWithPopup(auth, googleProvider);
-                const usuario = resultado.user;
-                
-                // 1. Crea automáticamente el expediente técnico de garantías en Firestore
-                await registrarExpedienteCliente(usuario.uid, usuario.email, usuario.displayName);
-                
-                // 2. Redirecciona
-                redireccionarPorRol(usuario.email);
+                await procesarIngresoCliente(resultado.user, resultado.user.displayName);
             } catch (err) {
                 alert("Error al conectar con Google: " + err.message);
             }
         });
 
-        // --- AUTENTICACIÓN CON CORREO Y CONTRASEÑA ---
+        // --- ACCESO Y REGISTRO CON CORREO TRADICIONAL ---
         document.getElementById('form-auth').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
@@ -131,14 +181,17 @@
 
             try {
                 if (esModoRegistro) {
+                    const whatsappRegistro = document.getElementById('auth-whatsapp-registro').value.trim();
+                    if(!whatsappRegistro) {
+                        alert("Por favor ingresa tu número de WhatsApp para el registro.");
+                        return;
+                    }
                     const credenciales = await createUserWithEmailAndPassword(auth, email, pass);
-                    // Crea el expediente de postventa para el nuevo correo
-                    await registrarExpedienteCliente(credenciales.user.uid, email, "Cliente Correo");
+                    await procesarIngresoCliente(credenciales.user, "Cliente Registro Correo", whatsappRegistro);
                     alert("¡Cuenta de cliente y ficha de mantenimiento activadas!");
-                    window.location.href = "index.html";
                 } else {
                     const userCredential = await signInWithEmailAndPassword(auth, email, pass);
-                    redireccionarPorRol(userCredential.user.email);
+                    await procesarIngresoCliente(userCredential.user, "Cliente");
                 }
             } catch (err) {
                 alert("Error en las credenciales: " + err.message);
@@ -150,6 +203,8 @@
             document.getElementById('auth-titulo').innerText = esModoRegistro ? "Crear Cuenta de Cliente" : "¡Te damos la bienvenida!";
             document.getElementById('auth-subtitulo').innerText = esModoRegistro ? "Regístrate para asegurar tu cobertura de mantenimientos gratis." : "Activa tu cuenta para registrar tus mantenimientos y garantías.";
             document.getElementById('btn-auth-submit').innerText = esModoRegistro ? "Registrarme y Activar Beneficios" : "Ingresar con Correo";
+            document.getElementById('wrapper-whatsapp-registro').classList.toggle('hidden', !esModoRegistro);
+            document.getElementById('auth-whatsapp-registro').required = esModoRegistro;
             document.getElementById('btn-cambiar-modo').innerText = esModoRegistro ? "¿Ya tienes una cuenta? Inicia sesión aquí" : "¿No tienes cuenta? Regístrate aquí";
         };
     </script>
