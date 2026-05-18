@@ -48,7 +48,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Fotografía del Producto</label>
                     <button type="button" id="btn-cloudinary" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded font-semibold shadow transition duration-200">
-                        📸 Subir Foto (Galería o Cámara)
+                        📸 Abrir Panel de Fotos
                     </button>
                     <input type="hidden" id="url-imagen-final" required>
                 </div>
@@ -101,7 +101,7 @@
         const btnErrorContainer = document.getElementById('btn-error-container');
 
         // ====================================================
-        // CONTROLES DE ACCESO CON BYPASS DE EMERGENCIA POR EMAIL
+        // CONTROLES DE ACCESO CON BYPASS POR EMAIL
         // ====================================================
         onAuthStateChanged(auth, async (user) => {
             if (!user) { 
@@ -114,12 +114,9 @@
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists() && docSnap.data().rol === "admin") {
-                    // Si en Firebase eres admin, pasas directo
                     bloqueoSeguridad.classList.add('hidden');
                 } else {
-                    // BLINDAJE: Si Firestore falla pero iniciaste con tu correo admin, te deja pasar
                     if (user.email.toLowerCase() === "villjebuxs@gmail.com") {
-                        console.log("Bypass activado: Acceso concedido por Correo Propietario.");
                         bloqueoSeguridad.classList.add('hidden');
                     } else {
                         const rolActual = docSnap.exists() ? docSnap.data().rol : "Ninguno";
@@ -127,7 +124,6 @@
                     }
                 }
             } catch (error) {
-                // En caso de error de red, si eres el dueño pasas de todas formas
                 if (user.email.toLowerCase() === "villjebuxs@gmail.com") {
                     bloqueoSeguridad.classList.add('hidden');
                 } else {
@@ -138,7 +134,7 @@
 
         function manejarAccesoDenegado(mensaje) {
             loaderSeguridad.classList.add('hidden');
-            textoSeguridad.innerHTML = `<span class="text-red-400 font-bold">⛔ ${mensaje}</span><br><br><span class="text-xs text-gray-400">Si eres el administrador, inicia sesión con el correo villjebuxs@gmail.com</span>`;
+            textoSeguridad.innerHTML = `<span class="text-red-400 font-bold">⛔ ${mensaje}</span><br><br><span class="text-xs text-gray-400">Inicia sesión con tu correo administrador.</span>`;
             btnErrorContainer.classList.remove('hidden');
         }
 
@@ -147,16 +143,14 @@
         };
 
         // ====================================================
-        // CONFIGURACIÓN DE CLOUDINARY CORREGIDA Y VERSÁTIL
+        // CONFIGURACIÓN DE CLOUDINARY CLÁSICA (MÚLTIPLES PESTAÑAS)
         // ====================================================
-        const CLOUD_NAME = "duyjyfunn";       
-        const UPLOAD_PRESET = "zapatos_preset";   
-
         const myWidget = cloudinary.createUploadWidget({ 
-            cloudName: CLOUD_NAME, 
-            uploadPreset: UPLOAD_PRESET, 
+            cloudName: "duyjyfunn",         // Tu nombre de cuenta real corregido
+            uploadPreset: "zapatos_preset",   // Tu preset sin firma ya creado
             multiple: false,
-            sources: ['local', 'camera'], // Abre galería en celulares y evita bloqueos de cámara
+            // Aquí definimos todas las pestañas clásicas que querías ver arriba
+            sources: ['local', 'url', 'camera', 'google_drive', 'dropbox'], 
             language: "es",
             styles: {
                 palette: {
@@ -175,14 +169,18 @@
                 }
             }
         }, (error, result) => { 
-            if (!error && result && result.event === "success") { 
+            // Control total de eventos para que se active al presionar "Upload" o al terminar la cola
+            if (!error && result && (result.event === "success" || result.event === "Success")) { 
+                
+                // Extrae e inyecta la URL segura de la imagen
                 document.getElementById('url-imagen-final').value = result.info.secure_url;
                 
+                // DESBLOQUEA EL BOTÓN (Adiós al círculo rojo de prohibido)
                 const btnGuardar = document.getElementById('btn-guardar-todo');
                 btnGuardar.disabled = false;
                 btnGuardar.classList.remove('opacity-50', 'cursor-not-allowed');
                 
-                alert("¡Imagen procesada y cargada con éxito!");
+                alert("¡Imagen cargada correctamente! Botón de publicar desbloqueado.");
             }
         });
 
