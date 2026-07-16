@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS (vía CDN) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Cloudinary Widget SDK -->
@@ -112,39 +112,12 @@
             align-items: center;
         }
 
-        /* Tablas */
-        .table-wrap {
-            overflow-x: auto;
-        }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        table th { text-align: left; padding: 0.75rem 0.5rem; color: #888; font-weight: 600; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.5px; border-bottom: 1px solid #2a2a2a; }
+        table td { padding: 0.75rem 0.5rem; border-bottom: 1px solid #222; vertical-align: middle; }
+        table tr:hover td { background: #1a1a1a; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-
-        table th {
-            text-align: left;
-            padding: 0.75rem 0.5rem;
-            color: #888;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.65rem;
-            letter-spacing: 0.5px;
-            border-bottom: 1px solid #2a2a2a;
-        }
-
-        table td {
-            padding: 0.75rem 0.5rem;
-            border-bottom: 1px solid #222;
-            vertical-align: middle;
-        }
-
-        table tr:hover td {
-            background: #1a1a1a;
-        }
-
-        /* Botones */
         .btn-gold {
             background: #d4af37;
             color: #000;
@@ -155,11 +128,7 @@
             border: none;
             cursor: pointer;
         }
-
-        .btn-gold:hover {
-            background: #e5c84a;
-            transform: scale(1.02);
-        }
+        .btn-gold:hover { background: #e5c84a; transform: scale(1.02); }
 
         .btn-outline-gold {
             background: transparent;
@@ -171,11 +140,7 @@
             transition: all 0.2s;
             cursor: pointer;
         }
-
-        .btn-outline-gold:hover {
-            background: #d4af37;
-            color: #000;
-        }
+        .btn-outline-gold:hover { background: #d4af37; color: #000; }
 
         .btn-danger {
             background: #b91c1c;
@@ -187,12 +152,8 @@
             cursor: pointer;
             transition: 0.2s;
         }
+        .btn-danger:hover { background: #dc2626; }
 
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-
-        /* Badges de estado */
         .badge {
             display: inline-block;
             padding: 0.2rem 0.7rem;
@@ -201,13 +162,13 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-
         .badge-pendiente { background: #92400e; color: #fcd34d; }
         .badge-pagado { background: #065f46; color: #6ee7b7; }
         .badge-enviado { background: #1e3a8a; color: #93c5fd; }
         .badge-entregado { background: #14532d; color: #86efac; }
+        .badge-asignado { background: #1e3a8a; color: #93c5fd; }
+        .badge-reparado { background: #14532d; color: #86efac; }
 
-        /* Modal */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -218,10 +179,7 @@
             align-items: center;
             z-index: 999;
         }
-
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
         .modal-box {
             background: #1a1a1a;
@@ -233,16 +191,8 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-
-        .modal-box h2 {
-            color: #d4af37;
-            font-size: 1.3rem;
-            margin-bottom: 1.2rem;
-        }
-
-        .modal-box input,
-        .modal-box select,
-        .modal-box textarea {
+        .modal-box h2 { color: #d4af37; font-size: 1.3rem; margin-bottom: 1.2rem; }
+        .modal-box input, .modal-box select, .modal-box textarea {
             width: 100%;
             padding: 0.6rem 0.8rem;
             background: #0a0a0a;
@@ -252,20 +202,25 @@
             margin-bottom: 0.8rem;
             font-size: 0.9rem;
         }
-
-        .modal-box input:focus,
-        .modal-box select:focus,
-        .modal-box textarea:focus {
+        .modal-box input:focus, .modal-box select:focus, .modal-box textarea:focus {
             outline: none;
             border-color: #d4af37;
         }
+        .modal-box label { display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 0.2rem; }
 
-        .modal-box label {
-            display: block;
-            font-size: 0.75rem;
-            color: #aaa;
-            margin-bottom: 0.2rem;
+        /* Botón cerrar sesión en header */
+        .logout-header {
+            background: #b91c1c;
+            color: #fff;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
         }
+        .logout-header:hover { background: #dc2626; }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -273,21 +228,10 @@
                 transform: translateX(-100%);
                 width: 280px;
             }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 1rem;
-            }
-
-            .menu-toggle {
-                display: block !important;
-            }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 1rem; }
+            .menu-toggle { display: block !important; }
         }
-
         .menu-toggle {
             display: none;
             background: none;
@@ -297,11 +241,36 @@
             cursor: pointer;
         }
 
-        /* Scroll personalizado */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+
+        /* Para el botón de imagen con input file */
+        .file-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .file-input-wrapper input[type="file"] {
+            flex: 1;
+            padding: 0.4rem;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 0.5rem;
+            color: #f1f1f1;
+        }
+        .file-input-wrapper .subir-btn {
+            background: #d4af37;
+            color: #000;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .file-input-wrapper .subir-btn:hover { background: #e5c84a; }
     </style>
 </head>
 <body>
@@ -333,17 +302,22 @@
 
         <div class="absolute bottom-0 left-0 w-full p-4 border-t border-[#2a2a2a]">
             <button onclick="cerrarSesionAdmin()" class="w-full btn-outline-gold text-sm">
-                🚪 Cerrar Sesión
+                🚪 Cerrar Sesión (Sidebar)
             </button>
         </div>
     </aside>
 
     <!-- ============ CONTENIDO PRINCIPAL ============ -->
     <main class="main-content" id="mainContent">
-        <!-- Botón menú móvil -->
+        <!-- Header con botón de cerrar sesión -->
         <div class="flex items-center justify-between mb-6">
             <button class="menu-toggle" id="menuToggle">☰</button>
-            <span class="text-sm text-gray-400" id="adminEmail">admin@jadi.com</span>
+            <div class="flex items-center gap-4">
+                <span class="text-sm text-gray-400" id="adminEmail">admin@jadi.com</span>
+                <button onclick="cerrarSesionAdmin()" class="logout-header">
+                    🚪 Cerrar Sesión
+                </button>
+            </div>
         </div>
 
         <!-- ======= SECCIÓN: PEDIDOS ======= -->
@@ -449,7 +423,7 @@
             </div>
         </section>
 
-        <!-- ======= SECCIÓN: CONFIGURACIÓN (placeholder) ======= -->
+        <!-- ======= SECCIÓN: CONFIGURACIÓN ======= -->
         <section id="section-configuracion" class="section-content hidden">
             <div class="card">
                 <div class="card-title">
@@ -491,11 +465,17 @@
                 <input type="number" id="prodStock" value="10" />
 
                 <label>Imagen del producto</label>
+                <!-- Opción 1: Cloudinary -->
                 <button type="button" id="btnCloudinary" class="btn-outline-gold w-full py-2 mb-2">
-                    📸 Subir imagen desde Cloudinary
+                    📸 Subir imagen con Cloudinary
                 </button>
+                <!-- Opción 2: Input file + botón subir a Firebase Storage -->
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept="image/*" />
+                    <button type="button" id="btnSubirStorage" class="subir-btn">⬆️ Subir a Firebase</button>
+                </div>
                 <input type="hidden" id="prodImagen" required />
-                <div id="previewImagen" class="mt-1 text-xs text-gray-400"></div>
+                <div id="previewImagen" class="mt-1 text-xs text-gray-400">Sin imagen</div>
 
                 <label>Descripción corta</label>
                 <textarea id="prodDescripcion" rows="2" placeholder="Zapato deportivo de alta calidad..."></textarea>
@@ -524,14 +504,19 @@
             updateDoc, 
             deleteDoc,
             query,
-            orderBy,
-            where
+            orderBy
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { 
             getAuth, 
             onAuthStateChanged, 
             signOut 
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import {
+            getStorage,
+            ref,
+            uploadBytesResumable,
+            getDownloadURL
+        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
         // ============================================================
         // 2. CONFIGURACIÓN DE FIREBASE
@@ -548,14 +533,13 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        const storage = getStorage(app);
 
         // ============================================================
         // 3. VARIABLES GLOBALES
         // ============================================================
         let usuarioAdmin = null;
         let productosCache = [];
-        let pedidosCache = [];
-        let garantiasCache = [];
 
         // ============================================================
         // 4. SEGURIDAD - VERIFICAR ROL ADMIN
@@ -586,7 +570,7 @@
             usuarioAdmin = user;
             document.getElementById('adminEmail').textContent = user.email;
             
-            // Cargar datos después de verificar
+            // Cargar datos
             cargarPedidos();
             cargarCatalogo();
             cargarUsuarios();
@@ -594,8 +578,15 @@
         });
 
         // ============================================================
-        // 5. NAVEGACIÓN POR SIDEBAR
+        // 5. NAVEGACIÓN Y CERRAR SESIÓN (GLOBAL)
         // ============================================================
+        window.cerrarSesionAdmin = async () => {
+            if (confirm('¿Seguro que deseas cerrar sesión?')) {
+                await signOut(auth);
+                window.location.href = 'login.html';
+            }
+        };
+
         const navItems = document.querySelectorAll('.nav-item');
         const sections = {
             pedidos: document.getElementById('section-pedidos'),
@@ -607,41 +598,23 @@
 
         navItems.forEach(item => {
             item.addEventListener('click', () => {
-                // Quitar active de todos
                 navItems.forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
-
-                // Ocultar todas las secciones
                 Object.values(sections).forEach(s => s.classList.add('hidden'));
-
-                // Mostrar la sección correspondiente
                 const sectionName = item.dataset.section;
                 if (sections[sectionName]) {
                     sections[sectionName].classList.remove('hidden');
                 }
-
-                // Cerrar sidebar en móvil
                 document.getElementById('sidebar').classList.remove('open');
             });
         });
 
-        // Toggle menú móvil
         document.getElementById('menuToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('open');
         });
 
         // ============================================================
-        // 6. CERRAR SESIÓN
-        // ============================================================
-        window.cerrarSesionAdmin = async () => {
-            if (confirm('¿Seguro que deseas cerrar sesión?')) {
-                await signOut(auth);
-                window.location.href = 'login.html';
-            }
-        };
-
-        // ============================================================
-        // 7. GESTIÓN DE PEDIDOS
+        // 6. GESTIÓN DE PEDIDOS
         // ============================================================
         function cargarPedidos() {
             const q = query(collection(db, "pedidos"), orderBy("fecha", "desc"));
@@ -655,7 +628,6 @@
                     const id = doc.id;
                     count++;
 
-                    // Construir detalle de productos
                     let productosHtml = '';
                     if (data.articulos && data.articulos.length) {
                         data.articulos.forEach(art => {
@@ -698,7 +670,6 @@
         window.cambiarEstadoPedido = async (id, nuevoEstado) => {
             try {
                 await updateDoc(doc(db, "pedidos", id), { estado: nuevoEstado });
-                // No es necesario recargar, onSnapshot se actualiza solo
             } catch (err) {
                 alert('Error al actualizar estado: ' + err.message);
             }
@@ -715,7 +686,7 @@
         };
 
         // ============================================================
-        // 8. GESTIÓN DE CATÁLOGO (CRUD)
+        // 7. GESTIÓN DE CATÁLOGO (CRUD)
         // ============================================================
         function cargarCatalogo() {
             onSnapshot(collection(db, "calzado"), (snapshot) => {
@@ -748,7 +719,7 @@
             });
         }
 
-        // ABRIR MODAL PARA NUEVO PRODUCTO
+        // ABRIR MODAL
         window.abrirModalProducto = (producto = null) => {
             const modal = document.getElementById('modalProducto');
             const titulo = document.getElementById('modalProductoTitulo');
@@ -787,12 +758,11 @@
             document.getElementById('modalProducto').classList.remove('active');
         };
 
-        // Cerrar modal al hacer clic fuera
         document.getElementById('modalProducto').addEventListener('click', (e) => {
             if (e.target === e.currentTarget) cerrarModalProducto();
         });
 
-        // GUARDAR PRODUCTO (crear o actualizar)
+        // GUARDAR PRODUCTO
         document.getElementById('formProducto').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -810,13 +780,16 @@
                 fechaRegistro: new Date().toLocaleDateString()
             };
 
+            if (!data.imagen) {
+                alert('⚠️ Debes subir una imagen primero.');
+                return;
+            }
+
             try {
                 if (id) {
-                    // Actualizar
                     await updateDoc(doc(db, "calzado", id), data);
                     alert('✅ Producto actualizado.');
                 } else {
-                    // Crear nuevo
                     await addDoc(collection(db, "calzado"), data);
                     alert('✅ Producto agregado al catálogo.');
                 }
@@ -831,8 +804,7 @@
             if (prod) {
                 abrirModalProducto(prod);
             } else {
-                alert('Producto no encontrado en caché. Recargando...');
-                // Opcional: buscar directamente en Firestore
+                alert('Producto no encontrado.');
             }
         };
 
@@ -847,8 +819,12 @@
         };
 
         // ============================================================
-        // 9. CLOUDINARY - SUBIDA DE IMÁGENES
+        // 8. SUBIDA DE IMÁGENES (Cloudinary + Firebase Storage)
         // ============================================================
+
+        // --- CLOUDINARY (mejorado) ---
+        let imagenSubidaCloudinary = null;
+
         const cloudinaryWidget = cloudinary.createUploadWidget({
             cloudName: "duyjyfunn",
             uploadPreset: "zapatos_preset",
@@ -871,25 +847,60 @@
                 }
             }
         }, (error, result) => {
+            // Evento cuando la subida es exitosa
             if (!error && result && result.event === "success") {
-                const url = result.info.secure_url;
-                document.getElementById('prodImagen').value = url;
+                imagenSubidaCloudinary = result.info.secure_url;
+                document.getElementById('prodImagen').value = imagenSubidaCloudinary;
                 document.getElementById('previewImagen').innerHTML = `
-                    <span class="text-green-400">✅ Imagen cargada</span>
-                    <a href="${url}" target="_blank" class="text-gold underline">ver</a>
+                    <span class="text-green-400">✅ Imagen cargada (Cloudinary)</span>
+                    <a href="${imagenSubidaCloudinary}" target="_blank" class="text-gold underline">ver</a>
                 `;
-                // Desbloquear botón de guardar si estaba bloqueado (no es necesario, pero útil)
-            } else if (error) {
-                console.error('Cloudinary error:', error);
+                // Cerrar automáticamente el widget para evitar que el usuario tenga que hacer clic en "Done"
+                cloudinaryWidget.close();
             }
+            // Si el usuario cierra el widget sin subir, no pasa nada
         });
 
         document.getElementById('btnCloudinary').addEventListener('click', () => {
             cloudinaryWidget.open();
         });
 
+        // --- FIREBASE STORAGE (alternativa directa) ---
+        document.getElementById('btnSubirStorage').addEventListener('click', () => {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Selecciona una imagen primero.');
+                return;
+            }
+
+            const storageRef = ref(storage, `productos/${Date.now()}_${file.name}`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    // Progreso
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    document.getElementById('previewImagen').textContent = `Subiendo... ${Math.round(progress)}%`;
+                },
+                (error) => {
+                    alert('Error al subir: ' + error.message);
+                },
+                async () => {
+                    // Subida completada
+                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                    document.getElementById('prodImagen').value = downloadURL;
+                    document.getElementById('previewImagen').innerHTML = `
+                        <span class="text-green-400">✅ Imagen cargada (Firebase)</span>
+                        <a href="${downloadURL}" target="_blank" class="text-gold underline">ver</a>
+                    `;
+                    alert('✅ Imagen subida a Firebase Storage.');
+                }
+            );
+        });
+
         // ============================================================
-        // 10. GESTIÓN DE USUARIOS
+        // 9. GESTIÓN DE USUARIOS
         // ============================================================
         function cargarUsuarios() {
             onSnapshot(collection(db, "usuarios_registrados"), (snapshot) => {
@@ -915,19 +926,16 @@
         }
 
         // ============================================================
-        // 11. GESTIÓN DE GARANTÍAS (BÁSICO)
+        // 10. GESTIÓN DE GARANTÍAS
         // ============================================================
         function cargarGarantias() {
             onSnapshot(collection(db, "garantias"), (snapshot) => {
                 const tbody = document.getElementById('tablaGarantias');
                 tbody.innerHTML = '';
-                garantiasCache = [];
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const id = doc.id;
-                    garantiasCache.push({ id, ...data });
-
                     const estado = data.estado || 'pendiente';
                     const badgeClass = `badge-${estado}`;
 
@@ -977,12 +985,7 @@
             }
         };
 
-        // ============================================================
-        // 12. INICIALIZAR (por si algo queda)
-        // ============================================================
         console.log('🔥 Panel JADI Admin cargado correctamente.');
-
     </script>
-
 </body>
 </html>
