@@ -1,83 +1,104 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso - Calzado Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jadi - Acceso al Ecosistema</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        .bg-jadi-dark { background-color: #0f172a; }
+        .text-jadi-gold { color: #fbbf24; }
+        .border-jadi-gold { border-color: #fbbf24; }
+        .focus-ring-jadi:focus { ring-color: #fbbf24; }
+        .bg-jadi-gold { background-color: #fbbf24; }
+        .bg-jadi-gold:hover { background-color: #f59e0b; }
+    </style>
 </head>
-<body class="bg-gray-900 flex items-center justify-center min-h-screen font-sans px-4">
+<body class="bg-jadi-dark flex items-center justify-center min-h-screen font-sans px-4">
 
-    <div id="contenedor-login" class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full">
-        <h2 id="auth-titulo" class="text-2xl font-bold text-gray-800 text-center mb-1">¡Te damos la bienvenida!</h2>
-        <p id="auth-subtitulo" class="text-xs text-gray-500 text-center mb-6">Inicia sesión para gestionar tus pedidos y garantías.</p>
+    <div id="contenedor-login" class="bg-gray-900 p-8 rounded-2xl shadow-2xl max-w-md w-full border border-gray-700">
+        <!-- Logo Jadi -->
+        <div class="text-center mb-6">
+            <div class="flex justify-center items-center gap-2">
+                <i class="fas fa-crown text-jadi-gold text-3xl"></i>
+                <h1 class="text-3xl font-extrabold text-white tracking-wider">JADI</h1>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">Ecosistema de Outfit</p>
+        </div>
 
-        <button type="button" id="btn-google" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-xl transition shadow-sm mb-6">
-            <svg class="w-5 h-5" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-            </svg>
+        <h2 id="auth-titulo" class="text-2xl font-bold text-white text-center mb-1">¡Bienvenido!</h2>
+        <p id="auth-subtitulo" class="text-sm text-gray-400 text-center mb-6">Inicia sesión para gestionar tus compras y garantías</p>
+
+        <!-- Botón Google -->
+        <button type="button" id="btn-google" class="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl transition shadow-md mb-4 border border-gray-300">
+            <i class="fab fa-google text-xl"></i>
             Continuar con Google
         </button>
 
         <div class="flex items-center my-4">
-            <div class="flex-1 border-t border-gray-200"></div>
-            <span class="mx-4 text-xs text-gray-400 uppercase tracking-wider font-semibold">o usar correo</span>
-            <div class="flex-1 border-t border-gray-200"></div>
+            <div class="flex-1 border-t border-gray-600"></div>
+            <span class="mx-4 text-xs text-gray-500 uppercase tracking-wider font-semibold">o usa tu correo</span>
+            <div class="flex-1 border-t border-gray-600"></div>
         </div>
 
+        <!-- Formulario -->
         <form id="form-auth" class="space-y-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700">Correo Electrónico</label>
-                <input type="email" id="auth-email" placeholder="ejemplo@correo.com" required class="mt-1 block w-full p-3 border rounded-xl text-gray-950 focus:ring-blue-500 shadow-sm">
+                <label class="block text-sm font-medium text-gray-300">Correo Electrónico</label>
+                <input type="email" id="auth-email" placeholder="ejemplo@correo.com" required class="mt-1 block w-full p-3 bg-gray-800 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-jadi-gold focus:border-transparent outline-none">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700">Contraseña</label>
-                <input type="password" id="auth-password" placeholder="••••••" required class="mt-1 block w-full p-3 border rounded-xl text-gray-950 focus:ring-blue-500 shadow-sm">
+                <label class="block text-sm font-medium text-gray-300">Contraseña</label>
+                <input type="password" id="auth-password" placeholder="••••••" required class="mt-1 block w-full p-3 bg-gray-800 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-jadi-gold focus:border-transparent outline-none">
             </div>
             
+            <!-- Campo WhatsApp (solo en registro) -->
             <div id="wrapper-whatsapp-registro" class="hidden">
-                <label class="block text-sm font-medium text-amber-600 font-bold">Número de WhatsApp (Obligatorio)</label>
-                <input type="tel" id="auth-whatsapp-registro" placeholder="Ej: +593999999999" class="mt-1 block w-full p-3 border border-amber-300 rounded-xl text-gray-950 bg-amber-50 shadow-sm">
+                <label class="block text-sm font-medium text-jadi-gold">
+                    <i class="fab fa-whatsapp mr-1"></i> WhatsApp (Obligatorio)
+                </label>
+                <input type="tel" id="auth-whatsapp-registro" placeholder="+593 99 999 9999" class="mt-1 block w-full p-3 bg-gray-800 border border-jadi-gold/50 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-jadi-gold outline-none">
+                <p class="text-[10px] text-gray-500 mt-1">Usaremos este número para coordinar garantías y envíos.</p>
             </div>
 
-            <button type="submit" id="btn-auth-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow-lg">
+            <button type="submit" id="btn-auth-submit" class="w-full bg-jadi-gold hover:bg-yellow-400 text-black font-bold py-3 rounded-xl transition shadow-lg">
                 Ingresar con Correo
             </button>
         </form>
 
-        <div class="mt-6 text-center text-sm border-t pt-4">
-            <button onclick="alternarModoAuth()" id="btn-cambiar-modo" class="text-blue-600 hover:underline font-medium">
+        <div class="mt-6 text-center text-sm border-t border-gray-700 pt-4">
+            <button onclick="alternarModoAuth()" id="btn-cambiar-modo" class="text-jadi-gold hover:underline font-medium">
                 ¿No tienes cuenta? Regístrate aquí
             </button>
         </div>
     </div>
 
-    <div id="modal-whatsapp" class="bg-white p-8 rounded-2xl shadow-2xl max-w-md w-full hidden text-center">
-        <h3 class="text-xl font-bold text-gray-900 mb-2">¡Paso Obligatorio!</h3>
-        <p class="text-sm text-gray-600 mb-6">Introduce tu WhatsApp para activar tus coberturas de mantenimiento gratuito.</p>
+    <!-- Modal WhatsApp (para usuarios que se registran con Google) -->
+    <div id="modal-whatsapp" class="bg-gray-900 p-8 rounded-2xl shadow-2xl max-w-md w-full hidden text-center border border-gray-700">
+        <h3 class="text-xl font-bold text-white mb-2"><i class="fab fa-whatsapp text-green-500"></i> Casi listo</h3>
+        <p class="text-sm text-gray-400 mb-6">Para activar tu garantía Jadi, necesitamos tu número de WhatsApp.</p>
         <form id="form-whatsapp-confirmar" class="space-y-4">
-            <input type="tel" id="input-whatsapp-modal" placeholder="Ej: +593999999999" required class="block w-full p-3 border rounded-xl text-center text-lg text-gray-950 font-semibold focus:ring-green-500">
-            <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition shadow-lg">
-                Completar Registro
+            <input type="tel" id="input-whatsapp-modal" placeholder="+593 99 999 9999" required class="block w-full p-3 bg-gray-800 border border-gray-600 rounded-xl text-white text-center text-lg font-semibold focus:ring-2 focus:ring-jadi-gold outline-none">
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition shadow-lg">
+                <i class="fas fa-check-circle mr-2"></i> Completar Registro
             </button>
         </form>
     </div>
 
+    <!-- ==================== SCRIPTS ==================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
-          authDomain: "ventas-dcc22.firebaseapp.com",
-          projectId: "ventas-dcc22",
-          storageBucket: "ventas-dcc22.firebasestorage.app",
-          messagingSenderId: "789904237680",
-          appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
+            apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
+            authDomain: "ventas-dcc22.firebaseapp.com",
+            projectId: "ventas-dcc22",
+            storageBucket: "ventas-dcc22.firebasestorage.app",
+            messagingSenderId: "789904237680",
+            appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -88,7 +109,7 @@
         let esModoRegistro = false;
         let datosUsuarioTemporal = null;
 
-        // --- EVALUAR ROL DESDE FIRESTORE BASE DE DATOS ---
+        // --- Verificar rol y redirigir ---
         async function evaluarRolYRedireccionar(uid) {
             const docRef = doc(db, "usuarios_registrados", uid);
             const docSnap = await getDoc(docRef);
@@ -96,16 +117,16 @@
             if (docSnap.exists()) {
                 const datos = docSnap.data();
                 if (datos.rol === "admin") {
-                    window.location.href = "jadiventas/admin.html"; // Al panel de control interno
+                    window.location.href = "jadiventas/admin.html";
                 } else {
-                    window.location.href = "index.html"; // Al catálogo normal
+                    window.location.href = "index.html";
                 }
             } else {
                 window.location.href = "index.html";
             }
         }
 
-        // --- CONTROLADOR GENERAL DE REGISTRO E INGRESO ---
+        // --- Procesar usuario (registro o login) ---
         async function procesarUsuario(user, nombreDefecto, whatsappManual = null) {
             const docRef = doc(db, "usuarios_registrados", user.uid);
             const docSnap = await getDoc(docRef);
@@ -118,21 +139,21 @@
                     return;
                 }
 
-                // REGISTRO INICIAL POR DEFECTO: SIEMPRE ES ROL CLIENTE
+                // Registro nuevo: siempre cliente por defecto
                 await setDoc(docRef, {
                     clienteEmail: user.email,
-                    nombre: user.displayName || nombreDefecto,
+                    nombre: user.displayName || nombreDefecto || "Cliente Jadi",
                     whatsapp: whatsappManual,
-                    rol: "cliente", // <--- CONTROLADOR DE ROL INICIAL
+                    rol: "cliente",
                     fechaRegistro: new Date().toLocaleDateString(),
-                    garantiasYPostventa: { mantenimientoMes3: "Disponible", ajusteCosturasMes4: "Disponible" }
+                    garantias: { mantenimientoMes3: "Disponible", ajusteCosturasMes4: "Disponible" }
                 });
             }
             
             await evaluarRolYRedireccionar(user.uid);
         }
 
-        // Evento Modal WhatsApp
+        // --- Modal WhatsApp ---
         document.getElementById('form-whatsapp-confirmar').addEventListener('submit', async (e) => {
             e.preventDefault();
             const wa = document.getElementById('input-whatsapp-modal').value.trim();
@@ -141,15 +162,17 @@
             }
         });
 
-        // Autenticación Google
+        // --- Google ---
         document.getElementById('btn-google').addEventListener('click', async () => {
             try {
                 const res = await signInWithPopup(auth, googleProvider);
                 await procesarUsuario(res.user, res.user.displayName);
-            } catch (err) { alert("Error: " + err.message); }
+            } catch (err) {
+                alert("Error con Google: " + err.message);
+            }
         });
 
-        // Formulario tradicional
+        // --- Formulario tradicional ---
         document.getElementById('form-auth').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('auth-email').value.trim();
@@ -158,18 +181,25 @@
             try {
                 if (esModoRegistro) {
                     const wa = document.getElementById('auth-whatsapp-registro').value.trim();
+                    if (!wa) {
+                        alert("Por favor, ingresa tu número de WhatsApp para la garantía.");
+                        return;
+                    }
                     const cred = await createUserWithEmailAndPassword(auth, email, pass);
                     await procesarUsuario(cred.user, "Cliente Correo", wa);
                 } else {
                     const cred = await signInWithEmailAndPassword(auth, email, pass);
                     await evaluarRolYRedireccionar(cred.user.uid);
                 }
-            } catch (err) { alert("Error: " + err.message); }
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
         });
 
+        // --- Alternar modo registro/login ---
         window.alternarModoAuth = () => {
             esModoRegistro = !esModoRegistro;
-            document.getElementById('auth-titulo').innerText = esModoRegistro ? "Crear Cuenta" : "¡Te damos la bienvenida!";
+            document.getElementById('auth-titulo').innerText = esModoRegistro ? "Crear Cuenta Jadi" : "¡Bienvenido!";
             document.getElementById('btn-auth-submit').innerText = esModoRegistro ? "Registrarme" : "Ingresar con Correo";
             document.getElementById('wrapper-whatsapp-registro').classList.toggle('hidden', !esModoRegistro);
             document.getElementById('auth-whatsapp-registro').required = esModoRegistro;
