@@ -1,107 +1,988 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Pedidos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JADI · Panel de Administración</title>
 
-    <div id="bloqueo-seguridad" class="fixed inset-0 bg-gray-950 flex items-center justify-center z-50">
-        <div class="text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500 mx-auto mb-4"></div>
-            <p class="text-sm text-gray-400">Verificando nivel de rol en base de datos...</p>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS (vía CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Cloudinary Widget SDK -->
+    <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background-color: #0a0a0a; color: #f1f1f1; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: #111111;
+            border-right: 1px solid #2a2a2a;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 50;
+        }
+
+        .sidebar-brand {
+            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .sidebar-brand h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d4af37, #f5e56b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .sidebar-brand small {
+            font-size: 0.7rem;
+            color: #888;
+            display: block;
+            margin-top: -4px;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #aaa;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar .nav-item:hover {
+            background: #1e1e1e;
+            color: #fff;
+        }
+
+        .sidebar .nav-item.active {
+            background: #1a1a1a;
+            color: #d4af37;
+            border-left-color: #d4af37;
+        }
+
+        .sidebar .nav-item .icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* Tarjetas */
+        .card {
+            background: #161616;
+            border-radius: 1rem;
+            border: 1px solid #2a2a2a;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f1f1f1;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Tablas */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        table th {
+            text-align: left;
+            padding: 0.75rem 0.5rem;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        table td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid #222;
+            vertical-align: middle;
+        }
+
+        table tr:hover td {
+            background: #1a1a1a;
+        }
+
+        /* Botones */
+        .btn-gold {
+            background: #d4af37;
+            color: #000;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-gold:hover {
+            background: #e5c84a;
+            transform: scale(1.02);
+        }
+
+        .btn-outline-gold {
+            background: transparent;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            font-weight: 500;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-outline-gold:hover {
+            background: #d4af37;
+            color: #000;
+        }
+
+        .btn-danger {
+            background: #b91c1c;
+            color: #fff;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Badges de estado */
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-pendiente { background: #92400e; color: #fcd34d; }
+        .badge-pagado { background: #065f46; color: #6ee7b7; }
+        .badge-enviado { background: #1e3a8a; color: #93c5fd; }
+        .badge-entregado { background: #14532d; color: #86efac; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-box h2 {
+            color: #d4af37;
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .modal-box input,
+        .modal-box select,
+        .modal-box textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 0.5rem;
+            color: #f1f1f1;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .modal-box input:focus,
+        .modal-box select:focus,
+        .modal-box textarea:focus {
+            outline: none;
+            border-color: #d4af37;
+        }
+
+        .modal-box label {
+            display: block;
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-bottom: 0.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .menu-toggle {
+                display: block !important;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #f1f1f1;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        /* Scroll personalizado */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+    </style>
+</head>
+<body>
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h1>JADI</h1>
+            <small>Panel de Control</small>
+        </div>
+
+        <nav class="mt-6">
+            <div class="nav-item active" data-section="pedidos">
+                <span class="icon">📦</span> Pedidos
+            </div>
+            <div class="nav-item" data-section="catalogo">
+                <span class="icon">🛍️</span> Catálogo
+            </div>
+            <div class="nav-item" data-section="usuarios">
+                <span class="icon">👥</span> Usuarios
+            </div>
+            <div class="nav-item" data-section="garantias">
+                <span class="icon">🛡️</span> Garantías
+            </div>
+            <div class="nav-item" data-section="configuracion">
+                <span class="icon">⚙️</span> Configuración
+            </div>
+        </nav>
+
+        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-[#2a2a2a]">
+            <button onclick="cerrarSesionAdmin()" class="w-full btn-outline-gold text-sm">
+                🚪 Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <!-- ============ CONTENIDO PRINCIPAL ============ -->
+    <main class="main-content" id="mainContent">
+        <!-- Botón menú móvil -->
+        <div class="flex items-center justify-between mb-6">
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <span class="text-sm text-gray-400" id="adminEmail">admin@jadi.com</span>
+        </div>
+
+        <!-- ======= SECCIÓN: PEDIDOS ======= -->
+        <section id="section-pedidos" class="section-content">
+            <div class="card">
+                <div class="card-title">
+                    <span>📦 Pedidos recibidos</span>
+                    <span class="text-sm text-gray-400" id="totalPedidos">0</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Productos</th>
+                                <th>Total</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaPedidos">
+                            <tr><td colspan="6" class="text-center text-gray-500 py-4">Cargando pedidos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======= SECCIÓN: CATÁLOGO ======= -->
+        <section id="section-catalogo" class="section-content hidden">
+            <div class="card">
+                <div class="card-title">
+                    <span>🛍️ Gestión de Catálogo</span>
+                    <button onclick="abrirModalProducto()" class="btn-gold text-sm">+ Agregar Producto</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Imagen</th>
+                                <th>Nombre</th>
+                                <th>Precio</th>
+                                <th>Proveedor</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCatalogo">
+                            <tr><td colspan="5" class="text-center text-gray-500 py-4">Cargando productos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======= SECCIÓN: USUARIOS ======= -->
+        <section id="section-usuarios" class="section-content hidden">
+            <div class="card">
+                <div class="card-title">
+                    <span>👥 Usuarios del sistema</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Rol</th>
+                                <th>WhatsApp</th>
+                                <th>Fecha Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaUsuarios">
+                            <tr><td colspan="4" class="text-center text-gray-500 py-4">Cargando usuarios...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======= SECCIÓN: GARANTÍAS ======= -->
+        <section id="section-garantias" class="section-content hidden">
+            <div class="card">
+                <div class="card-title">
+                    <span>🛡️ Solicitudes de Garantía</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Producto</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Reparador</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaGarantias">
+                            <tr><td colspan="6" class="text-center text-gray-500 py-4">Cargando garantías...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======= SECCIÓN: CONFIGURACIÓN (placeholder) ======= -->
+        <section id="section-configuracion" class="section-content hidden">
+            <div class="card">
+                <div class="card-title">
+                    <span>⚙️ Configuración del sistema</span>
+                </div>
+                <p class="text-gray-400 text-sm">Aquí podrás gestionar porcentajes de comisión, términos de garantía, etc. (Próximamente)</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============ MODAL PARA PRODUCTO ============ -->
+    <div class="modal-overlay" id="modalProducto">
+        <div class="modal-box">
+            <h2 id="modalProductoTitulo">Nuevo Producto</h2>
+            <form id="formProducto">
+                <input type="hidden" id="productoId" />
+
+                <label>Nombre del producto *</label>
+                <input type="text" id="prodNombre" placeholder="Ej: Jordan 23" required />
+
+                <label>Categoría</label>
+                <select id="prodCategoria">
+                    <option value="zapatos">Zapatos</option>
+                    <option value="ropa">Ropa</option>
+                    <option value="bolsos">Bolsos</option>
+                    <option value="accesorios">Accesorios</option>
+                </select>
+
+                <label>Precio de venta ($) *</label>
+                <input type="number" id="prodPrecio" step="0.01" placeholder="12.00" required />
+
+                <label>Precio de compra ($)</label>
+                <input type="number" id="prodCompra" step="0.01" placeholder="8.00" />
+
+                <label>Garantía (meses)</label>
+                <input type="number" id="prodGarantia" value="6" />
+
+                <label>Stock</label>
+                <input type="number" id="prodStock" value="10" />
+
+                <label>Imagen del producto</label>
+                <button type="button" id="btnCloudinary" class="btn-outline-gold w-full py-2 mb-2">
+                    📸 Subir imagen desde Cloudinary
+                </button>
+                <input type="hidden" id="prodImagen" required />
+                <div id="previewImagen" class="mt-1 text-xs text-gray-400"></div>
+
+                <label>Descripción corta</label>
+                <textarea id="prodDescripcion" rows="2" placeholder="Zapato deportivo de alta calidad..."></textarea>
+
+                <div class="flex gap-3 mt-4">
+                    <button type="submit" class="btn-gold flex-1">💾 Guardar</button>
+                    <button type="button" onclick="cerrarModalProducto()" class="btn-outline-gold flex-1">Cancelar</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <nav class="bg-gray-800 p-4 border-b border-gray-700 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold text-amber-500">📥 PANEL DE PEDIDOS</h1>
-            <div class="flex gap-4 items-center">
-                <a href="../index.html" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm">Ver Tienda</a>
-                <a href="catalogo.html" class="bg-indigo-700 hover:bg-indigo-600 px-4 py-2 rounded text-sm">Gestionar Vitrina</a>
-                <button onclick="cerrarSesionAdmin()" class="bg-red-600 text-xs px-3 py-2 rounded font-bold">Salir</button>
-            </div>
-        </div>
-    </nav>
-
-    <main class="container mx-auto p-4">
-        <div class="overflow-x-auto bg-gray-800 rounded-xl border border-gray-700 mt-4">
-            <table class="min-w-full divide-y divide-gray-700 text-sm">
-                <thead class="bg-gray-800">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-amber-400">Cliente</th>
-                        <th class="px-6 py-4 text-left text-amber-400">Detalle / Talla / Color</th>
-                        <th class="px-6 py-4 text-left text-amber-400">Fecha</th>
-                        <th class="px-6 py-4 text-left text-amber-400">Estado</th>
-                        <th class="px-6 py-4 text-left text-amber-400">Acción</th>
-                    </tr>
-                </thead>
-                <tbody id="lista-pedidos" class="divide-y divide-gray-700"></tbody>
-            </table>
-        </div>
-    </main>
-
+    <!-- ============ SCRIPTS (Firebase + Lógica) ============ -->
     <script type="module">
+        // ============================================================
+        // 1. IMPORTS DE FIREBASE
+        // ============================================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            onSnapshot, 
+            addDoc, 
+            doc, 
+            getDoc, 
+            updateDoc, 
+            deleteDoc,
+            query,
+            orderBy,
+            where
+        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { 
+            getAuth, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
+        // ============================================================
+        // 2. CONFIGURACIÓN DE FIREBASE
+        // ============================================================
         const firebaseConfig = {
-          apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
-          authDomain: "ventas-dcc22.firebaseapp.com",
-          projectId: "ventas-dcc22",
-          storageBucket: "ventas-dcc22.firebasestorage.app",
-          messagingSenderId: "789904237680",
-          appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
+            apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
+            authDomain: "ventas-dcc22.firebaseapp.com",
+            projectId: "ventas-dcc22",
+            storageBucket: "ventas-dcc22.firebasestorage.app",
+            messagingSenderId: "789904237680",
+            appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- CONTROLADOR DE ACCESO POR BASE DE DATOS ---
+        // ============================================================
+        // 3. VARIABLES GLOBALES
+        // ============================================================
+        let usuarioAdmin = null;
+        let productosCache = [];
+        let pedidosCache = [];
+        let garantiasCache = [];
+
+        // ============================================================
+        // 4. SEGURIDAD - VERIFICAR ROL ADMIN
+        // ============================================================
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
-                window.location.href = "../login.html";
+                window.location.href = "login.html";
                 return;
             }
+
             const docRef = doc(db, "usuarios_registrados", user.uid);
             const docSnap = await getDoc(docRef);
 
+            let esAdmin = false;
             if (docSnap.exists() && docSnap.data().rol === "admin") {
-                document.getElementById('bloqueo-seguridad').classList.add('hidden'); // Permitido
+                esAdmin = true;
+            } else if (user.email && user.email.toLowerCase() === "villjebuxs@gmail.com") {
+                esAdmin = true;
+            }
+
+            if (!esAdmin) {
+                alert("⛔ Acceso denegado. No eres administrador.");
+                await signOut(auth);
+                window.location.href = "login.html";
+                return;
+            }
+
+            usuarioAdmin = user;
+            document.getElementById('adminEmail').textContent = user.email;
+            
+            // Cargar datos después de verificar
+            cargarPedidos();
+            cargarCatalogo();
+            cargarUsuarios();
+            cargarGarantias();
+        });
+
+        // ============================================================
+        // 5. NAVEGACIÓN POR SIDEBAR
+        // ============================================================
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = {
+            pedidos: document.getElementById('section-pedidos'),
+            catalogo: document.getElementById('section-catalogo'),
+            usuarios: document.getElementById('section-usuarios'),
+            garantias: document.getElementById('section-garantias'),
+            configuracion: document.getElementById('section-configuracion')
+        };
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Quitar active de todos
+                navItems.forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+
+                // Ocultar todas las secciones
+                Object.values(sections).forEach(s => s.classList.add('hidden'));
+
+                // Mostrar la sección correspondiente
+                const sectionName = item.dataset.section;
+                if (sections[sectionName]) {
+                    sections[sectionName].classList.remove('hidden');
+                }
+
+                // Cerrar sidebar en móvil
+                document.getElementById('sidebar').classList.remove('open');
+            });
+        });
+
+        // Toggle menú móvil
+        document.getElementById('menuToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+
+        // ============================================================
+        // 6. CERRAR SESIÓN
+        // ============================================================
+        window.cerrarSesionAdmin = async () => {
+            if (confirm('¿Seguro que deseas cerrar sesión?')) {
+                await signOut(auth);
+                window.location.href = 'login.html';
+            }
+        };
+
+        // ============================================================
+        // 7. GESTIÓN DE PEDIDOS
+        // ============================================================
+        function cargarPedidos() {
+            const q = query(collection(db, "pedidos"), orderBy("fecha", "desc"));
+            onSnapshot(q, (snapshot) => {
+                const tbody = document.getElementById('tablaPedidos');
+                tbody.innerHTML = '';
+                let count = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    count++;
+
+                    // Construir detalle de productos
+                    let productosHtml = '';
+                    if (data.articulos && data.articulos.length) {
+                        data.articulos.forEach(art => {
+                            productosHtml += `${art.nombre} (${art.talla || 'N/A'})<br />`;
+                        });
+                    } else {
+                        productosHtml = 'Ver detalle';
+                    }
+
+                    const estado = data.estado || 'pendiente';
+                    const badgeClass = `badge-${estado}`;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${data.clienteEmail || 'Anónimo'}</td>
+                        <td class="text-xs">${productosHtml}</td>
+                        <td class="font-semibold text-gold">$${data.total?.toFixed(2) || '0.00'}</td>
+                        <td class="text-xs text-gray-400">${data.fecha || '--'}</td>
+                        <td><span class="badge ${badgeClass}">${estado}</span></td>
+                        <td>
+                            <select onchange="cambiarEstadoPedido('${id}', this.value)" class="bg-[#0a0a0a] border border-[#333] rounded px-2 py-1 text-xs text-white">
+                                <option value="pendiente" ${estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                                <option value="pagado" ${estado === 'pagado' ? 'selected' : ''}>Pagado</option>
+                                <option value="enviado" ${estado === 'enviado' ? 'selected' : ''}>Enviado</option>
+                                <option value="entregado" ${estado === 'entregado' ? 'selected' : ''}>Entregado</option>
+                            </select>
+                            <button onclick="eliminarPedido('${id}')" class="btn-danger mt-1">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('totalPedidos').textContent = count;
+                if (count === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-4">No hay pedidos registrados.</td></tr>`;
+                }
+            });
+        }
+
+        window.cambiarEstadoPedido = async (id, nuevoEstado) => {
+            try {
+                await updateDoc(doc(db, "pedidos", id), { estado: nuevoEstado });
+                // No es necesario recargar, onSnapshot se actualiza solo
+            } catch (err) {
+                alert('Error al actualizar estado: ' + err.message);
+            }
+        };
+
+        window.eliminarPedido = async (id) => {
+            if (confirm('¿Eliminar este pedido permanentemente?')) {
+                try {
+                    await deleteDoc(doc(db, "pedidos", id));
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        };
+
+        // ============================================================
+        // 8. GESTIÓN DE CATÁLOGO (CRUD)
+        // ============================================================
+        function cargarCatalogo() {
+            onSnapshot(collection(db, "calzado"), (snapshot) => {
+                const tbody = document.getElementById('tablaCatalogo');
+                tbody.innerHTML = '';
+                productosCache = [];
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    productosCache.push({ id, ...data });
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><img src="${data.imagen || 'https://via.placeholder.com/50'}" alt="${data.nombre}" class="w-12 h-12 object-cover rounded-lg border border-[#333]" /></td>
+                        <td class="font-medium">${data.nombre}</td>
+                        <td class="text-gold font-semibold">$${data.precio?.toFixed(2) || '0.00'}</td>
+                        <td class="text-xs text-gray-400">${data.proveedorId || '—'}</td>
+                        <td>
+                            <button onclick="editarProducto('${id}')" class="btn-outline-gold text-xs px-3 py-1">✏️</button>
+                            <button onclick="eliminarProducto('${id}')" class="btn-danger text-xs px-3 py-1">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500 py-4">No hay productos en el catálogo.</td></tr>`;
+                }
+            });
+        }
+
+        // ABRIR MODAL PARA NUEVO PRODUCTO
+        window.abrirModalProducto = (producto = null) => {
+            const modal = document.getElementById('modalProducto');
+            const titulo = document.getElementById('modalProductoTitulo');
+            const form = document.getElementById('formProducto');
+
+            if (producto) {
+                titulo.textContent = '✏️ Editar Producto';
+                document.getElementById('productoId').value = producto.id;
+                document.getElementById('prodNombre').value = producto.nombre || '';
+                document.getElementById('prodCategoria').value = producto.categoria || 'zapatos';
+                document.getElementById('prodPrecio').value = producto.precio || '';
+                document.getElementById('prodCompra').value = producto.precioCompra || '';
+                document.getElementById('prodGarantia').value = producto.garantiaMeses || 6;
+                document.getElementById('prodStock').value = producto.stock || 10;
+                document.getElementById('prodImagen').value = producto.imagen || '';
+                document.getElementById('prodDescripcion').value = producto.descripcion || '';
+                if (producto.imagen) {
+                    document.getElementById('previewImagen').innerHTML = `<span class="text-green-400">✅ Imagen cargada</span> <a href="${producto.imagen}" target="_blank" class="text-gold underline">ver</a>`;
+                } else {
+                    document.getElementById('previewImagen').textContent = 'Sin imagen';
+                }
             } else {
-                alert("⛔ ACCESO RECHAZADO: No eres administrador en la Base de Datos.");
-                window.location.href = "../index.html"; // Expulsado
+                titulo.textContent = '🆕 Nuevo Producto';
+                form.reset();
+                document.getElementById('productoId').value = '';
+                document.getElementById('prodImagen').value = '';
+                document.getElementById('previewImagen').textContent = 'Sin imagen';
+                document.getElementById('prodGarantia').value = 6;
+                document.getElementById('prodStock').value = 10;
+            }
+
+            modal.classList.add('active');
+        };
+
+        window.cerrarModalProducto = () => {
+            document.getElementById('modalProducto').classList.remove('active');
+        };
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modalProducto').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) cerrarModalProducto();
+        });
+
+        // GUARDAR PRODUCTO (crear o actualizar)
+        document.getElementById('formProducto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('productoId').value;
+            const data = {
+                nombre: document.getElementById('prodNombre').value.trim(),
+                categoria: document.getElementById('prodCategoria').value,
+                precio: parseFloat(document.getElementById('prodPrecio').value),
+                precioCompra: parseFloat(document.getElementById('prodCompra').value) || 0,
+                garantiaMeses: parseInt(document.getElementById('prodGarantia').value) || 6,
+                stock: parseInt(document.getElementById('prodStock').value) || 10,
+                imagen: document.getElementById('prodImagen').value.trim(),
+                descripcion: document.getElementById('prodDescripcion').value.trim(),
+                proveedorId: 'admin',
+                fechaRegistro: new Date().toLocaleDateString()
+            };
+
+            try {
+                if (id) {
+                    // Actualizar
+                    await updateDoc(doc(db, "calzado", id), data);
+                    alert('✅ Producto actualizado.');
+                } else {
+                    // Crear nuevo
+                    await addDoc(collection(db, "calzado"), data);
+                    alert('✅ Producto agregado al catálogo.');
+                }
+                cerrarModalProducto();
+            } catch (err) {
+                alert('Error: ' + err.message);
             }
         });
 
-        window.cerrarSesionAdmin = () => { signOut(auth).then(() => window.location.href = "../login.html"); };
+        window.editarProducto = async (id) => {
+            const prod = productosCache.find(p => p.id === id);
+            if (prod) {
+                abrirModalProducto(prod);
+            } else {
+                alert('Producto no encontrado en caché. Recargando...');
+                // Opcional: buscar directamente en Firestore
+            }
+        };
 
-        // Carga de Pedidos en tiempo real
-        const listaPedidos = document.getElementById('lista-pedidos');
-        onSnapshot(collection(db, "pedidos"), (snapshot) => {
-            listaPedidos.innerHTML = '';
-            snapshot.forEach((documento) => {
-                const pedido = documento.data();
-                const id = documento.id;
-                let detalle = '<ul>';
-                pedido.articulos.forEach(art => { detalle += `<li>${art.nombre} - Talla: ${art.talla} | Color: ${art.color}</li>`; });
-                detalle += '</ul>';
+        window.eliminarProducto = async (id) => {
+            if (confirm('¿Eliminar este producto del catálogo?')) {
+                try {
+                    await deleteDoc(doc(db, "calzado", id));
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        };
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="px-6 py-4">${pedido.clienteEmail}</td>
-                    <td class="px-6 py-4">${detalle}</td>
-                    <td class="px-6 py-4">${pedido.fecha}</td>
-                    <td class="px-6 py-4">${pedido.estado}</td>
-                    <td class="px-6 py-4"><button onclick="eliminarPedido('${id}')">❌</button></td>
+        // ============================================================
+        // 9. CLOUDINARY - SUBIDA DE IMÁGENES
+        // ============================================================
+        const cloudinaryWidget = cloudinary.createUploadWidget({
+            cloudName: "duyjyfunn",
+            uploadPreset: "zapatos_preset",
+            sources: ['local', 'url', 'camera', 'google_drive', 'dropbox'],
+            language: "es",
+            styles: {
+                palette: {
+                    window: "#1a1a1a",
+                    sourceBg: "#0a0a0a",
+                    windowBorder: "#d4af37",
+                    tabIcon: "#d4af37",
+                    inactiveTabIcon: "#888",
+                    menuIcons: "#fff",
+                    textDark: "#000",
+                    textLight: "#fff",
+                    link: "#d4af37",
+                    action: "#d4af37",
+                    complete: "#d4af37",
+                    error: "#ef4444"
+                }
+            }
+        }, (error, result) => {
+            if (!error && result && result.event === "success") {
+                const url = result.info.secure_url;
+                document.getElementById('prodImagen').value = url;
+                document.getElementById('previewImagen').innerHTML = `
+                    <span class="text-green-400">✅ Imagen cargada</span>
+                    <a href="${url}" target="_blank" class="text-gold underline">ver</a>
                 `;
-                listaPedidos.appendChild(tr);
-            });
+                // Desbloquear botón de guardar si estaba bloqueado (no es necesario, pero útil)
+            } else if (error) {
+                console.error('Cloudinary error:', error);
+            }
         });
+
+        document.getElementById('btnCloudinary').addEventListener('click', () => {
+            cloudinaryWidget.open();
+        });
+
+        // ============================================================
+        // 10. GESTIÓN DE USUARIOS
+        // ============================================================
+        function cargarUsuarios() {
+            onSnapshot(collection(db, "usuarios_registrados"), (snapshot) => {
+                const tbody = document.getElementById('tablaUsuarios');
+                tbody.innerHTML = '';
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${data.clienteEmail || data.email || '—'}</td>
+                        <td><span class="badge ${data.rol === 'admin' ? 'badge-entregado' : 'badge-pendiente'}">${data.rol || 'cliente'}</span></td>
+                        <td>${data.whatsapp || '—'}</td>
+                        <td class="text-xs text-gray-400">${data.fechaRegistro || '—'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500 py-4">No hay usuarios registrados.</td></tr>`;
+                }
+            });
+        }
+
+        // ============================================================
+        // 11. GESTIÓN DE GARANTÍAS (BÁSICO)
+        // ============================================================
+        function cargarGarantias() {
+            onSnapshot(collection(db, "garantias"), (snapshot) => {
+                const tbody = document.getElementById('tablaGarantias');
+                tbody.innerHTML = '';
+                garantiasCache = [];
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const id = doc.id;
+                    garantiasCache.push({ id, ...data });
+
+                    const estado = data.estado || 'pendiente';
+                    const badgeClass = `badge-${estado}`;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${data.clienteId || '—'}</td>
+                        <td>${data.productoId || '—'}</td>
+                        <td class="text-xs">${data.descripcion || 'Sin descripción'}</td>
+                        <td><span class="badge ${badgeClass}">${estado}</span></td>
+                        <td>${data.reparadorId || 'Sin asignar'}</td>
+                        <td>
+                            <button onclick="asignarReparador('${id}')" class="btn-outline-gold text-xs px-2 py-1">👤 Asignar</button>
+                            <button onclick="eliminarGarantia('${id}')" class="btn-danger text-xs px-2 py-1">🗑️</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-4">No hay solicitudes de garantía.</td></tr>`;
+                }
+            });
+        }
+
+        window.asignarReparador = async (id) => {
+            const nuevoReparador = prompt('Ingresa el ID o email del reparador a asignar:');
+            if (nuevoReparador) {
+                try {
+                    await updateDoc(doc(db, "garantias", id), {
+                        reparadorId: nuevoReparador,
+                        estado: 'asignado'
+                    });
+                    alert('✅ Reparador asignado.');
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        };
+
+        window.eliminarGarantia = async (id) => {
+            if (confirm('¿Eliminar esta solicitud de garantía?')) {
+                try {
+                    await deleteDoc(doc(db, "garantias", id));
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        };
+
+        // ============================================================
+        // 12. INICIALIZAR (por si algo queda)
+        // ============================================================
+        console.log('🔥 Panel JADI Admin cargado correctamente.');
+
     </script>
+
 </body>
 </html>
