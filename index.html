@@ -1,74 +1,231 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calzado Store - Vitrina Comercial</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jadi - Ecosistema de Outfit</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome para íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        /* Estilos personalizados para detalles finos */
+        .bg-jadi-dark {
+            background-color: #0f172a;
+        }
+        .text-jadi-gold {
+            color: #fbbf24;
+        }
+        .border-jadi-gold {
+            border-color: #fbbf24;
+        }
+        .hover-glow:hover {
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+            transform: scale(1.02);
+            transition: all 0.2s ease;
+        }
+        .sidebar-carrito {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+        .sidebar-carrito.open {
+            transform: translateX(0%);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-gray-50 font-sans antialiased">
 
-    <nav class="bg-blue-600 text-white p-4 shadow-lg sticky top-0 z-50">
+    <!-- ==================== NAVEGACIÓN ==================== -->
+    <nav class="bg-jadi-dark text-white p-4 shadow-lg sticky top-0 z-50 border-b border-jadi-gold/20">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-wider">CALZADO STORE</h1>
+            <!-- Logo -->
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-crown text-jadi-gold text-2xl"></i>
+                <h1 class="text-2xl font-extrabold tracking-wider">JADI</h1>
+                <span class="text-[10px] font-light bg-jadi-gold/20 text-jadi-gold px-2 py-0.5 rounded-full">Ecosistema</span>
+            </div>
+
+            <!-- Buscador (visual) -->
+            <div class="hidden md:flex items-center bg-gray-800 rounded-full px-4 py-1 border border-gray-600 focus-within:border-jadi-gold">
+                <i class="fas fa-search text-gray-400 text-sm mr-2"></i>
+                <input type="text" placeholder="Buscar zapatos, ropa..." class="bg-transparent text-sm text-white focus:outline-none w-48 lg:w-72">
+            </div>
+
+            <!-- Acciones Usuario -->
             <div class="flex items-center gap-4">
-                <div id="usuario-anonimo" class="block">
-                    <a href="login.html" class="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded text-sm font-semibold transition">🛒 Ingresar / Crear Cuenta</a>
+                <button onclick="toggleCarrito()" class="relative hover:text-jadi-gold transition">
+                    <i class="fas fa-shopping-bag text-xl"></i>
+                    <span id="contador-carrito" class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                </button>
+                
+                <div id="usuario-anonimo" class="flex gap-2">
+                    <a href="login.html" class="bg-jadi-gold/20 hover:bg-jadi-gold/30 text-white px-4 py-1.5 rounded-full text-sm font-semibold transition border border-jadi-gold/30">
+                        <i class="fas fa-user mr-1"></i> Ingresar
+                    </a>
                 </div>
-                <div id="usuario-autenticado" class="hidden flex items-center gap-3">
-                    <span id="email-usuario" class="text-sm font-medium bg-blue-700 px-3 py-1 rounded"></span>
-                    <button onclick="cerrarSesion()" class="text-xs text-red-200 hover:text-white underline">Cerrar Sesión</button>
+                <div id="usuario-autenticado" class="hidden items-center gap-3">
+                    <span id="email-usuario" class="text-sm font-medium bg-gray-800 px-3 py-1 rounded-full"></span>
+                    <button onclick="cerrarSesion()" class="text-xs text-red-300 hover:text-red-200 underline">Salir</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="bg-amber-500 text-white text-center py-2.5 px-4 text-sm font-bold shadow-inner">
-        🔥 BENEFICIO EXCLUSIVO: ¡Mantenimiento gratis a los 3 meses y ajuste de costuras a los 4 meses! 🔥
+    <!-- ==================== HERO / BANNER ==================== -->
+    <section class="hero-gradient text-white py-12 px-4 border-b border-jadi-gold/20">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
+            <div class="md:w-1/2 space-y-4 text-center md:text-left">
+                <span class="bg-jadi-gold/20 text-jadi-gold text-xs font-bold px-4 py-1 rounded-full inline-block">NUEVA TEMPORADA</span>
+                <h2 class="text-4xl md:text-5xl font-extrabold leading-tight">
+                    Viste tu <span class="text-jadi-gold">Estilo</span>, <br> Asegura tu <span class="text-jadi-gold">Compra</span>
+                </h2>
+                <p class="text-gray-300 text-lg max-w-md">Encuentra zapatos, ropa y accesorios con garantía incluida y servicio postventa en todo Ecuador.</p>
+                <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                    <a href="#catalogo" class="bg-jadi-gold text-black font-bold px-6 py-3 rounded-full hover:bg-yellow-400 transition flex items-center gap-2">
+                        <i class="fas fa-store"></i> Ver Catálogo
+                    </a>
+                    <button class="border border-white/30 hover:bg-white/10 px-6 py-3 rounded-full transition flex items-center gap-2">
+                        <i class="fas fa-shield-alt"></i> Garantía Jadi
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-1/2 mt-8 md:mt-0 flex justify-center">
+                <div class="grid grid-cols-2 gap-3">
+                    <img src="https://via.placeholder.com/150/0f172a/fbbf24?text=Zapato" alt="Zapato" class="rounded-xl shadow-2xl border border-jadi-gold/30 hover:scale-105 transition">
+                    <img src="https://via.placeholder.com/150/0f172a/fbbf24?text=Ropa" alt="Ropa" class="rounded-xl shadow-2xl border border-jadi-gold/30 hover:scale-105 transition mt-6">
+                    <img src="https://via.placeholder.com/150/0f172a/fbbf24?text=Accesorio" alt="Accesorio" class="rounded-xl shadow-2xl border border-jadi-gold/30 hover:scale-105 transition -mt-4">
+                    <img src="https://via.placeholder.com/150/0f172a/fbbf24?text=Garantia" alt="Garantia" class="rounded-xl shadow-2xl border border-jadi-gold/30 hover:scale-105 transition">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CATEGORÍAS ==================== -->
+    <section class="container mx-auto px-4 py-8 -mt-6 relative z-10">
+        <div class="grid grid-cols-3 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+            <div class="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-xl transition border-b-4 border-jadi-gold cursor-pointer">
+                <i class="fas fa-shoe-prints text-3xl text-jadi-gold"></i>
+                <p class="text-sm font-bold mt-1">Zapatos</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-xl transition border-b-4 border-gray-300 cursor-pointer">
+                <i class="fas fa-tshirt text-3xl text-indigo-500"></i>
+                <p class="text-sm font-bold mt-1">Ropa</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-xl transition border-b-4 border-gray-300 cursor-pointer">
+                <i class="fas fa-swatchbook text-3xl text-pink-500"></i>
+                <p class="text-sm font-bold mt-1">Accesorios</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-xl transition border-b-4 border-gray-300 cursor-pointer col-span-3 md:col-span-1">
+                <i class="fas fa-tags text-3xl text-green-500"></i>
+                <p class="text-sm font-bold mt-1">Ofertas</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CATÁLOGO DE PRODUCTOS ==================== -->
+    <section id="catalogo" class="container mx-auto px-4 py-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fas fa-grid-2 text-jadi-gold"></i> Catálogo Jadi
+            </h2>
+            <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">+50 productos</span>
+        </div>
+        
+        <!-- Grid de productos -->
+        <div id="contenedor-catalogo" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Aquí se inyectan los productos desde Firebase -->
+            <div class="col-span-full text-center py-10 text-gray-400">
+                <i class="fas fa-spinner fa-spin text-2xl"></i>
+                <p class="mt-2">Cargando modelos...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CARRITO LATERAL ==================== -->
+    <div id="sidebar-carrito" class="sidebar-carrito fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-[60] p-6 overflow-y-auto border-l border-gray-200">
+        <div class="flex justify-between items-center border-b pb-4">
+            <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-shopping-bag text-jadi-gold"></i> Tu Orden</h3>
+            <button onclick="toggleCarrito()" class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
+        </div>
+
+        <div id="alerta-login-carrito" class="mt-4 bg-amber-50 border border-amber-200 text-amber-700 text-sm p-3 rounded-lg flex items-start gap-2">
+            <i class="fas fa-exclamation-triangle mt-0.5"></i> 
+            <span>Debes iniciar sesión para finalizar la compra y acceder a la garantía Jadi.</span>
+        </div>
+
+        <div id="contenido-carrito" class="mt-4 space-y-4 max-h-96 overflow-y-auto">
+            <p class="text-gray-400 text-center text-sm">Aún no hay productos seleccionados.</p>
+        </div>
+
+        <div class="border-t pt-4 mt-4 sticky bottom-0 bg-white">
+            <div class="flex justify-between items-center text-lg font-bold text-gray-900 mb-4">
+                <span>Total:</span>
+                <span id="total-precio" class="text-jadi-gold text-2xl">$0.00</span>
+            </div>
+            <button onclick="procesarPedido()" id="btn-confirmar-pedido" class="w-full bg-jadi-gold hover:bg-yellow-400 text-black font-bold py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <i class="fas fa-check-circle"></i> Confirmar Pedido
+            </button>
+            <p class="text-[10px] text-gray-400 text-center mt-2">Al confirmar, aceptas los términos de garantía Jadi.</p>
+        </div>
     </div>
 
-    <main class="container mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <section class="lg:col-span-2">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">Modelos en Exhibición</h2>
-            <div id="contenedor-catalogo" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <!-- ==================== PIE DE PÁGINA ==================== -->
+    <footer class="bg-jadi-dark text-gray-300 mt-12 border-t border-jadi-gold/20">
+        <div class="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <h4 class="text-white font-bold text-lg flex items-center gap-2"><i class="fas fa-crown text-jadi-gold"></i> Jadi</h4>
+                <p class="text-sm mt-2">Ecosistema de outfit con garantía y servicio postventa. Compra local, asegura tu estilo.</p>
+                <div class="flex gap-3 mt-4">
+                    <i class="fab fa-instagram text-xl hover:text-jadi-gold cursor-pointer"></i>
+                    <i class="fab fa-tiktok text-xl hover:text-jadi-gold cursor-pointer"></i>
+                    <i class="fab fa-whatsapp text-xl hover:text-jadi-gold cursor-pointer"></i>
                 </div>
-        </section>
-
-        <section class="bg-white p-6 rounded-lg shadow-md h-fit sticky top-24">
-            <h2 class="text-xl font-bold text-gray-800 mb-2">Tu Orden de Compra</h2>
-            <p id="alerta-login-carrito" class="text-sm text-amber-600 font-medium mb-4 bg-amber-50 p-2 rounded border border-amber-200">
-                ⚠️ Debes iniciar sesión para procesar y personalizar tu calzado.
-            </p>
-            
-            <div id="contenido-carrito" class="space-y-4 max-h-80 overflow-y-auto mb-4">
-                <p class="text-gray-500 text-center text-sm">No has agregado ningún modelo.</p>
             </div>
-            
-            <div class="border-t pt-4">
-                <div class="flex justify-between items-center text-lg font-bold text-gray-900 mb-4">
-                    <span>Total:</span>
-                    <span id="total-precio">$0.00</span>
-                </div>
-                <button onclick="procesarPedidoBaseDatos()" id="btn-confirmar-pedido" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition opacity-50 cursor-not-allowed" disabled>
-                    Confirmar Pedido de Fábrica
-                </button>
+            <div>
+                <h5 class="text-white font-semibold">Compradores</h5>
+                <ul class="text-sm space-y-2 mt-2">
+                    <li><a href="#" class="hover:text-jadi-gold">Cómo comprar</a></li>
+                    <li><a href="#" class="hover:text-jadi-gold">Política de garantía</a></li>
+                    <li><a href="#" class="hover:text-jadi-gold">Preguntas frecuentes</a></li>
+                </ul>
             </div>
-        </section>
-    </main>
+            <div>
+                <h5 class="text-white font-semibold">Vendedores</h5>
+                <ul class="text-sm space-y-2 mt-2">
+                    <li><a href="#" class="hover:text-jadi-gold">Registrar mi negocio</a></li>
+                    <li><a href="#" class="hover:text-jadi-gold">Comisiones y beneficios</a></li>
+                    <li><a href="#" class="hover:text-jadi-gold">Centro de ayuda</a></li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-semibold">Contacto</h5>
+                <ul class="text-sm space-y-2 mt-2">
+                    <li><i class="fas fa-phone mr-2"></i> +593 99 999 9999</li>
+                    <li><i class="fas fa-envelope mr-2"></i> hola@jadi.ec</li>
+                    <li><i class="fas fa-map-pin mr-2"></i> Quito - Ecuador</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 text-center text-xs py-4">
+            &copy; 2026 Jadi. Todos los derechos reservados. Hecho con <i class="fas fa-heart text-red-500"></i> para emprendedores.
+        </div>
+    </footer>
 
+    <!-- ==================== SCRIPTS FIREBASE ==================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
         import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         const firebaseConfig = {
-          apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
-          authDomain: "ventas-dcc22.firebaseapp.com",
-          projectId: "ventas-dcc22",
-          storageBucket: "ventas-dcc22.firebasestorage.app",
-          messagingSenderId: "789904237680",
-          appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
+            apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
+            authDomain: "ventas-dcc22.firebaseapp.com",
+            projectId: "ventas-dcc22",
+            storageBucket: "ventas-dcc22.firebasestorage.app",
+            messagingSenderId: "789904237680",
+            appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -79,7 +236,7 @@
         let carrito = [];
         let usuarioActual = null;
 
-        // --- OBSERVAR ESTADO DEL CLIENTE ---
+        // --- Autenticación ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 usuarioActual = user;
@@ -98,145 +255,181 @@
 
         window.cerrarSesion = () => signOut(auth).then(() => window.location.reload());
 
-        // --- LEER VITRINA (Gestionada desde catalogo.html) ---
+        // --- Cargar Catálogo desde Firestore (colección "calzado") ---
         const contenedorCatalogo = document.getElementById('contenedor-catalogo');
 
         onSnapshot(collection(db, "calzado"), (snapshot) => {
             contenedorCatalogo.innerHTML = '';
             productosDisponibles = [];
-            
-            if(snapshot.empty) {
-                contenedorCatalogo.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-8">No hay modelos cargados en el catálogo en este momento.</p>';
+
+            if (snapshot.empty) {
+                contenedorCatalogo.innerHTML = `
+                    <div class="col-span-full text-center py-10 text-gray-400">
+                        <i class="fas fa-box-open text-4xl"></i>
+                        <p class="mt-2">No hay productos en el catálogo aún. ¡Vuelve pronto!</p>
+                    </div>
+                `;
                 return;
             }
 
             snapshot.forEach(doc => {
                 const prod = { id: doc.id, ...doc.data() };
                 productosDisponibles.push(prod);
-                
+
                 const div = document.createElement('div');
-                div.className = "bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 p-4 flex flex-col justify-between";
+                div.className = "bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-2xl hover-glow transition-all duration-300 flex flex-col";
                 div.innerHTML = `
-                    <img src="${prod.imagen}" class="w-full h-48 object-cover rounded-lg mb-3">
-                    <div>
-                        <div class="flex justify-between items-start mb-1">
-                            <h3 class="font-bold text-lg text-gray-900">${prod.nombre}</h3>
-                            ${prod.promocion ? `<span class="bg-red-500 text-white text-xs px-2.5 py-0.5 rounded-full font-bold">${prod.promocion}</span>` : ''}
-                        </div>
-                        <p class="text-xs text-gray-500 mb-3">${prod.descripcion || ''}</p>
-                        
-                        <div class="bg-blue-50 p-2 rounded-lg space-y-1 text-[11px] text-blue-800 mb-4 font-medium">
-                            <div>🎁 Mantenimiento preventivo gratis (Mes 3)</div>
-                            <div>🧵 Ajuste de costuras gratis (Mes 4)</div>
-                            <div>👟 Suela a mitad de precio (Ciclo medio)</div>
-                        </div>
+                    <div class="relative">
+                        <img src="${prod.imagen || 'https://via.placeholder.com/300/0f172a/fbbf24?text=JADI'}" 
+                             alt="${prod.nombre}" 
+                             class="w-full h-52 object-cover">
+                        <span class="absolute top-2 left-2 bg-jadi-gold text-black text-[10px] font-bold px-2 py-1 rounded-full">
+                            <i class="fas fa-shield-alt mr-1"></i> Garantía
+                        </span>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xl font-extrabold text-blue-600">$${parseFloat(prod.precio).toFixed(2)}</span>
-                        <button onclick="agregarAlCarrito('${prod.id}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 rounded-lg font-bold transition">
-                            Añadir al Carrito
-                        </button>
+                    <div class="p-4 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-lg">${prod.nombre}</h3>
+                        <p class="text-sm text-gray-500 flex-1">${prod.descripcion || 'Calidad Jadi'}</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-xl font-extrabold text-jadi-gold">$${parseFloat(prod.precio).toFixed(2)}</span>
+                            <button onclick="agregarAlCarrito('${prod.id}')" 
+                                    class="bg-jadi-dark hover:bg-gray-800 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1">
+                                <i class="fas fa-plus"></i> Añadir
+                            </button>
+                        </div>
                     </div>
                 `;
                 contenedorCatalogo.appendChild(div);
             });
         });
 
-        // --- MANEJO DEL CARRITO (TALLAS Y COLORES) ---
+        // --- Lógica del Carrito ---
         window.agregarAlCarrito = (id) => {
             const prod = productosDisponibles.find(p => p.id === id);
-            carrito.push({
-                id: prod.id,
-                nombre: prod.nombre,
-                precio: prod.precio,
-                talla: "38", 
-                color: "Negro", 
-                cantidad: 1
-            });
+            if (!prod) return;
+            
+            // Buscar si ya está en el carrito
+            const existente = carrito.find(item => item.id === id);
+            if (existente) {
+                existente.cantidad += 1;
+            } else {
+                carrito.push({
+                    id: prod.id,
+                    nombre: prod.nombre,
+                    precio: prod.precio,
+                    talla: "38",
+                    color: "Negro",
+                    cantidad: 1,
+                    imagen: prod.imagen
+                });
+            }
             actualizarInterfazCarrito();
+            // Pequeña animación de feedback
+            const btn = event.target.closest('button');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-check"></i> Añadido';
+                setTimeout(() => btn.innerHTML = '<i class="fas fa-plus"></i> Añadir', 1000);
+            }
         };
 
         function actualizarInterfazCarrito() {
             const contenido = document.getElementById('contenido-carrito');
             const totalTxt = document.getElementById('total-precio');
             const btnConfirmar = document.getElementById('btn-confirmar-pedido');
-            
+            const contador = document.getElementById('contador-carrito');
+
+            let totalItems = 0;
+            let totalPrecio = 0;
+
             contenido.innerHTML = '';
-            if(carrito.length === 0) {
-                contenido.innerHTML = '<p class="text-gray-500 text-center text-sm">El carrito está vacío.</p>';
+            if (carrito.length === 0) {
+                contenido.innerHTML = '<p class="text-gray-400 text-center text-sm py-8">🛒 Tu carrito está vacío</p>';
                 totalTxt.innerText = "$0.00";
                 btnConfirmar.disabled = true;
-                btnConfirmar.classList.add('opacity-50', 'cursor-not-allowed');
+                contador.innerText = '0';
                 return;
             }
 
-            let total = 0;
             carrito.forEach((item, index) => {
-                total += item.precio * item.cantidad;
+                totalItems += item.cantidad;
+                totalPrecio += item.precio * item.cantidad;
+
                 const div = document.createElement('div');
-                div.className = "bg-gray-50 p-3 rounded-lg border flex flex-col gap-2 text-xs text-gray-700";
+                div.className = "bg-gray-50 p-3 rounded-lg border flex gap-3 items-center";
                 div.innerHTML = `
-                    <div class="flex justify-between items-center font-bold text-gray-900">
-                        <span>${item.nombre}</span>
-                        <button onclick="removerDelCarrito(${index})" class="text-red-500 font-bold text-base">&times;</button>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[10px] uppercase font-bold text-gray-400">Talla:</label>
-                            <select onchange="cambiarEspecificacion(${index}, 'talla', this.value)" class="w-full bg-white p-1 border rounded">
+                    <img src="${item.imagen || 'https://via.placeholder.com/50/0f172a/fbbf24?text=JADI'}" class="w-12 h-12 object-cover rounded-lg">
+                    <div class="flex-1">
+                        <p class="font-bold text-sm text-gray-800">${item.nombre}</p>
+                        <div class="flex gap-2 text-xs text-gray-500">
+                            <span>Talla: <select onchange="cambiarEspecificacion(${index}, 'talla', this.value)" class="bg-white border rounded px-1">
                                 <option value="36">36</option><option value="37">37</option>
                                 <option value="38" selected>38</option><option value="39">39</option>
                                 <option value="40">40</option><option value="41">41</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] uppercase font-bold text-gray-400">Color:</label>
-                            <select onchange="cambiarEspecificacion(${index}, 'color', this.value)" class="w-full bg-white p-1 border rounded">
-                                <option value="Negro" selected>Negro</option>
-                                <option value="Blanco">Blanco</option>
-                                <option value="Café">Café</option>
-                                <option value="Azul">Azul</option>
-                            </select>
+                            </select></span>
+                            <span>Color: <select onchange="cambiarEspecificacion(${index}, 'color', this.value)" class="bg-white border rounded px-1">
+                                <option value="Negro" selected>Negro</option><option value="Blanco">Blanco</option>
+                                <option value="Café">Café</option><option value="Azul">Azul</option>
+                            </select></span>
                         </div>
                     </div>
-                    <div class="flex justify-between items-center pt-1 border-t mt-1">
-                        <span>Precio: $${parseFloat(item.precio).toFixed(2)}</span>
+                    <div class="text-right">
+                        <p class="font-bold text-jadi-gold">$${(item.precio * item.cantidad).toFixed(2)}</p>
+                        <button onclick="removerDelCarrito(${index})" class="text-red-400 hover:text-red-600 text-xs">Eliminar</button>
                     </div>
                 `;
                 contenido.appendChild(div);
             });
 
-            totalTxt.innerText = `$${total.toFixed(2)}`;
-            
+            contador.innerText = totalItems;
+            totalTxt.innerText = `$${totalPrecio.toFixed(2)}`;
+
             if (usuarioActual) {
                 btnConfirmar.disabled = false;
-                btnConfirmar.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
                 btnConfirmar.disabled = true;
-                btnConfirmar.classList.add('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        window.cambiarEspecificacion = (index, propiedad, valor) => { carrito[index][propiedad] = valor; };
-        window.removerDelCarrito = (index) => { carrito.splice(index, 1); actualizarInterfazCarrito(); };
+        window.cambiarEspecificacion = (index, propiedad, valor) => {
+            carrito[index][propiedad] = valor;
+        };
 
-        // --- ENVIAR ORDEN A FIRESTORE ---
-        window.procesarPedidoBaseDatos = async () => {
-            if(!usuarioActual) return;
+        window.removerDelCarrito = (index) => {
+            carrito.splice(index, 1);
+            actualizarInterfazCarrito();
+        };
+
+        window.toggleCarrito = () => {
+            document.getElementById('sidebar-carrito').classList.toggle('open');
+        };
+
+        // --- Procesar Pedido ---
+        window.procesarPedido = async () => {
+            if (!usuarioActual) return;
             try {
                 await addDoc(collection(db, "pedidos"), {
                     clienteEmail: usuarioActual.email,
+                    clienteUid: usuarioActual.uid,
                     articulos: carrito,
                     fecha: new Date().toLocaleString(),
                     estado: "Pendiente"
                 });
-                alert("¡Pedido guardado con éxito! Se ha mandado a tu panel de administración.");
+                alert("✅ ¡Pedido registrado! Revisa tu panel de administración para gestionarlo.");
                 carrito = [];
                 actualizarInterfazCarrito();
+                toggleCarrito();
             } catch (err) {
-                alert("Error al procesar la compra: " + err.message);
+                alert("❌ Error al procesar: " + err.message);
             }
         };
+
+        // Cerrar carrito al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar-carrito');
+            if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !e.target.closest('button[onclick="toggleCarrito()"]')) {
+                toggleCarrito();
+            }
+        });
     </script>
 </body>
 </html>
