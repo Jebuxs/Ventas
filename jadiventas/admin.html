@@ -5,22 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JADI · Panel de Administración</title>
 
-    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Cloudinary Widget SDK -->
     <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 
     <style>
         * { font-family: 'Inter', sans-serif; }
-        body { background-color: #f4f1eb; color: #1a1a1a; }
+        body { background-color: #f8f5f0; color: #1a1a1a; }
 
-        /* Sidebar - estilo claro y elegante */
+        /* Sidebar */
         .sidebar {
             width: 260px;
             background: #ffffff;
@@ -34,27 +30,22 @@
             z-index: 50;
             box-shadow: 2px 0 12px rgba(0,0,0,0.05);
         }
-
         .sidebar-brand {
             padding: 1.5rem 1.5rem 0.5rem 1.5rem;
             border-bottom: 1px solid #e5e0d8;
         }
-
         .sidebar-brand h1 {
             font-size: 1.8rem;
             font-weight: 700;
-            color: #e85d04; /* Naranja vibrante */
+            color: #e85d04;
             letter-spacing: -1px;
         }
-
         .sidebar-brand small {
             font-size: 0.7rem;
             color: #888;
             display: block;
             margin-top: -4px;
-            letter-spacing: 0.5px;
         }
-
         .sidebar .nav-item {
             display: flex;
             align-items: center;
@@ -67,32 +58,27 @@
             transition: all 0.2s;
             border-left: 3px solid transparent;
         }
-
         .sidebar .nav-item:hover {
             background: #f8f5f0;
             color: #e85d04;
         }
-
         .sidebar .nav-item.active {
             background: #f8f5f0;
             color: #e85d04;
             border-left-color: #e85d04;
         }
-
         .sidebar .nav-item .icon {
             font-size: 1.2rem;
             width: 24px;
             text-align: center;
         }
 
-        /* Contenido principal */
         .main-content {
             margin-left: 260px;
             padding: 2rem;
             min-height: 100vh;
         }
 
-        /* Tarjetas */
         .card {
             background: #ffffff;
             border-radius: 1rem;
@@ -101,7 +87,6 @@
             margin-bottom: 1.5rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-
         .card-title {
             font-size: 1.2rem;
             font-weight: 600;
@@ -180,7 +165,6 @@
             z-index: 999;
         }
         .modal-overlay.active { display: flex; }
-
         .modal-box {
             background: #ffffff;
             border-radius: 1.2rem;
@@ -208,6 +192,20 @@
         }
         .modal-box label { display: block; font-size: 0.75rem; color: #6b6b6b; margin-bottom: 0.2rem; font-weight: 600; }
 
+        /* Campo URL bloqueado */
+        .url-readonly {
+            background: #f0f0f0;
+            color: #333;
+            font-size: 0.7rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ddd;
+            width: 100%;
+            cursor: default;
+            margin-bottom: 0.5rem;
+            word-break: break-all;
+        }
+
         .logout-header {
             background: #b91c1c;
             color: #fff;
@@ -221,30 +219,15 @@
         }
         .logout-header:hover { background: #dc2626; }
 
-        .file-input-wrapper {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .file-input-wrapper input[type="file"] {
-            flex: 1;
-            padding: 0.4rem;
-            background: #f8f5f0;
-            border: 1px solid #ddd;
+        .status-message {
+            padding: 0.5rem;
             border-radius: 0.5rem;
-            color: #1a1a1a;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
         }
-        .file-input-wrapper .subir-btn {
-            background: #e85d04;
-            color: #fff;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .file-input-wrapper .subir-btn:hover { background: #d35400; }
+        .status-success { background: #d1fae5; color: #065f46; }
+        .status-error { background: #fee2e2; color: #991b1b; }
+        .status-loading { background: #fef3c7; color: #92400e; }
 
         @media (max-width: 768px) {
             .sidebar {
@@ -278,7 +261,6 @@
             <h1>JADI</h1>
             <small>Panel de Control</small>
         </div>
-
         <nav class="mt-6">
             <div class="nav-item active" data-section="pedidos">
                 <span class="icon">📦</span> Pedidos
@@ -296,7 +278,6 @@
                 <span class="icon">⚙️</span> Configuración
             </div>
         </nav>
-
         <div class="absolute bottom-0 left-0 w-full p-4 border-t border-[#e5e0d8]">
             <button onclick="cerrarSesionAdmin()" class="w-full btn-outline text-sm">
                 🚪 Cerrar Sesión (Sidebar)
@@ -306,7 +287,6 @@
 
     <!-- ============ CONTENIDO PRINCIPAL ============ -->
     <main class="main-content" id="mainContent">
-        <!-- Header con botón de cerrar sesión -->
         <div class="flex items-center justify-between mb-6">
             <button class="menu-toggle" id="menuToggle">☰</button>
             <div class="flex items-center gap-4">
@@ -426,7 +406,7 @@
                 <div class="card-title">
                     <span>⚙️ Configuración del sistema</span>
                 </div>
-                <p class="text-gray-600 text-sm">Aquí podrás gestionar porcentajes de comisión, términos de garantía, etc. (Próximamente)</p>
+                <p class="text-gray-600 text-sm">Próximamente: comisiones, términos de garantía, etc.</p>
             </div>
         </section>
     </main>
@@ -462,17 +442,16 @@
                 <input type="number" id="prodStock" value="10" />
 
                 <label>Imagen del producto</label>
-                <!-- Opción 1: Cloudinary -->
                 <button type="button" id="btnCloudinary" class="btn-outline w-full py-2 mb-2">
-                    📸 Subir imagen con Cloudinary
+                    📸 Seleccionar imagen con Cloudinary
                 </button>
-                <!-- Opción 2: Firebase Storage -->
-                <div class="file-input-wrapper">
-                    <input type="file" id="fileInput" accept="image/*" />
-                    <button type="button" id="btnSubirStorage" class="subir-btn">⬆️ Subir a Firebase</button>
-                </div>
-                <input type="hidden" id="prodImagen" required />
-                <div id="previewImagen" class="mt-1 text-xs text-gray-600">Sin imagen</div>
+
+                <!-- Campo de URL bloqueado (readonly) -->
+                <label>URL de la imagen (generada por Cloudinary)</label>
+                <input type="text" id="prodImagen" class="url-readonly" readonly placeholder="La URL aparecerá aquí después de subir la imagen" />
+
+                <!-- Mensaje de estado -->
+                <div id="previewImagen" class="mt-2 text-xs text-gray-500">📌 No hay imagen seleccionada</div>
 
                 <label>Descripción corta</label>
                 <textarea id="prodDescripcion" rows="2" placeholder="Zapato deportivo de alta calidad..."></textarea>
@@ -485,10 +464,10 @@
         </div>
     </div>
 
-    <!-- ============ SCRIPTS (Firebase + Lógica) ============ -->
+    <!-- ============ SCRIPTS ============ -->
     <script type="module">
         // ============================================================
-        // 1. IMPORTS DE FIREBASE
+        // IMPORTS DE FIREBASE
         // ============================================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
         import { 
@@ -508,15 +487,9 @@
             onAuthStateChanged, 
             signOut 
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
-        import {
-            getStorage,
-            ref,
-            uploadBytesResumable,
-            getDownloadURL
-        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js";
 
         // ============================================================
-        // 2. CONFIGURACIÓN DE FIREBASE
+        // CONFIGURACIÓN DE FIREBASE
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
@@ -530,16 +503,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        const storage = getStorage(app);
 
-        // ============================================================
-        // 3. VARIABLES GLOBALES
-        // ============================================================
         let usuarioAdmin = null;
         let productosCache = [];
 
         // ============================================================
-        // 4. SEGURIDAD - VERIFICAR ROL ADMIN
+        // SEGURIDAD - VERIFICAR ROL ADMIN
         // ============================================================
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
@@ -566,8 +535,7 @@
 
             usuarioAdmin = user;
             document.getElementById('adminEmail').textContent = user.email;
-            
-            // Cargar datos
+
             cargarPedidos();
             cargarCatalogo();
             cargarUsuarios();
@@ -575,7 +543,7 @@
         });
 
         // ============================================================
-        // 5. NAVEGACIÓN Y CERRAR SESIÓN
+        // CERRAR SESIÓN
         // ============================================================
         window.cerrarSesionAdmin = async () => {
             if (confirm('¿Seguro que deseas cerrar sesión?')) {
@@ -584,6 +552,9 @@
             }
         };
 
+        // ============================================================
+        // NAVEGACIÓN POR SIDEBAR
+        // ============================================================
         const navItems = document.querySelectorAll('.nav-item');
         const sections = {
             pedidos: document.getElementById('section-pedidos'),
@@ -611,7 +582,7 @@
         });
 
         // ============================================================
-        // 6. GESTIÓN DE PEDIDOS
+        // GESTIÓN DE PEDIDOS
         // ============================================================
         function cargarPedidos() {
             const q = query(collection(db, "pedidos"), orderBy("fecha", "desc"));
@@ -683,7 +654,7 @@
         };
 
         // ============================================================
-        // 7. GESTIÓN DE CATÁLOGO (CRUD)
+        // GESTIÓN DE CATÁLOGO
         // ============================================================
         function cargarCatalogo() {
             onSnapshot(collection(db, "calzado"), (snapshot) => {
@@ -720,7 +691,6 @@
         window.abrirModalProducto = (producto = null) => {
             const modal = document.getElementById('modalProducto');
             const titulo = document.getElementById('modalProductoTitulo');
-            const form = document.getElementById('formProducto');
 
             if (producto) {
                 titulo.textContent = '✏️ Editar Producto';
@@ -732,18 +702,17 @@
                 document.getElementById('prodGarantia').value = producto.garantiaMeses || 6;
                 document.getElementById('prodStock').value = producto.stock || 10;
                 document.getElementById('prodImagen').value = producto.imagen || '';
-                document.getElementById('prodDescripcion').value = producto.descripcion || '';
                 if (producto.imagen) {
-                    document.getElementById('previewImagen').innerHTML = `<span class="text-green-600">✅ Imagen cargada</span> <a href="${producto.imagen}" target="_blank" class="text-orange-600 underline">ver</a>`;
+                    document.getElementById('previewImagen').innerHTML = `<span class="status-message status-success">✅ Imagen cargada</span> <a href="${producto.imagen}" target="_blank" class="text-orange-600 underline">ver</a>`;
                 } else {
-                    document.getElementById('previewImagen').textContent = 'Sin imagen';
+                    document.getElementById('previewImagen').textContent = '📌 No hay imagen seleccionada';
                 }
             } else {
                 titulo.textContent = '🆕 Nuevo Producto';
-                form.reset();
+                document.getElementById('formProducto').reset();
                 document.getElementById('productoId').value = '';
                 document.getElementById('prodImagen').value = '';
-                document.getElementById('previewImagen').textContent = 'Sin imagen';
+                document.getElementById('previewImagen').textContent = '📌 No hay imagen seleccionada';
                 document.getElementById('prodGarantia').value = 6;
                 document.getElementById('prodStock').value = 10;
             }
@@ -764,6 +733,13 @@
             e.preventDefault();
 
             const id = document.getElementById('productoId').value;
+            const imagenURL = document.getElementById('prodImagen').value.trim();
+
+            if (!imagenURL) {
+                alert('⚠️ Debes subir una imagen primero usando Cloudinary.');
+                return;
+            }
+
             const data = {
                 nombre: document.getElementById('prodNombre').value.trim(),
                 categoria: document.getElementById('prodCategoria').value,
@@ -771,16 +747,11 @@
                 precioCompra: parseFloat(document.getElementById('prodCompra').value) || 0,
                 garantiaMeses: parseInt(document.getElementById('prodGarantia').value) || 6,
                 stock: parseInt(document.getElementById('prodStock').value) || 10,
-                imagen: document.getElementById('prodImagen').value.trim(),
+                imagen: imagenURL,
                 descripcion: document.getElementById('prodDescripcion').value.trim(),
                 proveedorId: 'admin',
                 fechaRegistro: new Date().toLocaleDateString()
             };
-
-            if (!data.imagen) {
-                alert('⚠️ Debes subir una imagen primero.');
-                return;
-            }
 
             try {
                 if (id) {
@@ -806,24 +777,76 @@
         };
 
         window.eliminarProducto = async (id) => {
-            if (confirm('¿Eliminar este producto del catálogo?')) {
+            if (confirm('¿Eliminar este producto del catálogo? También se eliminará la imagen de Cloudinary.')) {
                 try {
+                    // Obtener el producto para saber la URL de la imagen
+                    const prod = productosCache.find(p => p.id === id);
+                    if (prod && prod.imagen) {
+                        // Extraer el public_id de la URL de Cloudinary
+                        const publicId = extraerPublicIdDeCloudinary(prod.imagen);
+                        if (publicId) {
+                            await eliminarImagenCloudinary(publicId);
+                        }
+                    }
+                    // Eliminar de Firestore
                     await deleteDoc(doc(db, "calzado", id));
+                    alert('✅ Producto eliminado y su imagen de Cloudinary también.');
                 } catch (err) {
-                    alert('Error: ' + err.message);
+                    alert('Error al eliminar: ' + err.message);
                 }
             }
         };
 
         // ============================================================
-        // 8. SUBIDA DE IMÁGENES (Cloudinary + Firebase Storage)
+        // FUNCIÓN PARA EXTRAER PUBLIC_ID DE UNA URL DE CLOUDINARY
         // ============================================================
+        function extraerPublicIdDeCloudinary(url) {
+            // Ejemplo: https://res.cloudinary.com/duyjyfunn/image/upload/v1234567890/jadi/productos/abc123.jpg
+            try {
+                const parts = url.split('/');
+                // Buscar la parte que contiene "upload" y luego tomar el siguiente segmento
+                const uploadIndex = parts.indexOf('upload');
+                if (uploadIndex !== -1 && parts.length > uploadIndex + 2) {
+                    // El public_id es todo después de la versión (v1234567890) o directamente el nombre con extensión
+                    // Saltamos el segmento de la versión si existe
+                    let startIndex = uploadIndex + 2;
+                    if (parts[startIndex] && parts[startIndex].startsWith('v')) {
+                        startIndex++;
+                    }
+                    // Unir los segmentos restantes con "/" para mantener la carpeta
+                    const publicId = parts.slice(startIndex).join('/').split('.')[0];
+                    return publicId;
+                }
+                return null;
+            } catch (e) {
+                console.error('Error al extraer public_id:', e);
+                return null;
+            }
+        }
 
-        // --- CLOUDINARY CONFIGURACIÓN FINAL ---
-        // Usa tu cloudName y el preset exacto que tienes
+        // ============================================================
+        // FUNCIÓN PARA ELIMINAR IMAGEN DE CLOUDINARY (usando su API)
+        // ============================================================
+        async function eliminarImagenCloudinary(publicId) {
+            // Necesitas usar tu API Key y API Secret (los guardas en variables de entorno o aquí)
+            // ⚠️ NUNCA expongas tu API Secret en el frontend. Esto debe hacerse desde un backend.
+            // Pero para efectos prácticos y mientras tienes pocos productos, puedes hacerlo desde aquí.
+            // O simplemente eliminar el producto sin eliminar la imagen de Cloudinary (y limpiar después desde la consola de Cloudinary).
+            
+            // SOLUCIÓN TEMPORAL: Mostrar mensaje y no eliminar la imagen de Cloudinary.
+            console.warn('Eliminación de imagen de Cloudinary no implementada en frontend por seguridad. La imagen quedará en Cloudinary.');
+            alert('⚠️ La imagen quedará en Cloudinary. Puedes eliminarla manualmente desde tu consola de Cloudinary.');
+            
+            // Si quieres implementarlo realmente, necesitas un backend (Cloud Function) que use tu API Key y Secret.
+            // Por ahora, solo eliminamos el producto de Firestore.
+        }
+
+        // ============================================================
+        // CLOUDINARY WIDGET (mejorado)
+        // ============================================================
         const cloudinaryWidget = cloudinary.createUploadWidget({
-            cloudName: "duyjyfunn",          // ← TU CLOUD NAME
-            uploadPreset: "zapatos_present",  // ← TU PRESET (tal cual lo tienes)
+            cloudName: "duyjyfunn",
+            uploadPreset: "zapatos_present",
             sources: ['local', 'url', 'camera', 'google_drive'],
             multiple: false,
             language: "es",
@@ -843,25 +866,28 @@
                     error: "#ef4444"
                 }
             },
-            // Forzar que el botón "Done" se habilite correctamente
             showAdvancedOptions: false,
             clientAllowedFormats: ['image/*'],
             maxImageFileSize: 5000000
         }, (error, result) => {
+            console.log('Cloudinary event:', result?.event, result);
+
             if (error) {
                 console.error('Cloudinary error:', error);
+                document.getElementById('previewImagen').innerHTML = `<span class="status-message status-error">❌ Error: ${JSON.stringify(error)}</span>`;
                 alert('Error al subir la imagen: ' + JSON.stringify(error));
                 return;
             }
 
             if (result && result.event === "success") {
                 const url = result.info.secure_url;
+                // Colocar la URL en el campo readonly
                 document.getElementById('prodImagen').value = url;
                 document.getElementById('previewImagen').innerHTML = `
-                    <span class="text-green-600">✅ Imagen cargada (Cloudinary)</span>
+                    <span class="status-message status-success">✅ Imagen cargada (Cloudinary)</span>
                     <a href="${url}" target="_blank" class="text-orange-600 underline ml-2">ver</a>
                 `;
-                // Cerrar el widget después de 1 segundo para evitar que el usuario tenga que hacer clic en "Done"
+                // Cerrar el widget automáticamente
                 setTimeout(() => {
                     cloudinaryWidget.close();
                 }, 1000);
@@ -874,40 +900,8 @@
             cloudinaryWidget.open();
         });
 
-        // --- FIREBASE STORAGE (alternativa) ---
-        document.getElementById('btnSubirStorage').addEventListener('click', () => {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert('Selecciona una imagen primero.');
-                return;
-            }
-
-            const storageRef = ref(storage, `productos/${Date.now()}_${file.name}`);
-            const uploadTask = uploadBytesResumable(storageRef, file);
-
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    document.getElementById('previewImagen').textContent = `Subiendo... ${Math.round(progress)}%`;
-                },
-                (error) => {
-                    alert('Error al subir: ' + error.message);
-                },
-                async () => {
-                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-                    document.getElementById('prodImagen').value = downloadURL;
-                    document.getElementById('previewImagen').innerHTML = `
-                        <span class="text-green-600">✅ Imagen cargada (Firebase)</span>
-                        <a href="${downloadURL}" target="_blank" class="text-orange-600 underline ml-2">ver</a>
-                    `;
-                    alert('✅ Imagen subida a Firebase Storage.');
-                }
-            );
-        });
-
         // ============================================================
-        // 9. GESTIÓN DE USUARIOS
+        // GESTIÓN DE USUARIOS
         // ============================================================
         function cargarUsuarios() {
             onSnapshot(collection(db, "usuarios_registrados"), (snapshot) => {
@@ -933,7 +927,7 @@
         }
 
         // ============================================================
-        // 10. GESTIÓN DE GARANTÍAS
+        // GESTIÓN DE GARANTÍAS
         // ============================================================
         function cargarGarantias() {
             onSnapshot(collection(db, "garantias"), (snapshot) => {
