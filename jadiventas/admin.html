@@ -18,13 +18,13 @@
 
     <style>
         * { font-family: 'Inter', sans-serif; }
-        body { background-color: #0a0a0a; color: #f1f1f1; }
+        body { background-color: #f4f1eb; color: #1a1a1a; }
 
-        /* Sidebar */
+        /* Sidebar - estilo claro y elegante */
         .sidebar {
             width: 260px;
-            background: #111111;
-            border-right: 1px solid #2a2a2a;
+            background: #ffffff;
+            border-right: 1px solid #e5e0d8;
             height: 100vh;
             position: fixed;
             top: 0;
@@ -32,19 +32,18 @@
             overflow-y: auto;
             transition: transform 0.3s ease;
             z-index: 50;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.05);
         }
 
         .sidebar-brand {
             padding: 1.5rem 1.5rem 0.5rem 1.5rem;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 1px solid #e5e0d8;
         }
 
         .sidebar-brand h1 {
             font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #d4af37, #f5e56b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #e85d04; /* Naranja vibrante */
             letter-spacing: -1px;
         }
 
@@ -61,7 +60,7 @@
             align-items: center;
             gap: 0.75rem;
             padding: 0.75rem 1.5rem;
-            color: #aaa;
+            color: #4a4a4a;
             font-weight: 500;
             font-size: 0.9rem;
             cursor: pointer;
@@ -70,14 +69,14 @@
         }
 
         .sidebar .nav-item:hover {
-            background: #1e1e1e;
-            color: #fff;
+            background: #f8f5f0;
+            color: #e85d04;
         }
 
         .sidebar .nav-item.active {
-            background: #1a1a1a;
-            color: #d4af37;
-            border-left-color: #d4af37;
+            background: #f8f5f0;
+            color: #e85d04;
+            border-left-color: #e85d04;
         }
 
         .sidebar .nav-item .icon {
@@ -95,17 +94,18 @@
 
         /* Tarjetas */
         .card {
-            background: #161616;
+            background: #ffffff;
             border-radius: 1rem;
-            border: 1px solid #2a2a2a;
+            border: 1px solid #e5e0d8;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         .card-title {
             font-size: 1.2rem;
             font-weight: 600;
-            color: #f1f1f1;
+            color: #1a1a1a;
             margin-bottom: 1rem;
             display: flex;
             justify-content: space-between;
@@ -114,13 +114,13 @@
 
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        table th { text-align: left; padding: 0.75rem 0.5rem; color: #888; font-weight: 600; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.5px; border-bottom: 1px solid #2a2a2a; }
-        table td { padding: 0.75rem 0.5rem; border-bottom: 1px solid #222; vertical-align: middle; }
-        table tr:hover td { background: #1a1a1a; }
+        table th { text-align: left; padding: 0.75rem 0.5rem; color: #6b6b6b; font-weight: 600; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.5px; border-bottom: 1px solid #e5e0d8; }
+        table td { padding: 0.75rem 0.5rem; border-bottom: 1px solid #f0ece6; vertical-align: middle; }
+        table tr:hover td { background: #faf8f5; }
 
-        .btn-gold {
-            background: #d4af37;
-            color: #000;
+        .btn-primary {
+            background: #e85d04;
+            color: #fff;
             font-weight: 600;
             padding: 0.5rem 1.2rem;
             border-radius: 0.5rem;
@@ -128,19 +128,19 @@
             border: none;
             cursor: pointer;
         }
-        .btn-gold:hover { background: #e5c84a; transform: scale(1.02); }
+        .btn-primary:hover { background: #d35400; transform: scale(1.02); }
 
-        .btn-outline-gold {
+        .btn-outline {
             background: transparent;
-            border: 1px solid #d4af37;
-            color: #d4af37;
+            border: 1px solid #e85d04;
+            color: #e85d04;
             font-weight: 500;
             padding: 0.4rem 1rem;
             border-radius: 0.5rem;
             transition: all 0.2s;
             cursor: pointer;
         }
-        .btn-outline-gold:hover { background: #d4af37; color: #000; }
+        .btn-outline:hover { background: #e85d04; color: #fff; }
 
         .btn-danger {
             background: #b91c1c;
@@ -162,17 +162,17 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-        .badge-pendiente { background: #92400e; color: #fcd34d; }
-        .badge-pagado { background: #065f46; color: #6ee7b7; }
-        .badge-enviado { background: #1e3a8a; color: #93c5fd; }
-        .badge-entregado { background: #14532d; color: #86efac; }
-        .badge-asignado { background: #1e3a8a; color: #93c5fd; }
-        .badge-reparado { background: #14532d; color: #86efac; }
+        .badge-pendiente { background: #fef3c7; color: #92400e; }
+        .badge-pagado { background: #d1fae5; color: #065f46; }
+        .badge-enviado { background: #dbeafe; color: #1e3a8a; }
+        .badge-entregado { background: #d1fae5; color: #065f46; }
+        .badge-asignado { background: #dbeafe; color: #1e3a8a; }
+        .badge-reparado { background: #d1fae5; color: #065f46; }
 
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.5);
             backdrop-filter: blur(4px);
             display: none;
             justify-content: center;
@@ -182,33 +182,32 @@
         .modal-overlay.active { display: flex; }
 
         .modal-box {
-            background: #1a1a1a;
-            border: 1px solid #333;
+            background: #ffffff;
             border-radius: 1.2rem;
             padding: 2rem;
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
         }
-        .modal-box h2 { color: #d4af37; font-size: 1.3rem; margin-bottom: 1.2rem; }
+        .modal-box h2 { color: #e85d04; font-size: 1.3rem; margin-bottom: 1.2rem; }
         .modal-box input, .modal-box select, .modal-box textarea {
             width: 100%;
             padding: 0.6rem 0.8rem;
-            background: #0a0a0a;
-            border: 1px solid #333;
+            background: #f8f5f0;
+            border: 1px solid #ddd;
             border-radius: 0.5rem;
-            color: #f1f1f1;
+            color: #1a1a1a;
             margin-bottom: 0.8rem;
             font-size: 0.9rem;
         }
         .modal-box input:focus, .modal-box select:focus, .modal-box textarea:focus {
             outline: none;
-            border-color: #d4af37;
+            border-color: #e85d04;
         }
-        .modal-box label { display: block; font-size: 0.75rem; color: #aaa; margin-bottom: 0.2rem; }
+        .modal-box label { display: block; font-size: 0.75rem; color: #6b6b6b; margin-bottom: 0.2rem; font-weight: 600; }
 
-        /* Botón cerrar sesión en header */
         .logout-header {
             background: #b91c1c;
             color: #fff;
@@ -222,7 +221,31 @@
         }
         .logout-header:hover { background: #dc2626; }
 
-        /* Responsive */
+        .file-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .file-input-wrapper input[type="file"] {
+            flex: 1;
+            padding: 0.4rem;
+            background: #f8f5f0;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            color: #1a1a1a;
+        }
+        .file-input-wrapper .subir-btn {
+            background: #e85d04;
+            color: #fff;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .file-input-wrapper .subir-btn:hover { background: #d35400; }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -236,41 +259,15 @@
             display: none;
             background: none;
             border: none;
-            color: #f1f1f1;
+            color: #1a1a1a;
             font-size: 1.8rem;
             cursor: pointer;
         }
 
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
-
-        /* Para el botón de imagen con input file */
-        .file-input-wrapper {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .file-input-wrapper input[type="file"] {
-            flex: 1;
-            padding: 0.4rem;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            border-radius: 0.5rem;
-            color: #f1f1f1;
-        }
-        .file-input-wrapper .subir-btn {
-            background: #d4af37;
-            color: #000;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .file-input-wrapper .subir-btn:hover { background: #e5c84a; }
+        ::-webkit-scrollbar-track { background: #f4f1eb; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #e85d04; }
     </style>
 </head>
 <body>
@@ -300,8 +297,8 @@
             </div>
         </nav>
 
-        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-[#2a2a2a]">
-            <button onclick="cerrarSesionAdmin()" class="w-full btn-outline-gold text-sm">
+        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-[#e5e0d8]">
+            <button onclick="cerrarSesionAdmin()" class="w-full btn-outline text-sm">
                 🚪 Cerrar Sesión (Sidebar)
             </button>
         </div>
@@ -313,7 +310,7 @@
         <div class="flex items-center justify-between mb-6">
             <button class="menu-toggle" id="menuToggle">☰</button>
             <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-400" id="adminEmail">admin@jadi.com</span>
+                <span class="text-sm text-gray-600" id="adminEmail">admin@jadi.com</span>
                 <button onclick="cerrarSesionAdmin()" class="logout-header">
                     🚪 Cerrar Sesión
                 </button>
@@ -325,7 +322,7 @@
             <div class="card">
                 <div class="card-title">
                     <span>📦 Pedidos recibidos</span>
-                    <span class="text-sm text-gray-400" id="totalPedidos">0</span>
+                    <span class="text-sm text-gray-500" id="totalPedidos">0</span>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -352,7 +349,7 @@
             <div class="card">
                 <div class="card-title">
                     <span>🛍️ Gestión de Catálogo</span>
-                    <button onclick="abrirModalProducto()" class="btn-gold text-sm">+ Agregar Producto</button>
+                    <button onclick="abrirModalProducto()" class="btn-primary text-sm">+ Agregar Producto</button>
                 </div>
                 <div class="table-wrap">
                     <table>
@@ -429,7 +426,7 @@
                 <div class="card-title">
                     <span>⚙️ Configuración del sistema</span>
                 </div>
-                <p class="text-gray-400 text-sm">Aquí podrás gestionar porcentajes de comisión, términos de garantía, etc. (Próximamente)</p>
+                <p class="text-gray-600 text-sm">Aquí podrás gestionar porcentajes de comisión, términos de garantía, etc. (Próximamente)</p>
             </div>
         </section>
     </main>
@@ -466,23 +463,23 @@
 
                 <label>Imagen del producto</label>
                 <!-- Opción 1: Cloudinary -->
-                <button type="button" id="btnCloudinary" class="btn-outline-gold w-full py-2 mb-2">
+                <button type="button" id="btnCloudinary" class="btn-outline w-full py-2 mb-2">
                     📸 Subir imagen con Cloudinary
                 </button>
-                <!-- Opción 2: Input file + botón subir a Firebase Storage -->
+                <!-- Opción 2: Firebase Storage -->
                 <div class="file-input-wrapper">
                     <input type="file" id="fileInput" accept="image/*" />
                     <button type="button" id="btnSubirStorage" class="subir-btn">⬆️ Subir a Firebase</button>
                 </div>
                 <input type="hidden" id="prodImagen" required />
-                <div id="previewImagen" class="mt-1 text-xs text-gray-400">Sin imagen</div>
+                <div id="previewImagen" class="mt-1 text-xs text-gray-600">Sin imagen</div>
 
                 <label>Descripción corta</label>
                 <textarea id="prodDescripcion" rows="2" placeholder="Zapato deportivo de alta calidad..."></textarea>
 
                 <div class="flex gap-3 mt-4">
-                    <button type="submit" class="btn-gold flex-1">💾 Guardar</button>
-                    <button type="button" onclick="cerrarModalProducto()" class="btn-outline-gold flex-1">Cancelar</button>
+                    <button type="submit" class="btn-primary flex-1">💾 Guardar</button>
+                    <button type="button" onclick="cerrarModalProducto()" class="btn-outline flex-1">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -578,7 +575,7 @@
         });
 
         // ============================================================
-        // 5. NAVEGACIÓN Y CERRAR SESIÓN (GLOBAL)
+        // 5. NAVEGACIÓN Y CERRAR SESIÓN
         // ============================================================
         window.cerrarSesionAdmin = async () => {
             if (confirm('¿Seguro que deseas cerrar sesión?')) {
@@ -644,11 +641,11 @@
                     tr.innerHTML = `
                         <td>${data.clienteEmail || 'Anónimo'}</td>
                         <td class="text-xs">${productosHtml}</td>
-                        <td class="font-semibold text-gold">$${data.total?.toFixed(2) || '0.00'}</td>
-                        <td class="text-xs text-gray-400">${data.fecha || '--'}</td>
+                        <td class="font-semibold text-orange-600">$${data.total?.toFixed(2) || '0.00'}</td>
+                        <td class="text-xs text-gray-500">${data.fecha || '--'}</td>
                         <td><span class="badge ${badgeClass}">${estado}</span></td>
                         <td>
-                            <select onchange="cambiarEstadoPedido('${id}', this.value)" class="bg-[#0a0a0a] border border-[#333] rounded px-2 py-1 text-xs text-white">
+                            <select onchange="cambiarEstadoPedido('${id}', this.value)" class="bg-white border border-gray-300 rounded px-2 py-1 text-xs text-gray-700">
                                 <option value="pendiente" ${estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
                                 <option value="pagado" ${estado === 'pagado' ? 'selected' : ''}>Pagado</option>
                                 <option value="enviado" ${estado === 'enviado' ? 'selected' : ''}>Enviado</option>
@@ -701,12 +698,12 @@
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><img src="${data.imagen || 'https://via.placeholder.com/50'}" alt="${data.nombre}" class="w-12 h-12 object-cover rounded-lg border border-[#333]" /></td>
+                        <td><img src="${data.imagen || 'https://via.placeholder.com/50'}" alt="${data.nombre}" class="w-12 h-12 object-cover rounded-lg border border-gray-200" /></td>
                         <td class="font-medium">${data.nombre}</td>
-                        <td class="text-gold font-semibold">$${data.precio?.toFixed(2) || '0.00'}</td>
-                        <td class="text-xs text-gray-400">${data.proveedorId || '—'}</td>
+                        <td class="text-orange-600 font-semibold">$${data.precio?.toFixed(2) || '0.00'}</td>
+                        <td class="text-xs text-gray-500">${data.proveedorId || '—'}</td>
                         <td>
-                            <button onclick="editarProducto('${id}')" class="btn-outline-gold text-xs px-3 py-1">✏️</button>
+                            <button onclick="editarProducto('${id}')" class="btn-outline text-xs px-3 py-1">✏️</button>
                             <button onclick="eliminarProducto('${id}')" class="btn-danger text-xs px-3 py-1">🗑️</button>
                         </td>
                     `;
@@ -737,7 +734,7 @@
                 document.getElementById('prodImagen').value = producto.imagen || '';
                 document.getElementById('prodDescripcion').value = producto.descripcion || '';
                 if (producto.imagen) {
-                    document.getElementById('previewImagen').innerHTML = `<span class="text-green-400">✅ Imagen cargada</span> <a href="${producto.imagen}" target="_blank" class="text-gold underline">ver</a>`;
+                    document.getElementById('previewImagen').innerHTML = `<span class="text-green-600">✅ Imagen cargada</span> <a href="${producto.imagen}" target="_blank" class="text-orange-600 underline">ver</a>`;
                 } else {
                     document.getElementById('previewImagen').textContent = 'Sin imagen';
                 }
@@ -822,50 +819,62 @@
         // 8. SUBIDA DE IMÁGENES (Cloudinary + Firebase Storage)
         // ============================================================
 
-        // --- CLOUDINARY (mejorado) ---
-        let imagenSubidaCloudinary = null;
-
+        // --- CLOUDINARY CONFIGURACIÓN FINAL ---
+        // Usa tu cloudName y el preset exacto que tienes
         const cloudinaryWidget = cloudinary.createUploadWidget({
-            cloudName: "duyjyfunn",
-            uploadPreset: "zapatos_preset",
-            sources: ['local', 'url', 'camera', 'google_drive', 'dropbox'],
+            cloudName: "duyjyfunn",          // ← TU CLOUD NAME
+            uploadPreset: "zapatos_present",  // ← TU PRESET (tal cual lo tienes)
+            sources: ['local', 'url', 'camera', 'google_drive'],
+            multiple: false,
             language: "es",
             styles: {
                 palette: {
-                    window: "#1a1a1a",
-                    sourceBg: "#0a0a0a",
-                    windowBorder: "#d4af37",
-                    tabIcon: "#d4af37",
+                    window: "#ffffff",
+                    sourceBg: "#f4f1eb",
+                    windowBorder: "#e85d04",
+                    tabIcon: "#e85d04",
                     inactiveTabIcon: "#888",
-                    menuIcons: "#fff",
-                    textDark: "#000",
-                    textLight: "#fff",
-                    link: "#d4af37",
-                    action: "#d4af37",
-                    complete: "#d4af37",
+                    menuIcons: "#1a1a1a",
+                    textDark: "#1a1a1a",
+                    textLight: "#ffffff",
+                    link: "#e85d04",
+                    action: "#e85d04",
+                    complete: "#e85d04",
                     error: "#ef4444"
                 }
-            }
+            },
+            // Forzar que el botón "Done" se habilite correctamente
+            showAdvancedOptions: false,
+            clientAllowedFormats: ['image/*'],
+            maxImageFileSize: 5000000
         }, (error, result) => {
-            // Evento cuando la subida es exitosa
-            if (!error && result && result.event === "success") {
-                imagenSubidaCloudinary = result.info.secure_url;
-                document.getElementById('prodImagen').value = imagenSubidaCloudinary;
-                document.getElementById('previewImagen').innerHTML = `
-                    <span class="text-green-400">✅ Imagen cargada (Cloudinary)</span>
-                    <a href="${imagenSubidaCloudinary}" target="_blank" class="text-gold underline">ver</a>
-                `;
-                // Cerrar automáticamente el widget para evitar que el usuario tenga que hacer clic en "Done"
-                cloudinaryWidget.close();
+            if (error) {
+                console.error('Cloudinary error:', error);
+                alert('Error al subir la imagen: ' + JSON.stringify(error));
+                return;
             }
-            // Si el usuario cierra el widget sin subir, no pasa nada
+
+            if (result && result.event === "success") {
+                const url = result.info.secure_url;
+                document.getElementById('prodImagen').value = url;
+                document.getElementById('previewImagen').innerHTML = `
+                    <span class="text-green-600">✅ Imagen cargada (Cloudinary)</span>
+                    <a href="${url}" target="_blank" class="text-orange-600 underline ml-2">ver</a>
+                `;
+                // Cerrar el widget después de 1 segundo para evitar que el usuario tenga que hacer clic en "Done"
+                setTimeout(() => {
+                    cloudinaryWidget.close();
+                }, 1000);
+            } else if (result && result.event === "close") {
+                console.log('Widget cerrado manualmente.');
+            }
         });
 
         document.getElementById('btnCloudinary').addEventListener('click', () => {
             cloudinaryWidget.open();
         });
 
-        // --- FIREBASE STORAGE (alternativa directa) ---
+        // --- FIREBASE STORAGE (alternativa) ---
         document.getElementById('btnSubirStorage').addEventListener('click', () => {
             const fileInput = document.getElementById('fileInput');
             const file = fileInput.files[0];
@@ -879,7 +888,6 @@
 
             uploadTask.on('state_changed',
                 (snapshot) => {
-                    // Progreso
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     document.getElementById('previewImagen').textContent = `Subiendo... ${Math.round(progress)}%`;
                 },
@@ -887,12 +895,11 @@
                     alert('Error al subir: ' + error.message);
                 },
                 async () => {
-                    // Subida completada
                     const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
                     document.getElementById('prodImagen').value = downloadURL;
                     document.getElementById('previewImagen').innerHTML = `
-                        <span class="text-green-400">✅ Imagen cargada (Firebase)</span>
-                        <a href="${downloadURL}" target="_blank" class="text-gold underline">ver</a>
+                        <span class="text-green-600">✅ Imagen cargada (Firebase)</span>
+                        <a href="${downloadURL}" target="_blank" class="text-orange-600 underline ml-2">ver</a>
                     `;
                     alert('✅ Imagen subida a Firebase Storage.');
                 }
@@ -914,7 +921,7 @@
                         <td>${data.clienteEmail || data.email || '—'}</td>
                         <td><span class="badge ${data.rol === 'admin' ? 'badge-entregado' : 'badge-pendiente'}">${data.rol || 'cliente'}</span></td>
                         <td>${data.whatsapp || '—'}</td>
-                        <td class="text-xs text-gray-400">${data.fechaRegistro || '—'}</td>
+                        <td class="text-xs text-gray-500">${data.fechaRegistro || '—'}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -947,7 +954,7 @@
                         <td><span class="badge ${badgeClass}">${estado}</span></td>
                         <td>${data.reparadorId || 'Sin asignar'}</td>
                         <td>
-                            <button onclick="asignarReparador('${id}')" class="btn-outline-gold text-xs px-2 py-1">👤 Asignar</button>
+                            <button onclick="asignarReparador('${id}')" class="btn-outline text-xs px-2 py-1">👤 Asignar</button>
                             <button onclick="eliminarGarantia('${id}')" class="btn-danger text-xs px-2 py-1">🗑️</button>
                         </td>
                     `;
