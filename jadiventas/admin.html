@@ -88,7 +88,6 @@
             <div class="nav-item" data-section="usuarios"><span class="icon">👥</span> Usuarios</div>
             <div class="nav-item" data-section="garantias"><span class="icon">🛡️</span> Garantías</div>
             <div class="nav-item" data-section="configuracion"><span class="icon">⚙️</span> Configuración</div>
-            <div class="nav-item" data-section="limpieza"><span class="icon">🧹</span> Limpiar Imágenes</div>
         </nav>
         <div class="absolute bottom-0 left-0 w-full p-4 border-t border-[#e5e0d8]">
             <button onclick="cerrarSesionAdmin()" class="w-full btn-outline text-sm">🚪 Cerrar Sesión</button>
@@ -105,7 +104,7 @@
             </div>
         </div>
 
-        <!-- SECCIONES (igual que antes, pero con la nueva sección de limpieza) -->
+        <!-- SECCIONES -->
         <section id="section-pedidos" class="section-content">
             <div class="card"><div class="card-title"><span>📦 Pedidos recibidos</span><span id="totalPedidos" class="text-sm text-gray-500">0</span></div>
                 <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Productos</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaPedidos"><tr><td colspan="6" class="text-center py-4 text-gray-500">Cargando pedidos...</td></tr></tbody></table></div>
@@ -129,19 +128,6 @@
         <section id="section-configuracion" class="section-content hidden">
             <div class="card"><div class="card-title"><span>⚙️ Configuración</span></div><p class="text-gray-600 text-sm">Próximamente: comisiones, términos, etc.</p></div>
         </section>
-
-        <!-- NUEVA SECCIÓN: LIMPIAR IMÁGENES NO USADAS -->
-        <section id="section-limpieza" class="section-content hidden">
-            <div class="card">
-                <div class="card-title"><span>🧹 Imágenes en Cloudinary</span></div>
-                <p class="text-sm text-gray-600 mb-4">Aquí puedes ver todas las imágenes subidas y eliminar las que no estén siendo usadas por ningún producto.</p>
-                <button onclick="listarImagenesCloudinary()" class="btn-primary mb-4">📋 Listar imágenes</button>
-                <div id="listaImagenesCloudinary" class="overflow-y-auto max-h-80">
-                    <p class="text-gray-500">Haz clic en "Listar imágenes" para verlas.</p>
-                </div>
-            </div>
-        </section>
-
     </main>
 
     <!-- MODAL PRODUCTO -->
@@ -161,11 +147,8 @@
                 <label>Imagen del producto</label>
                 <button type="button" id="btnCloudinary" class="btn-primary w-full py-2 mb-2">📸 Subir imagen con Cloudinary</button>
 
-                <!-- Campo visible con la URL (solo lectura) -->
                 <label>URL de la imagen (se genera automáticamente)</label>
                 <input type="text" id="prodImagenVisible" class="url-field" readonly placeholder="Esperando subida..." />
-
-                <!-- Campo oculto para guardar la URL real -->
                 <input type="hidden" id="prodImagen" required />
 
                 <div id="previewImagen" class="text-xs text-gray-500 mt-1">📌 No hay imagen seleccionada</div>
@@ -232,8 +215,7 @@
             catalogo: document.getElementById('section-catalogo'),
             usuarios: document.getElementById('section-usuarios'),
             garantias: document.getElementById('section-garantias'),
-            configuracion: document.getElementById('section-configuracion'),
-            limpieza: document.getElementById('section-limpieza')
+            configuracion: document.getElementById('section-configuracion')
         };
         navItems.forEach(item => {
             item.addEventListener('click', () => {
@@ -445,22 +427,16 @@
         // ============================================================
         // CLOUDINARY CON TRANSFORMACIÓN Y OPTIMIZACIÓN
         // ============================================================
-        // Configuración mejorada:
-        // - Permite todos los formatos (clientAllowedFormats: null)
-        // - Aplica transformación: redimensiona a 800x800, formato webp (optimizado), calidad automática
-        // - Cierra automáticamente al terminar
         const cloudinaryWidget = cloudinary.createUploadWidget({
             cloudName: "duyjyfunn",
             uploadPreset: "zapatos_present",
             sources: ['local', 'url', 'camera', 'google_drive'],
             multiple: false,
             language: "es",
-            // 🔥 NUEVO: permitir cualquier formato de imagen
-            clientAllowedFormats: null,  // null = todos los formatos permitidos
-            // 🔥 TRANSFORMACIÓN: redimensionar y convertir a webp
+            clientAllowedFormats: null,  // todos los formatos
             transformation: [
-                { width: 800, height: 800, crop: "limit" },  // mantiene proporciones
-                { fetch_format: "webp", quality: "auto:good" }  // convierte a webp y optimiza calidad
+                { width: 800, height: 800, crop: "limit" },
+                { fetch_format: "webp", quality: "auto:good" }
             ],
             styles: {
                 palette: {
@@ -471,7 +447,7 @@
                 }
             },
             showAdvancedOptions: false,
-            maxImageFileSize: 10000000 // 10MB máximo
+            maxImageFileSize: 10000000
         }, (error, result) => {
             console.log('Cloudinary event:', result?.event, result);
             const preview = document.getElementById('previewImagen');
@@ -490,7 +466,6 @@
                 inputHidden.value = url;
                 inputVisible.value = url;
                 preview.innerHTML = `<span class="status-success">✅ Imagen cargada (Cloudinary)</span> <a href="${url}" target="_blank" class="text-orange-600 underline ml-2">ver</a>`;
-                // Cerrar widget automáticamente
                 setTimeout(() => { cloudinaryWidget.close(); }, 1000);
             } else if (result && result.event === "close") {
                 console.log('Widget cerrado.');
@@ -501,36 +476,7 @@
             cloudinaryWidget.open();
         });
 
-        // ============================================================
-        // LIMPIAR IMÁGENES NO USADAS (opcional, usando API de Cloudinary)
-        // ============================================================
-        // Para esta funcionalidad necesitas el API Key y Secret (no los compartes).
-        // Aquí pongo un esqueleto que lista las imágenes y permite eliminar.
-        // Debes configurar tu API Key y Secret en las variables.
-        // Si no quieres usarlo, simplemente ignora esta sección.
-
-        window.listarImagenesCloudinary = async () => {
-            const container = document.getElementById('listaImagenesCloudinary');
-            container.innerHTML = '<span class="status-loading">⏳ Cargando imágenes desde Cloudinary...</span>';
-            try {
-                // Usamos un proxy o una función serverless, pero como estamos en frontend,
-                // para listar necesitamos usar la API de administración con autenticación.
-                // Como no podemos exponer el API Secret en el frontend, esta funcionalidad se debe implementar con una función cloud (Firebase Functions) o un backend.
-                // Por ahora, mostramos un mensaje explicativo.
-                container.innerHTML = `
-                    <div class="text-sm text-gray-600 p-4 border rounded-lg">
-                        <p>🔐 Para listar y eliminar imágenes de Cloudinary, necesitas una función en el backend (por ejemplo, Firebase Cloud Functions) que use el API Key y Secret.</p>
-                        <p class="mt-2">Si deseas implementarlo, avísame y te ayudo a crear una función simple que liste y elimine imágenes no vinculadas a productos.</p>
-                        <p class="mt-2 text-xs text-gray-400">Mientras tanto, puedes eliminar manualmente desde la consola de Cloudinary.</p>
-                    </div>
-                `;
-            } catch (err) {
-                container.innerHTML = `<span class="status-error">❌ Error: ${err.message}</span>`;
-            }
-        };
-
         console.log('🔥 Panel JADI Admin cargado correctamente.');
     </script>
-
 </body>
 </html>
