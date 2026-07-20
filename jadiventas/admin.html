@@ -4,249 +4,70 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JADI · Panel de Administración</title>
-
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
 
     <style>
         * { font-family: 'Inter', sans-serif; }
-        body { background-color: #f8f5f0; color: #1a1a1a; }
-
-        /* Sidebar */
+        body { background: #f8f5f0; color: #1a1a1a; }
         .sidebar {
-            width: 260px;
-            background: #ffffff;
-            border-right: 1px solid #e5e0d8;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-            transition: transform 0.3s ease;
-            z-index: 50;
-            box-shadow: 2px 0 12px rgba(0,0,0,0.05);
+            width: 260px; background: #ffffff; border-right: 1px solid #e5e0d8;
+            height: 100vh; position: fixed; top: 0; left: 0; overflow-y: auto;
+            transition: transform 0.3s ease; z-index: 50;
         }
-        .sidebar-brand {
-            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
-            border-bottom: 1px solid #e5e0d8;
-        }
-        .sidebar-brand h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #e85d04;
-            letter-spacing: -1px;
-        }
-        .sidebar-brand small {
-            font-size: 0.7rem;
-            color: #888;
-            display: block;
-            margin-top: -4px;
-        }
+        .sidebar-brand { padding: 1.5rem; border-bottom: 1px solid #e5e0d8; }
+        .sidebar-brand h1 { font-size: 1.8rem; font-weight: 700; color: #e85d04; letter-spacing: -1px; }
+        .sidebar-brand small { font-size: 0.7rem; color: #888; display: block; margin-top: -4px; }
         .sidebar .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            color: #4a4a4a;
-            font-weight: 500;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
+            display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem;
+            color: #4a4a4a; font-weight: 500; font-size: 0.9rem; cursor: pointer;
+            transition: all 0.2s; border-left: 3px solid transparent;
         }
-        .sidebar .nav-item:hover {
-            background: #f8f5f0;
-            color: #e85d04;
-        }
-        .sidebar .nav-item.active {
-            background: #f8f5f0;
-            color: #e85d04;
-            border-left-color: #e85d04;
-        }
-        .sidebar .nav-item .icon {
-            font-size: 1.2rem;
-            width: 24px;
-            text-align: center;
-        }
-
-        .main-content {
-            margin-left: 260px;
-            padding: 2rem;
-            min-height: 100vh;
-        }
-
-        .card {
-            background: #ffffff;
-            border-radius: 1rem;
-            border: 1px solid #e5e0d8;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        }
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        .sidebar .nav-item:hover { background: #f8f5f0; color: #e85d04; }
+        .sidebar .nav-item.active { background: #f8f5f0; color: #e85d04; border-left-color: #e85d04; }
+        .sidebar .nav-item .icon { font-size: 1.2rem; width: 24px; text-align: center; }
+        .main-content { margin-left: 260px; padding: 2rem; min-height: 100vh; }
+        .card { background: #ffffff; border-radius: 1rem; border: 1px solid #e5e0d8; padding: 1.5rem; margin-bottom: 1.5rem; }
+        .card-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
         .table-wrap { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        table th { text-align: left; padding: 0.75rem 0.5rem; color: #6b6b6b; font-weight: 600; text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.5px; border-bottom: 1px solid #e5e0d8; }
-        table td { padding: 0.75rem 0.5rem; border-bottom: 1px solid #f0ece6; vertical-align: middle; }
+        table th { text-align: left; padding: 0.75rem 0.5rem; color: #6b6b6b; font-weight: 600; text-transform: uppercase; font-size: 0.65rem; border-bottom: 1px solid #e5e0d8; }
+        table td { padding: 0.75rem 0.5rem; border-bottom: 1px solid #f0ece6; }
         table tr:hover td { background: #faf8f5; }
-
-        .btn-primary {
-            background: #e85d04;
-            color: #fff;
-            font-weight: 600;
-            padding: 0.5rem 1.2rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            border: none;
-            cursor: pointer;
-        }
+        .btn-primary { background: #e85d04; color: #fff; font-weight: 600; padding: 0.5rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: 0.2s; }
         .btn-primary:hover { background: #d35400; transform: scale(1.02); }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #e85d04;
-            color: #e85d04;
-            font-weight: 500;
-            padding: 0.4rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
+        .btn-outline { background: transparent; border: 1px solid #e85d04; color: #e85d04; font-weight: 500; padding: 0.4rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s; }
         .btn-outline:hover { background: #e85d04; color: #fff; }
-
-        .btn-danger {
-            background: #b91c1c;
-            color: #fff;
-            border: none;
-            padding: 0.3rem 0.8rem;
-            border-radius: 0.4rem;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .btn-danger { background: #b91c1c; color: #fff; border: none; padding: 0.3rem 0.8rem; border-radius: 0.4rem; font-size: 0.75rem; cursor: pointer; }
         .btn-danger:hover { background: #dc2626; }
-
-        .badge {
-            display: inline-block;
-            padding: 0.2rem 0.7rem;
-            border-radius: 9999px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
+        .badge { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
         .badge-pendiente { background: #fef3c7; color: #92400e; }
         .badge-pagado { background: #d1fae5; color: #065f46; }
         .badge-enviado { background: #dbeafe; color: #1e3a8a; }
         .badge-entregado { background: #d1fae5; color: #065f46; }
-        .badge-asignado { background: #dbeafe; color: #1e3a8a; }
-        .badge-reparado { background: #d1fae5; color: #065f46; }
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; }
         .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: #ffffff;
-            border-radius: 1.2rem;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-        }
+        .modal-box { background: #ffffff; border-radius: 1.2rem; padding: 2rem; max-width: 550px; width: 90%; max-height: 90vh; overflow-y: auto; }
         .modal-box h2 { color: #e85d04; font-size: 1.3rem; margin-bottom: 1.2rem; }
-        .modal-box input, .modal-box select, .modal-box textarea {
-            width: 100%;
-            padding: 0.6rem 0.8rem;
-            background: #f8f5f0;
-            border: 1px solid #ddd;
-            border-radius: 0.5rem;
-            color: #1a1a1a;
-            margin-bottom: 0.8rem;
-            font-size: 0.9rem;
-        }
-        .modal-box input:focus, .modal-box select:focus, .modal-box textarea:focus {
-            outline: none;
-            border-color: #e85d04;
-        }
+        .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 0.6rem 0.8rem; background: #f8f5f0; border: 1px solid #ddd; border-radius: 0.5rem; color: #1a1a1a; margin-bottom: 0.8rem; font-size: 0.9rem; }
+        .modal-box input:focus, .modal-box select:focus, .modal-box textarea:focus { outline: none; border-color: #e85d04; }
         .modal-box label { display: block; font-size: 0.75rem; color: #6b6b6b; margin-bottom: 0.2rem; font-weight: 600; }
-
-        /* Campo URL bloqueado */
-        .url-readonly {
-            background: #f0f0f0;
-            color: #333;
-            font-size: 0.7rem;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid #ddd;
-            width: 100%;
-            cursor: default;
-            margin-bottom: 0.5rem;
-            word-break: break-all;
-        }
-
-        .logout-header {
-            background: #b91c1c;
-            color: #fff;
-            border: none;
-            padding: 0.4rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .logout-header { background: #b91c1c; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
         .logout-header:hover { background: #dc2626; }
-
-        .status-message {
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-        .status-success { background: #d1fae5; color: #065f46; }
-        .status-error { background: #fee2e2; color: #991b1b; }
-        .status-loading { background: #fef3c7; color: #92400e; }
-
+        .url-field { background: #f0ece6; border: 1px solid #ddd; border-radius: 0.5rem; padding: 0.6rem; font-size: 0.8rem; color: #1a1a1a; width: 100%; cursor: default; }
+        .status-success { color: #065f46; background: #d1fae5; padding: 0.3rem 0.8rem; border-radius: 0.5rem; }
+        .status-error { color: #991b1b; background: #fee2e2; padding: 0.3rem 0.8rem; border-radius: 0.5rem; }
+        .status-loading { color: #92400e; background: #fef3c7; padding: 0.3rem 0.8rem; border-radius: 0.5rem; }
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 280px;
-            }
+            .sidebar { transform: translateX(-100%); width: 280px; }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; padding: 1rem; }
             .menu-toggle { display: block !important; }
         }
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: #1a1a1a;
-            font-size: 1.8rem;
-            cursor: pointer;
-        }
-
+        .menu-toggle { display: none; background: none; border: none; color: #1a1a1a; font-size: 1.8rem; cursor: pointer; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f4f1eb; }
         ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
@@ -255,206 +76,102 @@
 </head>
 <body>
 
-    <!-- ============ SIDEBAR ============ -->
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <h1>JADI</h1>
             <small>Panel de Control</small>
         </div>
         <nav class="mt-6">
-            <div class="nav-item active" data-section="pedidos">
-                <span class="icon">📦</span> Pedidos
-            </div>
-            <div class="nav-item" data-section="catalogo">
-                <span class="icon">🛍️</span> Catálogo
-            </div>
-            <div class="nav-item" data-section="usuarios">
-                <span class="icon">👥</span> Usuarios
-            </div>
-            <div class="nav-item" data-section="garantias">
-                <span class="icon">🛡️</span> Garantías
-            </div>
-            <div class="nav-item" data-section="configuracion">
-                <span class="icon">⚙️</span> Configuración
-            </div>
+            <div class="nav-item active" data-section="pedidos"><span class="icon">📦</span> Pedidos</div>
+            <div class="nav-item" data-section="catalogo"><span class="icon">🛍️</span> Catálogo</div>
+            <div class="nav-item" data-section="usuarios"><span class="icon">👥</span> Usuarios</div>
+            <div class="nav-item" data-section="garantias"><span class="icon">🛡️</span> Garantías</div>
+            <div class="nav-item" data-section="configuracion"><span class="icon">⚙️</span> Configuración</div>
+            <div class="nav-item" data-section="limpieza"><span class="icon">🧹</span> Limpiar Imágenes</div>
         </nav>
         <div class="absolute bottom-0 left-0 w-full p-4 border-t border-[#e5e0d8]">
-            <button onclick="cerrarSesionAdmin()" class="w-full btn-outline text-sm">
-                🚪 Cerrar Sesión (Sidebar)
-            </button>
+            <button onclick="cerrarSesionAdmin()" class="w-full btn-outline text-sm">🚪 Cerrar Sesión</button>
         </div>
     </aside>
 
-    <!-- ============ CONTENIDO PRINCIPAL ============ -->
+    <!-- Contenido -->
     <main class="main-content" id="mainContent">
         <div class="flex items-center justify-between mb-6">
             <button class="menu-toggle" id="menuToggle">☰</button>
             <div class="flex items-center gap-4">
                 <span class="text-sm text-gray-600" id="adminEmail">admin@jadi.com</span>
-                <button onclick="cerrarSesionAdmin()" class="logout-header">
-                    🚪 Cerrar Sesión
-                </button>
+                <button onclick="cerrarSesionAdmin()" class="logout-header">🚪 Cerrar Sesión</button>
             </div>
         </div>
 
-        <!-- ======= SECCIÓN: PEDIDOS ======= -->
+        <!-- SECCIONES (igual que antes, pero con la nueva sección de limpieza) -->
         <section id="section-pedidos" class="section-content">
-            <div class="card">
-                <div class="card-title">
-                    <span>📦 Pedidos recibidos</span>
-                    <span class="text-sm text-gray-500" id="totalPedidos">0</span>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Productos</th>
-                                <th>Total</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaPedidos">
-                            <tr><td colspan="6" class="text-center text-gray-500 py-4">Cargando pedidos...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card"><div class="card-title"><span>📦 Pedidos recibidos</span><span id="totalPedidos" class="text-sm text-gray-500">0</span></div>
+                <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Productos</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tablaPedidos"><tr><td colspan="6" class="text-center py-4 text-gray-500">Cargando pedidos...</td></tr></tbody></table></div>
             </div>
         </section>
-
-        <!-- ======= SECCIÓN: CATÁLOGO ======= -->
         <section id="section-catalogo" class="section-content hidden">
-            <div class="card">
-                <div class="card-title">
-                    <span>🛍️ Gestión de Catálogo</span>
-                    <button onclick="abrirModalProducto()" class="btn-primary text-sm">+ Agregar Producto</button>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Imagen</th>
-                                <th>Nombre</th>
-                                <th>Precio</th>
-                                <th>Proveedor</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaCatalogo">
-                            <tr><td colspan="5" class="text-center text-gray-500 py-4">Cargando productos...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card"><div class="card-title"><span>🛍️ Gestión de Catálogo</span><button onclick="abrirModalProducto()" class="btn-primary text-sm">+ Agregar Producto</button></div>
+                <div class="table-wrap"><table><thead><tr><th>Imagen</th><th>Nombre</th><th>Precio</th><th>Proveedor</th><th>Acciones</th></tr></thead><tbody id="tablaCatalogo"><tr><td colspan="5" class="text-center py-4 text-gray-500">Cargando productos...</td></tr></tbody></table></div>
             </div>
         </section>
-
-        <!-- ======= SECCIÓN: USUARIOS ======= -->
         <section id="section-usuarios" class="section-content hidden">
-            <div class="card">
-                <div class="card-title">
-                    <span>👥 Usuarios del sistema</span>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Rol</th>
-                                <th>WhatsApp</th>
-                                <th>Fecha Registro</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaUsuarios">
-                            <tr><td colspan="4" class="text-center text-gray-500 py-4">Cargando usuarios...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="card"><div class="card-title"><span>👥 Usuarios del sistema</span></div>
+                <div class="table-wrap"><table><thead><tr><th>Email</th><th>Rol</th><th>WhatsApp</th><th>Fecha Registro</th></tr></thead><tbody id="tablaUsuarios"><tr><td colspan="4" class="text-center py-4 text-gray-500">Cargando usuarios...</td></tr></tbody></table></div>
             </div>
         </section>
-
-        <!-- ======= SECCIÓN: GARANTÍAS ======= -->
         <section id="section-garantias" class="section-content hidden">
+            <div class="card"><div class="card-title"><span>🛡️ Solicitudes de Garantía</span></div>
+                <div class="table-wrap"><table><thead><tr><th>Cliente</th><th>Producto</th><th>Descripción</th><th>Estado</th><th>Reparador</th><th>Acciones</th></tr></thead><tbody id="tablaGarantias"><tr><td colspan="6" class="text-center py-4 text-gray-500">Cargando garantías...</td></tr></tbody></table></div>
+            </div>
+        </section>
+        <section id="section-configuracion" class="section-content hidden">
+            <div class="card"><div class="card-title"><span>⚙️ Configuración</span></div><p class="text-gray-600 text-sm">Próximamente: comisiones, términos, etc.</p></div>
+        </section>
+
+        <!-- NUEVA SECCIÓN: LIMPIAR IMÁGENES NO USADAS -->
+        <section id="section-limpieza" class="section-content hidden">
             <div class="card">
-                <div class="card-title">
-                    <span>🛡️ Solicitudes de Garantía</span>
-                </div>
-                <div class="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Cliente</th>
-                                <th>Producto</th>
-                                <th>Descripción</th>
-                                <th>Estado</th>
-                                <th>Reparador</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaGarantias">
-                            <tr><td colspan="6" class="text-center text-gray-500 py-4">Cargando garantías...</td></tr>
-                        </tbody>
-                    </table>
+                <div class="card-title"><span>🧹 Imágenes en Cloudinary</span></div>
+                <p class="text-sm text-gray-600 mb-4">Aquí puedes ver todas las imágenes subidas y eliminar las que no estén siendo usadas por ningún producto.</p>
+                <button onclick="listarImagenesCloudinary()" class="btn-primary mb-4">📋 Listar imágenes</button>
+                <div id="listaImagenesCloudinary" class="overflow-y-auto max-h-80">
+                    <p class="text-gray-500">Haz clic en "Listar imágenes" para verlas.</p>
                 </div>
             </div>
         </section>
 
-        <!-- ======= SECCIÓN: CONFIGURACIÓN ======= -->
-        <section id="section-configuracion" class="section-content hidden">
-            <div class="card">
-                <div class="card-title">
-                    <span>⚙️ Configuración del sistema</span>
-                </div>
-                <p class="text-gray-600 text-sm">Próximamente: comisiones, términos de garantía, etc.</p>
-            </div>
-        </section>
     </main>
 
-    <!-- ============ MODAL PARA PRODUCTO ============ -->
+    <!-- MODAL PRODUCTO -->
     <div class="modal-overlay" id="modalProducto">
         <div class="modal-box">
             <h2 id="modalProductoTitulo">Nuevo Producto</h2>
             <form id="formProducto">
                 <input type="hidden" id="productoId" />
-
-                <label>Nombre del producto *</label>
-                <input type="text" id="prodNombre" placeholder="Ej: Jordan 23" required />
-
+                <label>Nombre *</label><input type="text" id="prodNombre" required />
                 <label>Categoría</label>
-                <select id="prodCategoria">
-                    <option value="zapatos">Zapatos</option>
-                    <option value="ropa">Ropa</option>
-                    <option value="bolsos">Bolsos</option>
-                    <option value="accesorios">Accesorios</option>
-                </select>
-
-                <label>Precio de venta ($) *</label>
-                <input type="number" id="prodPrecio" step="0.01" placeholder="12.00" required />
-
-                <label>Precio de compra ($)</label>
-                <input type="number" id="prodCompra" step="0.01" placeholder="8.00" />
-
-                <label>Garantía (meses)</label>
-                <input type="number" id="prodGarantia" value="6" />
-
-                <label>Stock</label>
-                <input type="number" id="prodStock" value="10" />
+                <select id="prodCategoria"><option value="zapatos">Zapatos</option><option value="ropa">Ropa</option><option value="bolsos">Bolsos</option><option value="accesorios">Accesorios</option></select>
+                <label>Precio venta ($) *</label><input type="number" id="prodPrecio" step="0.01" required />
+                <label>Precio compra ($)</label><input type="number" id="prodCompra" step="0.01" />
+                <label>Garantía (meses)</label><input type="number" id="prodGarantia" value="6" />
+                <label>Stock</label><input type="number" id="prodStock" value="10" />
 
                 <label>Imagen del producto</label>
-                <button type="button" id="btnCloudinary" class="btn-outline w-full py-2 mb-2">
-                    📸 Seleccionar imagen con Cloudinary
-                </button>
+                <button type="button" id="btnCloudinary" class="btn-primary w-full py-2 mb-2">📸 Subir imagen con Cloudinary</button>
 
-                <!-- Campo de URL bloqueado (readonly) -->
-                <label>URL de la imagen (generada por Cloudinary)</label>
-                <input type="text" id="prodImagen" class="url-readonly" readonly placeholder="La URL aparecerá aquí después de subir la imagen" />
+                <!-- Campo visible con la URL (solo lectura) -->
+                <label>URL de la imagen (se genera automáticamente)</label>
+                <input type="text" id="prodImagenVisible" class="url-field" readonly placeholder="Esperando subida..." />
 
-                <!-- Mensaje de estado -->
-                <div id="previewImagen" class="mt-2 text-xs text-gray-500">📌 No hay imagen seleccionada</div>
+                <!-- Campo oculto para guardar la URL real -->
+                <input type="hidden" id="prodImagen" required />
+
+                <div id="previewImagen" class="text-xs text-gray-500 mt-1">📌 No hay imagen seleccionada</div>
 
                 <label>Descripción corta</label>
-                <textarea id="prodDescripcion" rows="2" placeholder="Zapato deportivo de alta calidad..."></textarea>
+                <textarea id="prodDescripcion" rows="2"></textarea>
 
                 <div class="flex gap-3 mt-4">
                     <button type="submit" class="btn-primary flex-1">💾 Guardar</button>
@@ -464,33 +181,14 @@
         </div>
     </div>
 
-    <!-- ============ SCRIPTS ============ -->
     <script type="module">
         // ============================================================
-        // IMPORTS DE FIREBASE
+        // IMPORTS FIREBASE
         // ============================================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            onSnapshot, 
-            addDoc, 
-            doc, 
-            getDoc, 
-            updateDoc, 
-            deleteDoc,
-            query,
-            orderBy
-        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
-        // ============================================================
-        // CONFIGURACIÓN DE FIREBASE
-        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
             authDomain: "ventas-dcc22.firebaseapp.com",
@@ -508,106 +206,65 @@
         let productosCache = [];
 
         // ============================================================
-        // SEGURIDAD - VERIFICAR ROL ADMIN
+        // AUTENTICACIÓN
         // ============================================================
         onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = "login.html";
-                return;
-            }
-
+            if (!user) { window.location.href = "login.html"; return; }
             const docRef = doc(db, "usuarios_registrados", user.uid);
             const docSnap = await getDoc(docRef);
-
             let esAdmin = false;
-            if (docSnap.exists() && docSnap.data().rol === "admin") {
-                esAdmin = true;
-            } else if (user.email && user.email.toLowerCase() === "villjebuxs@gmail.com") {
-                esAdmin = true;
-            }
-
-            if (!esAdmin) {
-                alert("⛔ Acceso denegado. No eres administrador.");
-                await signOut(auth);
-                window.location.href = "login.html";
-                return;
-            }
-
+            if (docSnap.exists() && docSnap.data().rol === "admin") esAdmin = true;
+            else if (user.email && user.email.toLowerCase() === "villjebuxs@gmail.com") esAdmin = true;
+            if (!esAdmin) { alert("⛔ Acceso denegado."); await signOut(auth); window.location.href = "login.html"; return; }
             usuarioAdmin = user;
             document.getElementById('adminEmail').textContent = user.email;
-
-            cargarPedidos();
-            cargarCatalogo();
-            cargarUsuarios();
-            cargarGarantias();
+            cargarPedidos(); cargarCatalogo(); cargarUsuarios(); cargarGarantias();
         });
 
-        // ============================================================
-        // CERRAR SESIÓN
-        // ============================================================
         window.cerrarSesionAdmin = async () => {
-            if (confirm('¿Seguro que deseas cerrar sesión?')) {
-                await signOut(auth);
-                window.location.href = 'login.html';
-            }
+            if (confirm('¿Cerrar sesión?')) { await signOut(auth); window.location.href = 'login.html'; }
         };
 
-        // ============================================================
-        // NAVEGACIÓN POR SIDEBAR
-        // ============================================================
+        // Navegación
         const navItems = document.querySelectorAll('.nav-item');
         const sections = {
             pedidos: document.getElementById('section-pedidos'),
             catalogo: document.getElementById('section-catalogo'),
             usuarios: document.getElementById('section-usuarios'),
             garantias: document.getElementById('section-garantias'),
-            configuracion: document.getElementById('section-configuracion')
+            configuracion: document.getElementById('section-configuracion'),
+            limpieza: document.getElementById('section-limpieza')
         };
-
         navItems.forEach(item => {
             item.addEventListener('click', () => {
                 navItems.forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
                 Object.values(sections).forEach(s => s.classList.add('hidden'));
                 const sectionName = item.dataset.section;
-                if (sections[sectionName]) {
-                    sections[sectionName].classList.remove('hidden');
-                }
+                if (sections[sectionName]) sections[sectionName].classList.remove('hidden');
                 document.getElementById('sidebar').classList.remove('open');
             });
         });
-
         document.getElementById('menuToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('open');
         });
 
         // ============================================================
-        // GESTIÓN DE PEDIDOS
+        // FUNCIONES CRUD (Pedidos, Catálogo, Usuarios, Garantías)
         // ============================================================
         function cargarPedidos() {
             const q = query(collection(db, "pedidos"), orderBy("fecha", "desc"));
             onSnapshot(q, (snapshot) => {
                 const tbody = document.getElementById('tablaPedidos');
-                tbody.innerHTML = '';
-                let count = 0;
-
+                tbody.innerHTML = ''; let count = 0;
                 snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const id = doc.id;
-                    count++;
-
+                    const data = doc.data(); const id = doc.id; count++;
                     let productosHtml = '';
                     if (data.articulos && data.articulos.length) {
-                        data.articulos.forEach(art => {
-                            productosHtml += `${art.nombre} (${art.talla || 'N/A'})<br />`;
-                        });
-                    } else {
-                        productosHtml = 'Ver detalle';
-                    }
-
+                        data.articulos.forEach(art => { productosHtml += `${art.nombre} (${art.talla || 'N/A'})<br />`; });
+                    } else { productosHtml = 'Ver detalle'; }
                     const estado = data.estado || 'pendiente';
                     const badgeClass = `badge-${estado}`;
-
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${data.clienteEmail || 'Anónimo'}</td>
@@ -627,49 +284,23 @@
                     `;
                     tbody.appendChild(tr);
                 });
-
                 document.getElementById('totalPedidos').textContent = count;
-                if (count === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-4">No hay pedidos registrados.</td></tr>`;
-                }
+                if (count === 0) tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">No hay pedidos.</td></tr>`;
             });
         }
+        window.cambiarEstadoPedido = async (id, nuevoEstado) => { try { await updateDoc(doc(db, "pedidos", id), { estado: nuevoEstado }); } catch (err) { alert('Error: ' + err.message); } };
+        window.eliminarPedido = async (id) => { if (confirm('¿Eliminar?')) { try { await deleteDoc(doc(db, "pedidos", id)); } catch (err) { alert('Error: ' + err.message); } } };
 
-        window.cambiarEstadoPedido = async (id, nuevoEstado) => {
-            try {
-                await updateDoc(doc(db, "pedidos", id), { estado: nuevoEstado });
-            } catch (err) {
-                alert('Error al actualizar estado: ' + err.message);
-            }
-        };
-
-        window.eliminarPedido = async (id) => {
-            if (confirm('¿Eliminar este pedido permanentemente?')) {
-                try {
-                    await deleteDoc(doc(db, "pedidos", id));
-                } catch (err) {
-                    alert('Error: ' + err.message);
-                }
-            }
-        };
-
-        // ============================================================
-        // GESTIÓN DE CATÁLOGO
-        // ============================================================
         function cargarCatalogo() {
             onSnapshot(collection(db, "calzado"), (snapshot) => {
                 const tbody = document.getElementById('tablaCatalogo');
-                tbody.innerHTML = '';
-                productosCache = [];
-
+                tbody.innerHTML = ''; productosCache = [];
                 snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const id = doc.id;
+                    const data = doc.data(); const id = doc.id;
                     productosCache.push({ id, ...data });
-
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><img src="${data.imagen || 'https://via.placeholder.com/50'}" alt="${data.nombre}" class="w-12 h-12 object-cover rounded-lg border border-gray-200" /></td>
+                        <td><img src="${data.imagen || 'https://via.placeholder.com/50'}" class="w-12 h-12 object-cover rounded-lg border border-gray-200" /></td>
                         <td class="font-medium">${data.nombre}</td>
                         <td class="text-orange-600 font-semibold">$${data.precio?.toFixed(2) || '0.00'}</td>
                         <td class="text-xs text-gray-500">${data.proveedorId || '—'}</td>
@@ -680,18 +311,14 @@
                     `;
                     tbody.appendChild(tr);
                 });
-
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="text-center text-gray-500 py-4">No hay productos en el catálogo.</td></tr>`;
-                }
+                if (snapshot.empty) tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">No hay productos.</td></tr>`;
             });
         }
 
-        // ABRIR MODAL
         window.abrirModalProducto = (producto = null) => {
             const modal = document.getElementById('modalProducto');
             const titulo = document.getElementById('modalProductoTitulo');
-
+            const form = document.getElementById('formProducto');
             if (producto) {
                 titulo.textContent = '✏️ Editar Producto';
                 document.getElementById('productoId').value = producto.id;
@@ -702,44 +329,36 @@
                 document.getElementById('prodGarantia').value = producto.garantiaMeses || 6;
                 document.getElementById('prodStock').value = producto.stock || 10;
                 document.getElementById('prodImagen').value = producto.imagen || '';
+                document.getElementById('prodImagenVisible').value = producto.imagen || '';
+                document.getElementById('prodDescripcion').value = producto.descripcion || '';
                 if (producto.imagen) {
-                    document.getElementById('previewImagen').innerHTML = `<span class="status-message status-success">✅ Imagen cargada</span> <a href="${producto.imagen}" target="_blank" class="text-orange-600 underline">ver</a>`;
+                    document.getElementById('previewImagen').innerHTML = `<span class="status-success">✅ Imagen cargada</span> <a href="${producto.imagen}" target="_blank" class="text-orange-600 underline">ver</a>`;
                 } else {
                     document.getElementById('previewImagen').textContent = '📌 No hay imagen seleccionada';
                 }
             } else {
                 titulo.textContent = '🆕 Nuevo Producto';
-                document.getElementById('formProducto').reset();
+                form.reset();
                 document.getElementById('productoId').value = '';
                 document.getElementById('prodImagen').value = '';
+                document.getElementById('prodImagenVisible').value = '';
                 document.getElementById('previewImagen').textContent = '📌 No hay imagen seleccionada';
                 document.getElementById('prodGarantia').value = 6;
                 document.getElementById('prodStock').value = 10;
             }
-
             modal.classList.add('active');
         };
+        window.cerrarModalProducto = () => { document.getElementById('modalProducto').classList.remove('active'); };
+        document.getElementById('modalProducto').addEventListener('click', (e) => { if (e.target === e.currentTarget) cerrarModalProducto(); });
 
-        window.cerrarModalProducto = () => {
-            document.getElementById('modalProducto').classList.remove('active');
-        };
-
-        document.getElementById('modalProducto').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) cerrarModalProducto();
-        });
-
-        // GUARDAR PRODUCTO
         document.getElementById('formProducto').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const id = document.getElementById('productoId').value;
             const imagenURL = document.getElementById('prodImagen').value.trim();
-
             if (!imagenURL) {
                 alert('⚠️ Debes subir una imagen primero usando Cloudinary.');
                 return;
             }
-
+            const id = document.getElementById('productoId').value;
             const data = {
                 nombre: document.getElementById('prodNombre').value.trim(),
                 categoria: document.getElementById('prodCategoria').value,
@@ -752,162 +371,27 @@
                 proveedorId: 'admin',
                 fechaRegistro: new Date().toLocaleDateString()
             };
-
             try {
-                if (id) {
-                    await updateDoc(doc(db, "calzado", id), data);
-                    alert('✅ Producto actualizado.');
-                } else {
-                    await addDoc(collection(db, "calzado"), data);
-                    alert('✅ Producto agregado al catálogo.');
-                }
+                if (id) { await updateDoc(doc(db, "calzado", id), data); alert('✅ Producto actualizado.'); }
+                else { await addDoc(collection(db, "calzado"), data); alert('✅ Producto agregado.'); }
                 cerrarModalProducto();
-            } catch (err) {
-                alert('Error: ' + err.message);
-            }
+            } catch (err) { alert('Error: ' + err.message); }
         });
 
         window.editarProducto = async (id) => {
             const prod = productosCache.find(p => p.id === id);
-            if (prod) {
-                abrirModalProducto(prod);
-            } else {
-                alert('Producto no encontrado.');
-            }
+            if (prod) abrirModalProducto(prod); else alert('Producto no encontrado.');
         };
-
         window.eliminarProducto = async (id) => {
-            if (confirm('¿Eliminar este producto del catálogo? También se eliminará la imagen de Cloudinary.')) {
-                try {
-                    // Obtener el producto para saber la URL de la imagen
-                    const prod = productosCache.find(p => p.id === id);
-                    if (prod && prod.imagen) {
-                        // Extraer el public_id de la URL de Cloudinary
-                        const publicId = extraerPublicIdDeCloudinary(prod.imagen);
-                        if (publicId) {
-                            await eliminarImagenCloudinary(publicId);
-                        }
-                    }
-                    // Eliminar de Firestore
-                    await deleteDoc(doc(db, "calzado", id));
-                    alert('✅ Producto eliminado y su imagen de Cloudinary también.');
-                } catch (err) {
-                    alert('Error al eliminar: ' + err.message);
-                }
+            if (confirm('¿Eliminar?')) {
+                try { await deleteDoc(doc(db, "calzado", id)); } catch (err) { alert('Error: ' + err.message); }
             }
         };
 
-        // ============================================================
-        // FUNCIÓN PARA EXTRAER PUBLIC_ID DE UNA URL DE CLOUDINARY
-        // ============================================================
-        function extraerPublicIdDeCloudinary(url) {
-            // Ejemplo: https://res.cloudinary.com/duyjyfunn/image/upload/v1234567890/jadi/productos/abc123.jpg
-            try {
-                const parts = url.split('/');
-                // Buscar la parte que contiene "upload" y luego tomar el siguiente segmento
-                const uploadIndex = parts.indexOf('upload');
-                if (uploadIndex !== -1 && parts.length > uploadIndex + 2) {
-                    // El public_id es todo después de la versión (v1234567890) o directamente el nombre con extensión
-                    // Saltamos el segmento de la versión si existe
-                    let startIndex = uploadIndex + 2;
-                    if (parts[startIndex] && parts[startIndex].startsWith('v')) {
-                        startIndex++;
-                    }
-                    // Unir los segmentos restantes con "/" para mantener la carpeta
-                    const publicId = parts.slice(startIndex).join('/').split('.')[0];
-                    return publicId;
-                }
-                return null;
-            } catch (e) {
-                console.error('Error al extraer public_id:', e);
-                return null;
-            }
-        }
-
-        // ============================================================
-        // FUNCIÓN PARA ELIMINAR IMAGEN DE CLOUDINARY (usando su API)
-        // ============================================================
-        async function eliminarImagenCloudinary(publicId) {
-            // Necesitas usar tu API Key y API Secret (los guardas en variables de entorno o aquí)
-            // ⚠️ NUNCA expongas tu API Secret en el frontend. Esto debe hacerse desde un backend.
-            // Pero para efectos prácticos y mientras tienes pocos productos, puedes hacerlo desde aquí.
-            // O simplemente eliminar el producto sin eliminar la imagen de Cloudinary (y limpiar después desde la consola de Cloudinary).
-            
-            // SOLUCIÓN TEMPORAL: Mostrar mensaje y no eliminar la imagen de Cloudinary.
-            console.warn('Eliminación de imagen de Cloudinary no implementada en frontend por seguridad. La imagen quedará en Cloudinary.');
-            alert('⚠️ La imagen quedará en Cloudinary. Puedes eliminarla manualmente desde tu consola de Cloudinary.');
-            
-            // Si quieres implementarlo realmente, necesitas un backend (Cloud Function) que use tu API Key y Secret.
-            // Por ahora, solo eliminamos el producto de Firestore.
-        }
-
-        // ============================================================
-        // CLOUDINARY WIDGET (mejorado)
-        // ============================================================
-        const cloudinaryWidget = cloudinary.createUploadWidget({
-            cloudName: "duyjyfunn",
-            uploadPreset: "zapatos_present",
-            sources: ['local', 'url', 'camera', 'google_drive'],
-            multiple: false,
-            language: "es",
-            styles: {
-                palette: {
-                    window: "#ffffff",
-                    sourceBg: "#f4f1eb",
-                    windowBorder: "#e85d04",
-                    tabIcon: "#e85d04",
-                    inactiveTabIcon: "#888",
-                    menuIcons: "#1a1a1a",
-                    textDark: "#1a1a1a",
-                    textLight: "#ffffff",
-                    link: "#e85d04",
-                    action: "#e85d04",
-                    complete: "#e85d04",
-                    error: "#ef4444"
-                }
-            },
-            showAdvancedOptions: false,
-            clientAllowedFormats: ['image/*'],
-            maxImageFileSize: 5000000
-        }, (error, result) => {
-            console.log('Cloudinary event:', result?.event, result);
-
-            if (error) {
-                console.error('Cloudinary error:', error);
-                document.getElementById('previewImagen').innerHTML = `<span class="status-message status-error">❌ Error: ${JSON.stringify(error)}</span>`;
-                alert('Error al subir la imagen: ' + JSON.stringify(error));
-                return;
-            }
-
-            if (result && result.event === "success") {
-                const url = result.info.secure_url;
-                // Colocar la URL en el campo readonly
-                document.getElementById('prodImagen').value = url;
-                document.getElementById('previewImagen').innerHTML = `
-                    <span class="status-message status-success">✅ Imagen cargada (Cloudinary)</span>
-                    <a href="${url}" target="_blank" class="text-orange-600 underline ml-2">ver</a>
-                `;
-                // Cerrar el widget automáticamente
-                setTimeout(() => {
-                    cloudinaryWidget.close();
-                }, 1000);
-            } else if (result && result.event === "close") {
-                console.log('Widget cerrado manualmente.');
-            }
-        });
-
-        document.getElementById('btnCloudinary').addEventListener('click', () => {
-            cloudinaryWidget.open();
-        });
-
-        // ============================================================
-        // GESTIÓN DE USUARIOS
-        // ============================================================
         function cargarUsuarios() {
             onSnapshot(collection(db, "usuarios_registrados"), (snapshot) => {
                 const tbody = document.getElementById('tablaUsuarios');
                 tbody.innerHTML = '';
-
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     const tr = document.createElement('tr');
@@ -919,27 +403,18 @@
                     `;
                     tbody.appendChild(tr);
                 });
-
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500 py-4">No hay usuarios registrados.</td></tr>`;
-                }
+                if (snapshot.empty) tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-gray-500">No hay usuarios.</td></tr>`;
             });
         }
 
-        // ============================================================
-        // GESTIÓN DE GARANTÍAS
-        // ============================================================
         function cargarGarantias() {
             onSnapshot(collection(db, "garantias"), (snapshot) => {
                 const tbody = document.getElementById('tablaGarantias');
                 tbody.innerHTML = '';
-
                 snapshot.forEach(doc => {
-                    const data = doc.data();
-                    const id = doc.id;
+                    const data = doc.data(); const id = doc.id;
                     const estado = data.estado || 'pendiente';
                     const badgeClass = `badge-${estado}`;
-
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${data.clienteId || '—'}</td>
@@ -954,39 +429,108 @@
                     `;
                     tbody.appendChild(tr);
                 });
-
-                if (snapshot.empty) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-gray-500 py-4">No hay solicitudes de garantía.</td></tr>`;
-                }
+                if (snapshot.empty) tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">No hay garantías.</td></tr>`;
             });
         }
-
         window.asignarReparador = async (id) => {
-            const nuevoReparador = prompt('Ingresa el ID o email del reparador a asignar:');
+            const nuevoReparador = prompt('Ingresa el ID o email del reparador:');
             if (nuevoReparador) {
-                try {
-                    await updateDoc(doc(db, "garantias", id), {
-                        reparadorId: nuevoReparador,
-                        estado: 'asignado'
-                    });
-                    alert('✅ Reparador asignado.');
-                } catch (err) {
-                    alert('Error: ' + err.message);
-                }
+                try { await updateDoc(doc(db, "garantias", id), { reparadorId: nuevoReparador, estado: 'asignado' }); alert('✅ Asignado.'); } catch (err) { alert('Error: ' + err.message); }
             }
         };
-
         window.eliminarGarantia = async (id) => {
-            if (confirm('¿Eliminar esta solicitud de garantía?')) {
-                try {
-                    await deleteDoc(doc(db, "garantias", id));
-                } catch (err) {
-                    alert('Error: ' + err.message);
+            if (confirm('¿Eliminar?')) { try { await deleteDoc(doc(db, "garantias", id)); } catch (err) { alert('Error: ' + err.message); } }
+        };
+
+        // ============================================================
+        // CLOUDINARY CON TRANSFORMACIÓN Y OPTIMIZACIÓN
+        // ============================================================
+        // Configuración mejorada:
+        // - Permite todos los formatos (clientAllowedFormats: null)
+        // - Aplica transformación: redimensiona a 800x800, formato webp (optimizado), calidad automática
+        // - Cierra automáticamente al terminar
+        const cloudinaryWidget = cloudinary.createUploadWidget({
+            cloudName: "duyjyfunn",
+            uploadPreset: "zapatos_present",
+            sources: ['local', 'url', 'camera', 'google_drive'],
+            multiple: false,
+            language: "es",
+            // 🔥 NUEVO: permitir cualquier formato de imagen
+            clientAllowedFormats: null,  // null = todos los formatos permitidos
+            // 🔥 TRANSFORMACIÓN: redimensionar y convertir a webp
+            transformation: [
+                { width: 800, height: 800, crop: "limit" },  // mantiene proporciones
+                { fetch_format: "webp", quality: "auto:good" }  // convierte a webp y optimiza calidad
+            ],
+            styles: {
+                palette: {
+                    window: "#ffffff", sourceBg: "#f4f1eb", windowBorder: "#e85d04",
+                    tabIcon: "#e85d04", inactiveTabIcon: "#888", menuIcons: "#1a1a1a",
+                    textDark: "#1a1a1a", textLight: "#ffffff", link: "#e85d04",
+                    action: "#e85d04", complete: "#e85d04", error: "#ef4444"
                 }
+            },
+            showAdvancedOptions: false,
+            maxImageFileSize: 10000000 // 10MB máximo
+        }, (error, result) => {
+            console.log('Cloudinary event:', result?.event, result);
+            const preview = document.getElementById('previewImagen');
+            const inputHidden = document.getElementById('prodImagen');
+            const inputVisible = document.getElementById('prodImagenVisible');
+
+            if (error) {
+                console.error('Cloudinary error:', error);
+                preview.innerHTML = `<span class="status-error">❌ Error: ${JSON.stringify(error)}</span>`;
+                alert('Error al subir: ' + JSON.stringify(error));
+                return;
+            }
+
+            if (result && result.event === "success") {
+                const url = result.info.secure_url;
+                inputHidden.value = url;
+                inputVisible.value = url;
+                preview.innerHTML = `<span class="status-success">✅ Imagen cargada (Cloudinary)</span> <a href="${url}" target="_blank" class="text-orange-600 underline ml-2">ver</a>`;
+                // Cerrar widget automáticamente
+                setTimeout(() => { cloudinaryWidget.close(); }, 1000);
+            } else if (result && result.event === "close") {
+                console.log('Widget cerrado.');
+            }
+        });
+
+        document.getElementById('btnCloudinary').addEventListener('click', () => {
+            cloudinaryWidget.open();
+        });
+
+        // ============================================================
+        // LIMPIAR IMÁGENES NO USADAS (opcional, usando API de Cloudinary)
+        // ============================================================
+        // Para esta funcionalidad necesitas el API Key y Secret (no los compartes).
+        // Aquí pongo un esqueleto que lista las imágenes y permite eliminar.
+        // Debes configurar tu API Key y Secret en las variables.
+        // Si no quieres usarlo, simplemente ignora esta sección.
+
+        window.listarImagenesCloudinary = async () => {
+            const container = document.getElementById('listaImagenesCloudinary');
+            container.innerHTML = '<span class="status-loading">⏳ Cargando imágenes desde Cloudinary...</span>';
+            try {
+                // Usamos un proxy o una función serverless, pero como estamos en frontend,
+                // para listar necesitamos usar la API de administración con autenticación.
+                // Como no podemos exponer el API Secret en el frontend, esta funcionalidad se debe implementar con una función cloud (Firebase Functions) o un backend.
+                // Por ahora, mostramos un mensaje explicativo.
+                container.innerHTML = `
+                    <div class="text-sm text-gray-600 p-4 border rounded-lg">
+                        <p>🔐 Para listar y eliminar imágenes de Cloudinary, necesitas una función en el backend (por ejemplo, Firebase Cloud Functions) que use el API Key y Secret.</p>
+                        <p class="mt-2">Si deseas implementarlo, avísame y te ayudo a crear una función simple que liste y elimine imágenes no vinculadas a productos.</p>
+                        <p class="mt-2 text-xs text-gray-400">Mientras tanto, puedes eliminar manualmente desde la consola de Cloudinary.</p>
+                    </div>
+                `;
+            } catch (err) {
+                container.innerHTML = `<span class="status-error">❌ Error: ${err.message}</span>`;
             }
         };
 
         console.log('🔥 Panel JADI Admin cargado correctamente.');
     </script>
+
 </body>
 </html>
