@@ -1,75 +1,242 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JADI · Panel de Administración</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { font-family: 'Inter', sans-serif; }
-        body { background: #f8f5f0; color: #1a1a1a; }
+        /* Estilos generales (igual que antes) */
+        body {
+            background: #f8f5f0;
+            font-family: 'Inter', sans-serif;
+        }
         .sidebar {
-            width: 260px; background: #ffffff; border-right: 1px solid #e5e0d8;
-            height: 100vh; position: fixed; top: 0; left: 0; overflow-y: auto;
-            transition: transform 0.3s ease; z-index: 50;
+            width: 260px;
+            background: #fff;
+            border-right: 1px solid #e5e0d8;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 50;
         }
         .sidebar-brand { padding: 1.5rem; border-bottom: 1px solid #e5e0d8; }
-        .sidebar-brand h1 { font-size: 1.8rem; font-weight: 700; color: #e85d04; letter-spacing: -1px; }
-        .sidebar-brand small { font-size: 0.7rem; color: #888; display: block; margin-top: -4px; }
+        .sidebar-brand h1 { font-size: 1.8rem; font-weight: 700; color: #e85d04; }
         .sidebar .nav-item {
-            display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem;
-            color: #4a4a4a; font-weight: 500; font-size: 0.9rem; cursor: pointer;
-            transition: all 0.2s; border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #4a4a4a;
+            font-weight: 500;
+            cursor: pointer;
+            border-left: 3px solid transparent;
         }
-        .sidebar .nav-item:hover { background: #f8f5f0; color: #e85d04; }
-        .sidebar .nav-item.active { background: #f8f5f0; color: #e85d04; border-left-color: #e85d04; }
-        .sidebar .nav-item .icon { font-size: 1.2rem; width: 24px; text-align: center; }
-        .main-content { margin-left: 260px; padding: 2rem; min-height: 100vh; }
-        .card { background: #ffffff; border-radius: 1rem; border: 1px solid #e5e0d8; padding: 1.5rem; margin-bottom: 1.5rem; }
-        .card-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-        .table-wrap { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        table th { text-align: left; padding: 0.75rem 0.5rem; color: #6b6b6b; font-weight: 600; text-transform: uppercase; font-size: 0.65rem; border-bottom: 1px solid #e5e0d8; }
-        table td { padding: 0.75rem 0.5rem; border-bottom: 1px solid #f0ece6; vertical-align: middle; }
-        table tr:hover td { background: #faf8f5; }
-        .btn-primary { background: #e85d04; color: #fff; font-weight: 600; padding: 0.5rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: 0.2s; }
-        .btn-primary:hover { background: #d35400; transform: scale(1.02); }
-        .btn-outline { background: transparent; border: 1px solid #e85d04; color: #e85d04; font-weight: 500; padding: 0.4rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s; }
-        .btn-outline:hover { background: #e85d04; color: #fff; }
-        .btn-danger { background: #b91c1c; color: #fff; border: none; padding: 0.3rem 0.8rem; border-radius: 0.4rem; font-size: 0.75rem; cursor: pointer; }
-        .btn-danger:hover { background: #dc2626; }
-        .badge { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
+        .sidebar .nav-item:hover,
+        .sidebar .nav-item.active {
+            background: #f8f5f0;
+            color: #e85d04;
+            border-left-color: #e85d04;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .card {
+            background: #fff;
+            border-radius: 1rem;
+            border: 1px solid #e5e0d8;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-primary {
+            background: #e85d04;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background: #d35400;
+        }
+        .btn-danger {
+            background: #b91c1c;
+            color: #fff;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
         .badge-pendiente { background: #fef3c7; color: #92400e; }
         .badge-pagado { background: #d1fae5; color: #065f46; }
         .badge-enviado { background: #dbeafe; color: #1e3a8a; }
         .badge-entregado { background: #d1fae5; color: #065f46; }
-        .badge-asignado { background: #dbeafe; color: #1e3a8a; }
-        .badge-reparado { background: #d1fae5; color: #065f46; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; }
-        .modal-overlay.active { display: flex; }
-        .modal-box { background: #ffffff; border-radius: 1.2rem; padding: 2rem; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-box h2 { color: #e85d04; font-size: 1.3rem; margin-bottom: 1.2rem; }
-        .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 0.6rem 0.8rem; background: #f8f5f0; border: 1px solid #ddd; border-radius: 0.5rem; color: #1a1a1a; margin-bottom: 0.8rem; font-size: 0.9rem; }
-        .modal-box input:focus, .modal-box select:focus, .modal-box textarea:focus { outline: none; border-color: #e85d04; }
-        .modal-box label { display: block; font-size: 0.75rem; color: #6b6b6b; margin-bottom: 0.2rem; font-weight: 600; }
-        .logout-header { background: #b91c1c; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-        .logout-header:hover { background: #dc2626; }
-        .img-help { background: #fef3c7; padding: 0.5rem; border-radius: 0.5rem; font-size: 0.8rem; margin-bottom: 0.8rem; }
-        .img-help a { color: #e85d04; font-weight: 600; text-decoration: underline; }
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); width: 280px; }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; padding: 1rem; }
-            .menu-toggle { display: block !important; }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
         }
-        .menu-toggle { display: none; background: none; border: none; color: #1a1a1a; font-size: 1.8rem; cursor: pointer; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f4f1eb; }
-        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #e85d04; }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #fff;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-box input,
+        .modal-box select,
+        .modal-box textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background: #f8f5f0;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .modal-box label {
+            display: block;
+            font-size: 0.75rem;
+            color: #6b6b6b;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
+        .img-preview {
+            margin-top: 0.5rem;
+            max-width: 100%;
+            max-height: 150px;
+            border-radius: 0.5rem;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #e85d04;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 0.8s linear infinite;
+            display: inline-block;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .logout-header {
+            background: #b91c1c;
+            color: #fff;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .logout-header:hover {
+            background: #dc2626;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .menu-toggle {
+                display: block !important;
+            }
+        }
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #1a1a1a;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        table th {
+            text-align: left;
+            padding: 0.75rem 0.5rem;
+            color: #6b6b6b;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            border-bottom: 1px solid #e5e0d8;
+        }
+        table td {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid #f0ece6;
+            vertical-align: middle;
+        }
+        table tr:hover td {
+            background: #faf8f5;
+        }
+        .status-ok {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+        }
+        .status-loading {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+        }
     </style>
 </head>
 <body>
@@ -81,13 +248,13 @@
             <small>Panel de Control</small>
         </div>
         <nav class="mt-6">
-            <div class="nav-item active" data-section="pedidos"><span class="icon">📦</span> Pedidos</div>
-            <div class="nav-item" data-section="catalogo"><span class="icon">🛍️</span> Catálogo</div>
-            <div class="nav-item" data-section="usuarios"><span class="icon">👥</span> Usuarios</div>
-            <div class="nav-item" data-section="garantias"><span class="icon">🛡️</span> Garantías</div>
+            <div class="nav-item active" data-section="pedidos"><span>📦</span> Pedidos</div>
+            <div class="nav-item" data-section="catalogo"><span>🛍️</span> Catálogo</div>
+            <div class="nav-item" data-section="usuarios"><span>👥</span> Usuarios</div>
+            <div class="nav-item" data-section="garantias"><span>🛡️</span> Garantías</div>
         </nav>
-        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-[#e5e0d8]">
-            <button onclick="cerrarSesionAdmin()" class="w-full btn-outline text-sm">🚪 Cerrar Sesión</button>
+        <div class="absolute bottom-0 left-0 w-full p-4 border-t border-gray-200">
+            <button onclick="cerrarSesionAdmin()" class="w-full btn-primary text-sm">🚪 Cerrar Sesión</button>
         </div>
     </aside>
 
@@ -105,7 +272,7 @@
         <section id="section-pedidos" class="section-content">
             <div class="card">
                 <div class="card-title"><span>📦 Pedidos recibidos</span><span id="totalPedidos" class="text-sm text-gray-500">0</span></div>
-                <div class="table-wrap">
+                <div class="overflow-x-auto">
                     <table>
                         <thead><tr><th>Cliente</th><th>Productos</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody id="tablaPedidos"><tr><td colspan="6" class="text-center py-4 text-gray-500">Cargando pedidos...</td></tr></tbody>
@@ -118,7 +285,7 @@
         <section id="section-catalogo" class="section-content hidden">
             <div class="card">
                 <div class="card-title"><span>🛍️ Gestión de Catálogo</span><button onclick="abrirModalProducto()" class="btn-primary text-sm">+ Agregar Producto</button></div>
-                <div class="table-wrap">
+                <div class="overflow-x-auto">
                     <table>
                         <thead><tr><th>Imagen</th><th>Nombre</th><th>Precio</th><th>Proveedor</th><th>Acciones</th></tr></thead>
                         <tbody id="tablaCatalogo"><tr><td colspan="5" class="text-center py-4 text-gray-500">Cargando productos...</td></tr></tbody>
@@ -131,7 +298,7 @@
         <section id="section-usuarios" class="section-content hidden">
             <div class="card">
                 <div class="card-title"><span>👥 Usuarios del sistema</span></div>
-                <div class="table-wrap">
+                <div class="overflow-x-auto">
                     <table>
                         <thead><tr><th>Email</th><th>Rol</th><th>WhatsApp</th><th>Fecha Registro</th></tr></thead>
                         <tbody id="tablaUsuarios"><tr><td colspan="4" class="text-center py-4 text-gray-500">Cargando usuarios...</td></tr></tbody>
@@ -144,7 +311,7 @@
         <section id="section-garantias" class="section-content hidden">
             <div class="card">
                 <div class="card-title"><span>🛡️ Solicitudes de Garantía</span></div>
-                <div class="table-wrap">
+                <div class="overflow-x-auto">
                     <table>
                         <thead><tr><th>Cliente</th><th>Producto</th><th>Descripción</th><th>Estado</th><th>Reparador</th><th>Acciones</th></tr></thead>
                         <tbody id="tablaGarantias"><tr><td colspan="6" class="text-center py-4 text-gray-500">Cargando garantías...</td></tr></tbody>
@@ -157,7 +324,7 @@
     <!-- MODAL PRODUCTO -->
     <div class="modal-overlay" id="modalProducto">
         <div class="modal-box">
-            <h2 id="modalProductoTitulo">Nuevo Producto</h2>
+            <h2 id="modalProductoTitulo" class="text-2xl font-bold text-orange-600">Nuevo Producto</h2>
             <form id="formProducto">
                 <input type="hidden" id="productoId" />
 
@@ -184,20 +351,20 @@
                 <label>Stock</label>
                 <input type="number" id="prodStock" value="10" />
 
-                <!-- IMAGEN: Subida manual a ImgBB -->
-                <label>URL de la imagen</label>
-                <div class="img-help">
-                    📸 Sube la imagen en <a href="https://imgbb.com" target="_blank">ImgBB.com</a> 
-                    (sin registro) y pega el enlace <strong>"URL directa"</strong> aquí abajo.
-                </div>
-                <input type="url" id="prodImagen" placeholder="https://i.ibb.co/xxxxx/imagen.jpg" required />
+                <!-- IMAGEN: Subida automática con ImgBB API -->
+                <label>Subir imagen (se optimizará automáticamente)</label>
+                <input type="file" id="fileInput" accept="image/*" />
+                <button type="button" id="btnSubirImgBB" class="btn-primary mt-2 w-full">⬆️ Subir imagen a ImgBB</button>
+                <div id="estadoSubida" class="mt-2 text-xs text-gray-500">Sin imagen</div>
+                <input type="hidden" id="prodImagen" required />
+                <img id="previewImagen" class="img-preview" src="#" alt="Vista previa" />
 
                 <label>Descripción corta</label>
                 <textarea id="prodDescripcion" rows="2"></textarea>
 
                 <div class="flex gap-3 mt-4">
                     <button type="submit" class="btn-primary flex-1">💾 Guardar</button>
-                    <button type="button" onclick="cerrarModalProducto()" class="btn-outline flex-1">Cancelar</button>
+                    <button type="button" onclick="cerrarModalProducto()" class="btn-primary flex-1 bg-gray-500 hover:bg-gray-600">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -209,22 +376,22 @@
         // IMPORTS DE FIREBASE
         // ============================================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            onSnapshot, 
-            addDoc, 
-            doc, 
-            getDoc, 
-            updateDoc, 
+        import {
+            getFirestore,
+            collection,
+            onSnapshot,
+            addDoc,
+            doc,
+            getDoc,
+            updateDoc,
             deleteDoc,
             query,
             orderBy
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-        import { 
-            getAuth, 
-            onAuthStateChanged, 
-            signOut 
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signOut
         } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         // ============================================================
@@ -243,6 +410,9 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // ============================================================
+        // VARIABLES GLOBALES
+        // ============================================================
         let usuarioAdmin = null;
         let productosCache = [];
 
@@ -274,7 +444,7 @@
 
             usuarioAdmin = user;
             document.getElementById('adminEmail').textContent = user.email;
-            
+
             cargarPedidos();
             cargarCatalogo();
             cargarUsuarios();
@@ -409,8 +579,8 @@
                         <td class="text-orange-600 font-semibold">$${data.precio?.toFixed(2) || '0.00'}</td>
                         <td class="text-xs text-gray-500">${data.proveedorId || '—'}</td>
                         <td>
-                            <button onclick="editarProducto('${id}')" class="btn-outline text-xs px-3 py-1">✏️</button>
-                            <button onclick="eliminarProducto('${id}')" class="btn-danger text-xs px-3 py-1">🗑️</button>
+                            <button onclick="editarProducto('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">✏️</button>
+                            <button onclick="eliminarProducto('${id}')" class="btn-danger text-xs px-2 py-1">🗑️</button>
                         </td>
                     `;
                     tbody.appendChild(tr);
@@ -422,7 +592,9 @@
             });
         }
 
-        // ABRIR MODAL
+        // ============================================================
+        // ABRIR / CERRAR MODAL
+        // ============================================================
         window.abrirModalProducto = (producto = null) => {
             const modal = document.getElementById('modalProducto');
             const titulo = document.getElementById('modalProductoTitulo');
@@ -437,11 +609,20 @@
                 document.getElementById('prodGarantia').value = producto.garantiaMeses || 6;
                 document.getElementById('prodStock').value = producto.stock || 10;
                 document.getElementById('prodImagen').value = producto.imagen || '';
+                document.getElementById('estadoSubida').innerHTML = producto.imagen ? '✅ Imagen cargada' : 'Sin imagen';
+                if (producto.imagen) {
+                    const preview = document.getElementById('previewImagen');
+                    preview.src = producto.imagen;
+                    preview.style.display = 'block';
+                }
                 document.getElementById('prodDescripcion').value = producto.descripcion || '';
             } else {
                 titulo.textContent = '🆕 Nuevo Producto';
                 document.getElementById('formProducto').reset();
                 document.getElementById('productoId').value = '';
+                document.getElementById('prodImagen').value = '';
+                document.getElementById('estadoSubida').innerHTML = 'Sin imagen';
+                document.getElementById('previewImagen').style.display = 'none';
                 document.getElementById('prodGarantia').value = 6;
                 document.getElementById('prodStock').value = 10;
             }
@@ -457,11 +638,124 @@
             if (e.target === e.currentTarget) cerrarModalProducto();
         });
 
+        // ============================================================
+        // SUBIR IMAGEN A IMGBB (con optimización automática)
+        // ============================================================
+        const IMGBB_API_KEY = 'cb12e6a76abb14df50fa90b78479a43c'; // Tu API Key
+        const IMGBB_ENDPOINT = 'https://api.imgbb.com/1/upload';
+
+        document.getElementById('btnSubirImgBB').addEventListener('click', async () => {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Selecciona una imagen primero.');
+                return;
+            }
+
+            const estadoDiv = document.getElementById('estadoSubida');
+            const preview = document.getElementById('previewImagen');
+
+            // Mostrar estado de carga
+            estadoDiv.innerHTML = `<span class="status-loading">⏳ Subiendo y optimizando imagen...</span>`;
+
+            try {
+                // 1. Optimizar la imagen (redimensionar y convertir a WebP)
+                const imagenOptimizada = await optimizarImagen(file, 800, 800);
+
+                // 2. Crear FormData para la API de ImgBB
+                const formData = new FormData();
+                formData.append('image', imagenOptimizada);
+                formData.append('key', IMGBB_API_KEY);
+
+                // 3. Enviar a ImgBB
+                const response = await fetch(IMGBB_ENDPOINT, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const url = data.data.url;
+                    document.getElementById('prodImagen').value = url;
+                    estadoDiv.innerHTML = `<span class="status-ok">✅ Imagen subida con éxito</span>`;
+                    preview.src = url;
+                    preview.style.display = 'block';
+                } else {
+                    throw new Error(data.error?.message || 'Error desconocido de ImgBB');
+                }
+            } catch (error) {
+                console.error('Error al subir imagen:', error);
+                estadoDiv.innerHTML = `<span class="status-error">❌ Error: ${error.message}</span>`;
+                alert('Error al subir la imagen: ' + error.message);
+            }
+        });
+
+        // ============================================================
+        // FUNCIÓN PARA OPTIMIZAR LA IMAGEN (Canvas)
+        // ============================================================
+        function optimizarImagen(file, maxWidth, maxHeight) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Calcular nuevas dimensiones manteniendo proporción
+                        let width = img.width;
+                        let height = img.height;
+
+                        if (width > maxWidth) {
+                            height = (maxWidth / width) * height;
+                            width = maxWidth;
+                        }
+                        if (height > maxHeight) {
+                            width = (maxHeight / height) * width;
+                            height = maxHeight;
+                        }
+
+                        // Crear canvas para redimensionar
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.round(width);
+                        canvas.height = Math.round(height);
+                        const ctx = canvas.getContext('2d');
+
+                        // Dibujar imagen redimensionada con alta calidad
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        // Convertir a WebP con calidad 90% (buen equilibrio peso/calidad)
+                        canvas.toBlob((blob) => {
+                            if (blob) {
+                                resolve(blob);
+                            } else {
+                                reject(new Error('Error al convertir la imagen a WebP'));
+                            }
+                        }, 'image/webp', 0.9);
+                    };
+                    img.onerror = () => reject(new Error('Error al cargar la imagen'));
+                    img.src = e.target.result;
+                };
+                reader.onerror = () => reject(new Error('Error al leer el archivo'));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // ============================================================
         // GUARDAR PRODUCTO
+        // ============================================================
         document.getElementById('formProducto').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const id = document.getElementById('productoId').value;
+            const imagenURL = document.getElementById('prodImagen').value.trim();
+
+            if (!imagenURL) {
+                alert('⚠️ Debes subir una imagen primero usando el botón "Subir imagen a ImgBB".');
+                return;
+            }
+
             const data = {
                 nombre: document.getElementById('prodNombre').value.trim(),
                 categoria: document.getElementById('prodCategoria').value,
@@ -469,16 +763,11 @@
                 precioCompra: parseFloat(document.getElementById('prodCompra').value) || 0,
                 garantiaMeses: parseInt(document.getElementById('prodGarantia').value) || 6,
                 stock: parseInt(document.getElementById('prodStock').value) || 10,
-                imagen: document.getElementById('prodImagen').value.trim(),
+                imagen: imagenURL,
                 descripcion: document.getElementById('prodDescripcion').value.trim(),
                 proveedorId: 'admin',
                 fechaRegistro: new Date().toLocaleDateString()
             };
-
-            if (!data.imagen) {
-                alert('⚠️ Debes pegar la URL de la imagen (subida en ImgBB).');
-                return;
-            }
 
             try {
                 if (id) {
@@ -490,10 +779,13 @@
                 }
                 cerrarModalProducto();
             } catch (err) {
-                alert('Error: ' + err.message);
+                alert('Error al guardar: ' + err.message);
             }
         });
 
+        // ============================================================
+        // EDITAR / ELIMINAR PRODUCTO
+        // ============================================================
         window.editarProducto = async (id) => {
             const prod = productosCache.find(p => p.id === id);
             if (prod) {
@@ -561,7 +853,7 @@
                         <td><span class="badge ${badgeClass}">${estado}</span></td>
                         <td>${data.reparadorId || 'Sin asignar'}</td>
                         <td>
-                            <button onclick="asignarReparador('${id}')" class="btn-outline text-xs px-2 py-1">👤 Asignar</button>
+                            <button onclick="asignarReparador('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">👤 Asignar</button>
                             <button onclick="eliminarGarantia('${id}')" class="btn-danger text-xs px-2 py-1">🗑️</button>
                         </td>
                     `;
