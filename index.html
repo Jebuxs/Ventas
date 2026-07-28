@@ -1,224 +1,139 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jadi - Ecosistema de Outfit</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JADI · Tienda</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome para íconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* Estilos personalizados para detalles finos */
-        .bg-jadi-dark {
-            background-color: #0f172a;
-        }
-        .text-jadi-gold {
-            color: #fbbf24;
-        }
-        .border-jadi-gold {
-            border-color: #fbbf24;
-        }
-        .hover-glow:hover {
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
-            transform: scale(1.02);
-            transition: all 0.2s ease;
-        }
-        .sidebar-carrito {
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(100%);
-        }
-        .sidebar-carrito.open {
-            transform: translateX(0%);
-        }
-        .hero-gradient {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
+        body { background: #f8f5f0; font-family: 'Inter', sans-serif; }
+        .card-producto { background: #fff; border-radius: 1rem; border: 1px solid #e5e0d8; padding: 1rem; transition: transform 0.2s; }
+        .card-producto:hover { transform: scale(1.02); }
+        .btn-primary { background: #e85d04; color: #fff; font-weight: 600; padding: 0.5rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; }
+        .btn-primary:hover { background: #d35400; }
+        .btn-secondary { background: #6b7280; color: #fff; font-weight: 600; padding: 0.5rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; }
+        .btn-secondary:hover { background: #4b5563; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; }
+        .modal-overlay.active { display: flex; }
+        .modal-box { background: #fff; border-radius: 1.2rem; padding: 2rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-box input, .modal-box select { width: 100%; padding: 0.6rem 0.8rem; background: #f8f5f0; border: 1px solid #ddd; border-radius: 0.5rem; margin-bottom: 0.8rem; }
+        .modal-box label { display: block; font-size: 0.75rem; color: #6b6b6b; font-weight: 600; margin-bottom: 0.2rem; }
+        .filtro-btn { background: #fff; border: 1px solid #e5e0d8; padding: 0.4rem 1.2rem; border-radius: 9999px; cursor: pointer; transition: 0.2s; }
+        .filtro-btn:hover { background: #e85d04; color: #fff; border-color: #e85d04; }
+        .filtro-btn.active { background: #e85d04; color: #fff; border-color: #e85d04; }
+        .badge-estado { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
+        .badge-pendiente_pago { background: #fef3c7; color: #92400e; }
+        .badge-pagado { background: #d1fae5; color: #065f46; }
+        .badge-enviado { background: #dbeafe; color: #1e3a8a; }
+        .badge-entregado { background: #d1fae5; color: #065f46; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans antialiased">
+<body>
 
-    <!-- ==================== NAVEGACIÓN ==================== -->
-    <nav class="bg-jadi-dark text-white p-4 shadow-lg sticky top-0 z-50 border-b border-jadi-gold/20">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <!-- Logo -->
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-crown text-jadi-gold text-2xl"></i>
-                <h1 class="text-2xl font-extrabold tracking-wider">JADI</h1>
-                <span class="text-[10px] font-light bg-jadi-gold/20 text-jadi-gold px-2 py-0.5 rounded-full">Ecosistema</span>
-            </div>
-
-            <!-- Buscador (visual) -->
-            <div class="hidden md:flex items-center bg-gray-800 rounded-full px-4 py-1 border border-gray-600 focus-within:border-jadi-gold">
-                <i class="fas fa-search text-gray-400 text-sm mr-2"></i>
-                <input type="text" placeholder="Buscar zapatos, ropa..." class="bg-transparent text-sm text-white focus:outline-none w-48 lg:w-72">
-            </div>
-
-            <!-- Acciones Usuario -->
+            <h1 class="text-2xl font-bold text-orange-600">JADI</h1>
             <div class="flex items-center gap-4">
-                <button onclick="toggleCarrito()" class="relative hover:text-jadi-gold transition">
-                    <i class="fas fa-shopping-bag text-xl"></i>
-                    <span id="contador-carrito" class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">0</span>
-                </button>
-                
-                <div id="usuario-anonimo" class="flex gap-2">
-                    <a href="login.html" class="bg-jadi-gold/20 hover:bg-jadi-gold/30 text-white px-4 py-1.5 rounded-full text-sm font-semibold transition border border-jadi-gold/30">
-                        <i class="fas fa-user mr-1"></i> Ingresar
-                    </a>
-                </div>
-                <div id="usuario-autenticado" class="hidden items-center gap-3">
-                    <span id="email-usuario" class="text-sm font-medium bg-gray-800 px-3 py-1 rounded-full"></span>
-                    <button onclick="cerrarSesion()" class="text-xs text-red-300 hover:text-red-200 underline">Salir</button>
-                </div>
+                <span class="text-sm text-gray-600" id="usuarioEmail">Invitado</span>
+                <a href="login.html" class="btn-primary text-sm">Ingresar</a>
+                <button onclick="verCarrito()" class="btn-secondary text-sm">🛒 Carrito (<span id="carritoCount">0</span>)</button>
             </div>
         </div>
     </nav>
 
-    <!-- ==================== HERO / BANNER ==================== -->
-    <section class="hero-gradient text-white py-12 px-4 border-b border-jadi-gold/20">
-        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
-            <div class="md:w-1/2 space-y-4 text-center md:text-left">
-                <span class="bg-jadi-gold/20 text-jadi-gold text-xs font-bold px-4 py-1 rounded-full inline-block">NUEVA TEMPORADA</span>
-                <h2 class="text-4xl md:text-5xl font-extrabold leading-tight">
-                    Viste tu <span class="text-jadi-gold">Estilo</span>, <br> Asegura tu <span class="text-jadi-gold">Compra</span>
-                </h2>
-                <p class="text-gray-300 text-lg max-w-md">Encuentra zapatos, ropa y accesorios con garantía incluida y servicio postventa en todo Ecuador.</p>
-                <div class="flex flex-wrap gap-3 justify-center md:justify-start">
-                    <a href="#catalogo" class="bg-jadi-gold text-black font-bold px-6 py-3 rounded-full hover:bg-yellow-400 transition flex items-center gap-2">
-                        <i class="fas fa-store"></i> Ver Catálogo
-                    </a>
-                    <button class="border border-white/30 hover:bg-white/10 px-6 py-3 rounded-full transition flex items-center gap-2">
-                        <i class="fas fa-shield-alt"></i> Garantía Jadi
-                    </button>
+    <!-- Filtros -->
+    <div class="container mx-auto p-4 flex gap-2 flex-wrap">
+        <button class="filtro-btn active" data-categoria="todos">Todos</button>
+        <button class="filtro-btn" data-categoria="zapatos">👟 Zapatos</button>
+        <button class="filtro-btn" data-categoria="ropa">👕 Ropa</button>
+        <button class="filtro-btn" data-categoria="bolsos">👜 Bolsos</button>
+        <button class="filtro-btn" data-categoria="accesorios">⌚ Accesorios</button>
+    </div>
+
+    <!-- Catálogo -->
+    <main class="container mx-auto p-4">
+        <div id="catalogo" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <p class="col-span-full text-center text-gray-500">Cargando productos...</p>
+        </div>
+    </main>
+
+    <!-- MODAL CARRITO -->
+    <div class="modal-overlay" id="modalCarrito">
+        <div class="modal-box">
+            <h2 class="text-2xl font-bold text-orange-600">🛒 Tu Carrito</h2>
+            <div id="contenidoCarrito" class="my-4">
+                <p class="text-gray-500">El carrito está vacío.</p>
+            </div>
+            <div id="resumenCarrito" class="hidden">
+                <div class="flex justify-between font-bold text-lg">
+                    <span>Total:</span>
+                    <span id="totalCarrito">$0.00</span>
                 </div>
+                <button onclick="procesarPedido()" class="btn-primary w-full mt-4">Confirmar Pedido</button>
             </div>
-            <div class="md:w-1/2 mt-8 md:mt-0 flex justify-center">
-                <div class="grid grid-cols-2 gap-3">
-                    <img src="https://via.placeholder.com/150/0f172a/fbbf24?text=Zapato" alt="Zapato" class="rounded-xl shadow-2xl border border-jadi-gold/30 hover:scale-105 transition">
-                    <img src="https://via.placeholder.com/150/0f172a/fbbf24?text=Ropa" alt="Ropa" class="rounded-xl shadow-2xl border border-jadi-gold/30 hover:scale-105 transition mt-6">
-                    <img src="https://via.placeholder.com/150/0f172a/fbbf24?text=Accesorio" alt="Accesorio" class="rounded-xl shadow-2xl border border-jadi-gold/30 hover:scale-105 transition -mt-4">
-                    <img src="https://via.placeholder.com/150/0f172a/fbbf24?text=Garantia" alt="Garantia" class="rounded-xl shadow-2xl border border-jadi-gold/30 hover:scale-105 transition">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== CATEGORÍAS ==================== -->
-    <section class="container mx-auto px-4 py-8 -mt-6 relative z-10">
-        <div class="grid grid-cols-3 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            <div class="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-xl transition border-b-4 border-jadi-gold cursor-pointer">
-                <i class="fas fa-shoe-prints text-3xl text-jadi-gold"></i>
-                <p class="text-sm font-bold mt-1">Zapatos</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-xl transition border-b-4 border-gray-300 cursor-pointer">
-                <i class="fas fa-tshirt text-3xl text-indigo-500"></i>
-                <p class="text-sm font-bold mt-1">Ropa</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-xl transition border-b-4 border-gray-300 cursor-pointer">
-                <i class="fas fa-swatchbook text-3xl text-pink-500"></i>
-                <p class="text-sm font-bold mt-1">Accesorios</p>
-            </div>
-            <div class="bg-white rounded-xl shadow-md p-4 text-center hover:shadow-xl transition border-b-4 border-gray-300 cursor-pointer col-span-3 md:col-span-1">
-                <i class="fas fa-tags text-3xl text-green-500"></i>
-                <p class="text-sm font-bold mt-1">Ofertas</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== CATÁLOGO DE PRODUCTOS ==================== -->
-    <section id="catalogo" class="container mx-auto px-4 py-8">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
-                <i class="fas fa-grid-2 text-jadi-gold"></i> Catálogo Jadi
-            </h2>
-            <span class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">+50 productos</span>
-        </div>
-        
-        <!-- Grid de productos -->
-        <div id="contenedor-catalogo" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Aquí se inyectan los productos desde Firebase -->
-            <div class="col-span-full text-center py-10 text-gray-400">
-                <i class="fas fa-spinner fa-spin text-2xl"></i>
-                <p class="mt-2">Cargando modelos...</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== CARRITO LATERAL ==================== -->
-    <div id="sidebar-carrito" class="sidebar-carrito fixed top-0 right-0 h-full w-96 bg-white shadow-2xl z-[60] p-6 overflow-y-auto border-l border-gray-200">
-        <div class="flex justify-between items-center border-b pb-4">
-            <h3 class="text-xl font-bold text-gray-800"><i class="fas fa-shopping-bag text-jadi-gold"></i> Tu Orden</h3>
-            <button onclick="toggleCarrito()" class="text-gray-500 hover:text-red-500 text-2xl">&times;</button>
-        </div>
-
-        <div id="alerta-login-carrito" class="mt-4 bg-amber-50 border border-amber-200 text-amber-700 text-sm p-3 rounded-lg flex items-start gap-2">
-            <i class="fas fa-exclamation-triangle mt-0.5"></i> 
-            <span>Debes iniciar sesión para finalizar la compra y acceder a la garantía Jadi.</span>
-        </div>
-
-        <div id="contenido-carrito" class="mt-4 space-y-4 max-h-96 overflow-y-auto">
-            <p class="text-gray-400 text-center text-sm">Aún no hay productos seleccionados.</p>
-        </div>
-
-        <div class="border-t pt-4 mt-4 sticky bottom-0 bg-white">
-            <div class="flex justify-between items-center text-lg font-bold text-gray-900 mb-4">
-                <span>Total:</span>
-                <span id="total-precio" class="text-jadi-gold text-2xl">$0.00</span>
-            </div>
-            <button onclick="procesarPedido()" id="btn-confirmar-pedido" class="w-full bg-jadi-gold hover:bg-yellow-400 text-black font-bold py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                <i class="fas fa-check-circle"></i> Confirmar Pedido
-            </button>
-            <p class="text-[10px] text-gray-400 text-center mt-2">Al confirmar, aceptas los términos de garantía Jadi.</p>
+            <button onclick="cerrarModalCarrito()" class="btn-secondary w-full mt-2">Cerrar</button>
         </div>
     </div>
 
-    <!-- ==================== PIE DE PÁGINA ==================== -->
-    <footer class="bg-jadi-dark text-gray-300 mt-12 border-t border-jadi-gold/20">
-        <div class="container mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-                <h4 class="text-white font-bold text-lg flex items-center gap-2"><i class="fas fa-crown text-jadi-gold"></i> Jadi</h4>
-                <p class="text-sm mt-2">Ecosistema de outfit con garantía y servicio postventa. Compra local, asegura tu estilo.</p>
-                <div class="flex gap-3 mt-4">
-                    <i class="fab fa-instagram text-xl hover:text-jadi-gold cursor-pointer"></i>
-                    <i class="fab fa-tiktok text-xl hover:text-jadi-gold cursor-pointer"></i>
-                    <i class="fab fa-whatsapp text-xl hover:text-jadi-gold cursor-pointer"></i>
-                </div>
+    <!-- MODAL SELECCIÓN TALLA/COLOR -->
+    <div class="modal-overlay" id="modalSeleccion">
+        <div class="modal-box">
+            <h2 class="text-2xl font-bold text-orange-600">Selecciona talla y color</h2>
+            <div id="infoProductoSeleccion" class="mb-4">
+                <p><strong>Producto:</strong> <span id="seleccionNombre"></span></p>
+                <p><strong>Precio:</strong> $<span id="seleccionPrecio"></span></p>
             </div>
-            <div>
-                <h5 class="text-white font-semibold">Compradores</h5>
-                <ul class="text-sm space-y-2 mt-2">
-                    <li><a href="#" class="hover:text-jadi-gold">Cómo comprar</a></li>
-                    <li><a href="#" class="hover:text-jadi-gold">Política de garantía</a></li>
-                    <li><a href="#" class="hover:text-jadi-gold">Preguntas frecuentes</a></li>
-                </ul>
-            </div>
-            <div>
-                <h5 class="text-white font-semibold">Vendedores</h5>
-                <ul class="text-sm space-y-2 mt-2">
-                    <li><a href="#" class="hover:text-jadi-gold">Registrar mi negocio</a></li>
-                    <li><a href="#" class="hover:text-jadi-gold">Comisiones y beneficios</a></li>
-                    <li><a href="#" class="hover:text-jadi-gold">Centro de ayuda</a></li>
-                </ul>
-            </div>
-            <div>
-                <h5 class="text-white font-semibold">Contacto</h5>
-                <ul class="text-sm space-y-2 mt-2">
-                    <li><i class="fas fa-phone mr-2"></i> +593 99 999 9999</li>
-                    <li><i class="fas fa-envelope mr-2"></i> hola@jadi.ec</li>
-                    <li><i class="fas fa-map-pin mr-2"></i> Quito - Ecuador</li>
-                </ul>
+            <label>Talla</label>
+            <select id="seleccionTalla">
+                <option value="">Selecciona una talla</option>
+            </select>
+            <label>Color</label>
+            <select id="seleccionColor">
+                <option value="">Selecciona un color</option>
+            </select>
+            <div class="flex gap-3 mt-4">
+                <button onclick="agregarAlCarritoConfirmado()" class="btn-primary flex-1">Agregar al carrito</button>
+                <button onclick="cerrarModalSeleccion()" class="btn-secondary flex-1">Cancelar</button>
             </div>
         </div>
-        <div class="border-t border-gray-800 text-center text-xs py-4">
-            &copy; 2026 Jadi. Todos los derechos reservados. Hecho con <i class="fas fa-heart text-red-500"></i> para emprendedores.
-        </div>
-    </footer>
+    </div>
 
-    <!-- ==================== SCRIPTS FIREBASE ==================== -->
+    <!-- MODAL PAGO (Transferencia) -->
+    <div class="modal-overlay" id="modalPago">
+        <div class="modal-box">
+            <h2 class="text-2xl font-bold text-orange-600">💳 Realizar Pago</h2>
+            <p class="text-sm text-gray-600 mb-4">Selecciona tu banco y realiza la transferencia. Luego ingresa el número de transacción.</p>
+            <label>Banco</label>
+            <select id="bancoSeleccionado" class="w-full p-2 border rounded">
+                <option value="">Selecciona un banco</option>
+                <option value="pichincha">Banco Pichincha</option>
+                <option value="solidario">Banco Solidario</option>
+                <option value="guayaquil">Banco Guayaquil</option>
+                <option value="pacifico">Banco Pacífico</option>
+                <option value="produbanco">Produbanco</option>
+                <option value="internacional">Banco Internacional</option>
+                <option value="bolivariano">Banco Bolivariano</option>
+                <option value="austro">Banco del Austro</option>
+                <option value="loja">Banco de Loja</option>
+                <option value="amazonas">Banco Amazonas</option>
+            </select>
+            <label>Número de Transacción</label>
+            <input type="text" id="numeroTransaccion" placeholder="Ej: 123456789" />
+            <div class="flex gap-3 mt-4">
+                <button onclick="confirmarPago()" class="btn-primary flex-1">Confirmar Pago</button>
+                <button onclick="cerrarModalPago()" class="btn-secondary flex-1">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-        import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
+        // Configuración Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
             authDomain: "ventas-dcc22.firebaseapp.com",
@@ -232,204 +147,268 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        let productosDisponibles = [];
+        let productos = [];
         let carrito = [];
         let usuarioActual = null;
+        let categoriaActual = 'todos';
 
-        // --- Autenticación ---
+        // ============================================================
+        // AUTENTICACIÓN
+        // ============================================================
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 usuarioActual = user;
-                document.getElementById('usuario-anonimo').classList.add('hidden');
-                document.getElementById('usuario-autenticado').classList.remove('hidden');
-                document.getElementById('email-usuario').innerText = user.email;
-                document.getElementById('alerta-login-carrito').classList.add('hidden');
+                document.getElementById('usuarioEmail').textContent = user.email;
             } else {
                 usuarioActual = null;
-                document.getElementById('usuario-anonimo').classList.remove('hidden');
-                document.getElementById('usuario-autenticado').classList.add('hidden');
-                document.getElementById('alerta-login-carrito').classList.remove('hidden');
+                document.getElementById('usuarioEmail').textContent = 'Invitado';
             }
-            actualizarInterfazCarrito();
         });
 
-        window.cerrarSesion = () => signOut(auth).then(() => window.location.reload());
-
-        // --- Cargar Catálogo desde Firestore (colección "calzado") ---
-        const contenedorCatalogo = document.getElementById('contenedor-catalogo');
-
-        onSnapshot(collection(db, "calzado"), (snapshot) => {
-            contenedorCatalogo.innerHTML = '';
-            productosDisponibles = [];
-
-            if (snapshot.empty) {
-                contenedorCatalogo.innerHTML = `
-                    <div class="col-span-full text-center py-10 text-gray-400">
-                        <i class="fas fa-box-open text-4xl"></i>
-                        <p class="mt-2">No hay productos en el catálogo aún. ¡Vuelve pronto!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            snapshot.forEach(doc => {
-                const prod = { id: doc.id, ...doc.data() };
-                productosDisponibles.push(prod);
-
-                const div = document.createElement('div');
-                div.className = "bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-2xl hover-glow transition-all duration-300 flex flex-col";
-                div.innerHTML = `
-                    <div class="relative">
-                        <img src="${prod.imagen || 'https://via.placeholder.com/300/0f172a/fbbf24?text=JADI'}" 
-                             alt="${prod.nombre}" 
-                             class="w-full h-52 object-cover">
-                        <span class="absolute top-2 left-2 bg-jadi-gold text-black text-[10px] font-bold px-2 py-1 rounded-full">
-                            <i class="fas fa-shield-alt mr-1"></i> Garantía
-                        </span>
-                    </div>
-                    <div class="p-4 flex flex-col flex-1">
-                        <h3 class="font-bold text-gray-800 text-lg">${prod.nombre}</h3>
-                        <p class="text-sm text-gray-500 flex-1">${prod.descripcion || 'Calidad Jadi'}</p>
-                        <div class="flex justify-between items-center mt-4">
-                            <span class="text-xl font-extrabold text-jadi-gold">$${parseFloat(prod.precio).toFixed(2)}</span>
-                            <button onclick="agregarAlCarrito('${prod.id}')" 
-                                    class="bg-jadi-dark hover:bg-gray-800 text-white text-xs px-4 py-2 rounded-lg font-bold transition flex items-center gap-1">
-                                <i class="fas fa-plus"></i> Añadir
-                            </button>
-                        </div>
-                    </div>
-                `;
-                contenedorCatalogo.appendChild(div);
+        // ============================================================
+        // FILTROS POR CATEGORÍA
+        // ============================================================
+        document.querySelectorAll('.filtro-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                categoriaActual = btn.dataset.categoria;
+                renderizarProductos();
             });
         });
 
-        // --- Lógica del Carrito ---
-        window.agregarAlCarrito = (id) => {
-            const prod = productosDisponibles.find(p => p.id === id);
-            if (!prod) return;
-            
-            // Buscar si ya está en el carrito
-            const existente = carrito.find(item => item.id === id);
-            if (existente) {
-                existente.cantidad += 1;
-            } else {
-                carrito.push({
-                    id: prod.id,
-                    nombre: prod.nombre,
-                    precio: prod.precio,
-                    talla: "38",
-                    color: "Negro",
-                    cantidad: 1,
-                    imagen: prod.imagen
+        // ============================================================
+        // CARGAR PRODUCTOS DESDE FIRESTORE
+        // ============================================================
+        function cargarProductos() {
+            onSnapshot(collection(db, "calzado"), (snapshot) => {
+                productos = [];
+                snapshot.forEach(doc => {
+                    productos.push({ id: doc.id, ...doc.data() });
                 });
-            }
-            actualizarInterfazCarrito();
-            // Pequeña animación de feedback
-            const btn = event.target.closest('button');
-            if (btn) {
-                btn.innerHTML = '<i class="fas fa-check"></i> Añadido';
-                setTimeout(() => btn.innerHTML = '<i class="fas fa-plus"></i> Añadir', 1000);
-            }
-        };
-
-        function actualizarInterfazCarrito() {
-            const contenido = document.getElementById('contenido-carrito');
-            const totalTxt = document.getElementById('total-precio');
-            const btnConfirmar = document.getElementById('btn-confirmar-pedido');
-            const contador = document.getElementById('contador-carrito');
-
-            let totalItems = 0;
-            let totalPrecio = 0;
-
-            contenido.innerHTML = '';
-            if (carrito.length === 0) {
-                contenido.innerHTML = '<p class="text-gray-400 text-center text-sm py-8">🛒 Tu carrito está vacío</p>';
-                totalTxt.innerText = "$0.00";
-                btnConfirmar.disabled = true;
-                contador.innerText = '0';
-                return;
-            }
-
-            carrito.forEach((item, index) => {
-                totalItems += item.cantidad;
-                totalPrecio += item.precio * item.cantidad;
-
-                const div = document.createElement('div');
-                div.className = "bg-gray-50 p-3 rounded-lg border flex gap-3 items-center";
-                div.innerHTML = `
-                    <img src="${item.imagen || 'https://via.placeholder.com/50/0f172a/fbbf24?text=JADI'}" class="w-12 h-12 object-cover rounded-lg">
-                    <div class="flex-1">
-                        <p class="font-bold text-sm text-gray-800">${item.nombre}</p>
-                        <div class="flex gap-2 text-xs text-gray-500">
-                            <span>Talla: <select onchange="cambiarEspecificacion(${index}, 'talla', this.value)" class="bg-white border rounded px-1">
-                                <option value="36">36</option><option value="37">37</option>
-                                <option value="38" selected>38</option><option value="39">39</option>
-                                <option value="40">40</option><option value="41">41</option>
-                            </select></span>
-                            <span>Color: <select onchange="cambiarEspecificacion(${index}, 'color', this.value)" class="bg-white border rounded px-1">
-                                <option value="Negro" selected>Negro</option><option value="Blanco">Blanco</option>
-                                <option value="Café">Café</option><option value="Azul">Azul</option>
-                            </select></span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="font-bold text-jadi-gold">$${(item.precio * item.cantidad).toFixed(2)}</p>
-                        <button onclick="removerDelCarrito(${index})" class="text-red-400 hover:text-red-600 text-xs">Eliminar</button>
-                    </div>
-                `;
-                contenido.appendChild(div);
+                renderizarProductos();
             });
-
-            contador.innerText = totalItems;
-            totalTxt.innerText = `$${totalPrecio.toFixed(2)}`;
-
-            if (usuarioActual) {
-                btnConfirmar.disabled = false;
-            } else {
-                btnConfirmar.disabled = true;
-            }
         }
 
-        window.cambiarEspecificacion = (index, propiedad, valor) => {
-            carrito[index][propiedad] = valor;
-        };
+        function renderizarProductos() {
+            const catalogo = document.getElementById('catalogo');
+            catalogo.innerHTML = '';
 
-        window.removerDelCarrito = (index) => {
-            carrito.splice(index, 1);
-            actualizarInterfazCarrito();
-        };
+            let productosFiltrados = productos;
+            if (categoriaActual !== 'todos') {
+                productosFiltrados = productos.filter(p => p.categoria === categoriaActual);
+            }
 
-        window.toggleCarrito = () => {
-            document.getElementById('sidebar-carrito').classList.toggle('open');
-        };
+            if (productosFiltrados.length === 0) {
+                catalogo.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay productos en esta categoría.</p>';
+                return;
+            }
 
-        // --- Procesar Pedido ---
-        window.procesarPedido = async () => {
-            if (!usuarioActual) return;
-            try {
-                await addDoc(collection(db, "pedidos"), {
-                    clienteEmail: usuarioActual.email,
-                    clienteUid: usuarioActual.uid,
-                    articulos: carrito,
-                    fecha: new Date().toLocaleString(),
-                    estado: "Pendiente"
+            productosFiltrados.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'card-producto';
+                card.innerHTML = `
+                    <img src="${prod.imagen || 'https://via.placeholder.com/150'}" class="w-full h-48 object-cover rounded-lg mb-3" />
+                    <h3 class="font-bold text-lg">${prod.nombre}</h3>
+                    <p class="text-sm text-gray-500">${prod.descripcion || ''}</p>
+                    <p class="text-xl font-bold text-orange-600 mt-2">$${prod.precio.toFixed(2)}</p>
+                    <button onclick="abrirModalSeleccion('${prod.id}')" class="btn-primary w-full mt-3">Agregar al carrito</button>
+                `;
+                catalogo.appendChild(card);
+            });
+        }
+
+        // ============================================================
+        // SELECCIÓN DE TALLA Y COLOR (MODAL)
+        // ============================================================
+        let productoSeleccionadoId = null;
+
+        window.abrirModalSeleccion = (productoId) => {
+            const prod = productos.find(p => p.id === productoId);
+            if (!prod) return;
+
+            productoSeleccionadoId = productoId;
+            document.getElementById('seleccionNombre').textContent = prod.nombre;
+            document.getElementById('seleccionPrecio').textContent = prod.precio.toFixed(2);
+
+            // Llenar tallas
+            const tallaSelect = document.getElementById('seleccionTalla');
+            tallaSelect.innerHTML = '<option value="">Selecciona una talla</option>';
+            if (prod.tallas && prod.tallas.length) {
+                prod.tallas.forEach(t => {
+                    tallaSelect.innerHTML += `<option value="${t}">${t}</option>`;
                 });
-                alert("✅ ¡Pedido registrado! Revisa tu panel de administración para gestionarlo.");
-                carrito = [];
-                actualizarInterfazCarrito();
-                toggleCarrito();
-            } catch (err) {
-                alert("❌ Error al procesar: " + err.message);
+            } else {
+                tallaSelect.innerHTML += `<option value="Única">Única</option>`;
+            }
+
+            // Llenar colores
+            const colorSelect = document.getElementById('seleccionColor');
+            colorSelect.innerHTML = '<option value="">Selecciona un color</option>';
+            if (prod.colores && prod.colores.length) {
+                prod.colores.forEach(c => {
+                    colorSelect.innerHTML += `<option value="${c}">${c}</option>`;
+                });
+            } else {
+                colorSelect.innerHTML += `<option value="Estándar">Estándar</option>`;
+            }
+
+            document.getElementById('modalSeleccion').classList.add('active');
+        };
+
+        window.cerrarModalSeleccion = () => {
+            document.getElementById('modalSeleccion').classList.remove('active');
+        };
+
+        window.agregarAlCarritoConfirmado = () => {
+            const talla = document.getElementById('seleccionTalla').value;
+            const color = document.getElementById('seleccionColor').value;
+
+            if (!talla || !color) {
+                alert('Selecciona una talla y un color.');
+                return;
+            }
+
+            const prod = productos.find(p => p.id === productoSeleccionadoId);
+            if (!prod) return;
+
+            carrito.push({
+                id: prod.id,
+                nombre: prod.nombre,
+                precio: prod.precio,
+                talla: talla,
+                color: color,
+                cantidad: 1
+            });
+
+            cerrarModalSeleccion();
+            actualizarCarritoUI();
+        };
+
+        // ============================================================
+        // CARRITO
+        // ============================================================
+        function actualizarCarritoUI() {
+            document.getElementById('carritoCount').textContent = carrito.length;
+        }
+
+        window.verCarrito = () => {
+            const modal = document.getElementById('modalCarrito');
+            const contenido = document.getElementById('contenidoCarrito');
+            const resumen = document.getElementById('resumenCarrito');
+
+            if (carrito.length === 0) {
+                contenido.innerHTML = '<p class="text-gray-500">El carrito está vacío.</p>';
+                resumen.classList.add('hidden');
+            } else {
+                let html = '';
+                let total = 0;
+                carrito.forEach((item, index) => {
+                    total += item.precio * item.cantidad;
+                    html += `
+                        <div class="flex justify-between items-center border-b py-2">
+                            <div>
+                                <p class="font-bold">${item.nombre}</p>
+                                <p class="text-xs text-gray-500">Talla: ${item.talla} | Color: ${item.color}</p>
+                            </div>
+                            <div>
+                                <span class="font-bold">$${item.precio.toFixed(2)}</span>
+                                <button onclick="eliminarDelCarrito(${index})" class="text-red-500 ml-2">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                contenido.innerHTML = html;
+                document.getElementById('totalCarrito').textContent = `$${total.toFixed(2)}`;
+                resumen.classList.remove('hidden');
+            }
+
+            modal.classList.add('active');
+        };
+
+        window.cerrarModalCarrito = () => {
+            document.getElementById('modalCarrito').classList.remove('active');
+        };
+
+        window.eliminarDelCarrito = (index) => {
+            carrito.splice(index, 1);
+            actualizarCarritoUI();
+            // Si el carrito está abierto, refrescar la vista
+            if (document.getElementById('modalCarrito').classList.contains('active')) {
+                verCarrito();
             }
         };
 
-        // Cerrar carrito al hacer clic fuera
-        document.addEventListener('click', (e) => {
-            const sidebar = document.getElementById('sidebar-carrito');
-            if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !e.target.closest('button[onclick="toggleCarrito()"]')) {
-                toggleCarrito();
+        // ============================================================
+        // PROCESAR PEDIDO (con pago)
+        // ============================================================
+        window.procesarPedido = () => {
+            if (!usuarioActual) {
+                alert('Debes iniciar sesión para realizar un pedido.');
+                return;
             }
-        });
+
+            if (carrito.length === 0) {
+                alert('El carrito está vacío.');
+                return;
+            }
+
+            cerrarModalCarrito();
+            document.getElementById('modalPago').classList.add('active');
+        };
+
+        window.cerrarModalPago = () => {
+            document.getElementById('modalPago').classList.remove('active');
+        };
+
+        window.confirmarPago = async () => {
+            const banco = document.getElementById('bancoSeleccionado').value;
+            const numeroTransaccion = document.getElementById('numeroTransaccion').value.trim();
+
+            if (!banco) {
+                alert('Selecciona un banco.');
+                return;
+            }
+
+            if (!numeroTransaccion) {
+                alert('Ingresa el número de transacción.');
+                return;
+            }
+
+            const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+
+            const pedido = {
+                clienteEmail: usuarioActual.email,
+                articulos: carrito.map(item => ({
+                    nombre: item.nombre,
+                    talla: item.talla,
+                    color: item.color,
+                    cantidad: item.cantidad,
+                    precio: item.precio
+                })),
+                total: total,
+                fecha: new Date().toLocaleString(),
+                estado: 'pendiente_pago',
+                banco: banco,
+                numeroTransaccion: numeroTransaccion
+            };
+
+            try {
+                await addDoc(collection(db, "pedidos"), pedido);
+                alert('✅ Pedido confirmado. Espera la validación del pago.');
+                carrito = [];
+                actualizarCarritoUI();
+                cerrarModalPago();
+            } catch (error) {
+                alert('Error al procesar el pedido: ' + error.message);
+            }
+        };
+
+        // ============================================================
+        // INICIALIZAR
+        // ============================================================
+        cargarProductos();
+        console.log('🔥 Tienda JADI cargada correctamente.');
     </script>
 </body>
 </html>
