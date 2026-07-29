@@ -35,20 +35,3 @@ export function mostrarMensaje(elemento, mensaje, tipo = "info") {
     elemento.className = `text-sm ${clases[tipo] || clases.info}`;
     elemento.textContent = mensaje;
 }
-
-// Obtener el nombre del banco a partir de su clave
-export function obtenerNombreBanco(clave) {
-    const bancos = {
-        pichincha: "Banco Pichincha",
-        solidario: "Banco Solidario",
-        guayaquil: "Banco Guayaquil",
-        pacifico: "Banco Pacífico",
-        produbanco: "Produbanco",
-        internacional: "Banco Internacional",
-        bolivariano: "Banco Bolivariano",
-        austro: "Banco del Austro",
-        loja: "Banco de Loja",
-        amazonas: "Banco Amazonas"
-    };
-    return bancos[clave] || clave;
-}
