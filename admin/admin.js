@@ -1,48 +1,52 @@
 // ============================================================
-// ADMIN.JS - LÓGICA DEL PANEL DE ADMINISTRACIÓN
+// ADMIN.JS - LÓGICA DEL PANEL DE ADMINISTRACIÓN (CORREGIDO)
 // ============================================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { 
-    getFirestore, 
-    collection, 
-    onSnapshot, 
-    addDoc, 
-    doc, 
-    updateDoc, 
+import {
+    getFirestore,
+    collection,
+    onSnapshot,
+    addDoc,
+    doc,
+    updateDoc,
     deleteDoc,
     query,
     orderBy,
     getDoc
 } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 import { firebaseConfig } from "../core/firebase-config.js";
-import { esAdmin, cerrarSesion } from "../core/auth.js";
+import { esAdmin, obtenerRolUsuario, auth, db } from "../core/auth.js";
+import { IMGBB_API_KEY, IMGBB_ENDPOINT } from "../config/imgbb-config.js";
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+// Usar auth y db importados desde auth.js
 
-// Variables globales
-let productosCache = [];
 let usuarioAdmin = null;
+let productosCache = [];
 
 // ============================================================
-// 1. VERIFICAR ACCESO ADMIN
+// 1. VERIFICAR ACCESO ADMIN (CORREGIDO)
 // ============================================================
 onAuthStateChanged(auth, async (user) => {
     if (!user) {
         window.location.href = "../login.html";
         return;
     }
-    const admin = await esAdmin();
+
+    // Verificar si el usuario tiene rol admin
+    const admin = await esAdmin(user.uid);
     if (!admin) {
         alert("⛔ Acceso denegado. No eres administrador.");
-        await cerrarSesion();
+        await signOut(auth);
+        window.location.href = "../login.html";
         return;
     }
+
     usuarioAdmin = user;
     document.getElementById('adminEmail').textContent = user.email;
+    
     // Cargar datos
     cargarPedidos();
     cargarCatalogo();
@@ -51,7 +55,17 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ============================================================
-// 2. NAVEGACIÓN POR SIDEBAR
+// 2. CERRAR SESIÓN
+// ============================================================
+window.cerrarSesionAdmin = async () => {
+    if (confirm('¿Seguro que deseas cerrar sesión?')) {
+        await signOut(auth);
+        window.location.href = "../login.html";
+    }
+};
+
+// ============================================================
+// 3. NAVEGACIÓN POR SIDEBAR
 // ============================================================
 const navItems = document.querySelectorAll('.nav-item');
 const sections = {
@@ -74,15 +88,9 @@ navItems.forEach(item => {
     });
 });
 
-// Toggle menú móvil
 document.getElementById('menuToggle').addEventListener('click', () => {
     document.getElementById('sidebar').classList.toggle('open');
 });
-
-// ============================================================
-// 3. CERRAR SESIÓN
-// ============================================================
-window.cerrarSesionAdmin = cerrarSesion;
 
 // ============================================================
 // 4. GESTIÓN DE PEDIDOS
@@ -102,7 +110,7 @@ function cargarPedidos() {
             let productosHtml = '';
             if (data.articulos && data.articulos.length) {
                 data.articulos.forEach(art => {
-                    productosHtml += `${art.nombre} (Talla: ${art.talla || 'N/A'}, Color: ${art.color || 'N/A'})<br />`;
+                    productosHtml += `${art.nombre} (${art.talla || 'N/A'})<br />`;
                 });
             } else {
                 productosHtml = 'Ver detalle';
@@ -119,9 +127,8 @@ function cargarPedidos() {
                 <td class="text-xs text-gray-500">${data.fecha || '--'}</td>
                 <td><span class="badge ${badgeClass}">${estado}</span></td>
                 <td>
-                    <button onclick="verDetallePedido('${id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs">📋 Ver</button>
                     <select onchange="cambiarEstadoPedido('${id}', this.value)" class="bg-white border border-gray-300 rounded px-2 py-1 text-xs text-gray-700">
-                        <option value="pendiente_pago" ${estado === 'pendiente_pago' ? 'selected' : ''}>Pendiente pago</option>
+                        <option value="pendiente" ${estado === 'pendiente' ? 'selected' : ''}>Pendiente</option>
                         <option value="pagado" ${estado === 'pagado' ? 'selected' : ''}>Pagado</option>
                         <option value="enviado" ${estado === 'enviado' ? 'selected' : ''}>Enviado</option>
                         <option value="entregado" ${estado === 'entregado' ? 'selected' : ''}>Entregado</option>
@@ -139,71 +146,6 @@ function cargarPedidos() {
     });
 }
 
-// ============================================================
-// 5. VER DETALLE DE PEDIDO (Modal)
-// ============================================================
-window.verDetallePedido = async (id) => {
-    try {
-        const docRef = doc(db, "pedidos", id);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
-            alert('Pedido no encontrado.');
-            return;
-        }
-        const data = docSnap.data();
-        const modal = document.getElementById('modalDetallePedido');
-        const contenido = document.getElementById('contenidoDetallePedido');
-        
-        let productosHtml = '';
-        if (data.articulos && data.articulos.length) {
-            data.articulos.forEach(art => {
-                productosHtml += `
-                    <tr>
-                        <td>${art.nombre}</td>
-                        <td>${art.talla || 'N/A'}</td>
-                        <td>${art.color || 'N/A'}</td>
-                        <td>${art.cantidad || 1}</td>
-                        <td>$${(art.precio || 0).toFixed(2)}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        contenido.innerHTML = `
-            <div class="mb-4">
-                <p><strong>Cliente:</strong> ${data.clienteEmail || 'Anónimo'}</p>
-                <p><strong>Fecha:</strong> ${data.fecha || '--'}</p>
-                <p><strong>Estado:</strong> ${data.estado || 'pendiente'}</p>
-                <p><strong>Banco:</strong> ${data.banco || 'No especificado'}</p>
-                <p><strong>Número de Transacción:</strong> ${data.numeroTransaccion || 'No ingresado'}</p>
-                <p><strong>Total:</strong> $${data.total?.toFixed(2) || '0.00'}</p>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="min-w-full">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Talla</th>
-                            <th>Color</th>
-                            <th>Cantidad</th>
-                            <th>Precio</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${productosHtml}
-                    </tbody>
-                </table>
-            </div>
-        `;
-        modal.classList.add('active');
-    } catch (error) {
-        alert('Error al cargar el detalle: ' + error.message);
-    }
-};
-
-// ============================================================
-// 6. CAMBIAR ESTADO DEL PEDIDO
-// ============================================================
 window.cambiarEstadoPedido = async (id, nuevoEstado) => {
     try {
         await updateDoc(doc(db, "pedidos", id), { estado: nuevoEstado });
@@ -212,9 +154,6 @@ window.cambiarEstadoPedido = async (id, nuevoEstado) => {
     }
 };
 
-// ============================================================
-// 7. ELIMINAR PEDIDO
-// ============================================================
 window.eliminarPedido = async (id) => {
     if (confirm('¿Eliminar este pedido permanentemente?')) {
         try {
@@ -226,7 +165,7 @@ window.eliminarPedido = async (id) => {
 };
 
 // ============================================================
-// 8. GESTIÓN DE CATÁLOGO (CRUD)
+// 5. GESTIÓN DE CATÁLOGO
 // ============================================================
 function cargarCatalogo() {
     onSnapshot(collection(db, "calzado"), (snapshot) => {
@@ -260,68 +199,8 @@ function cargarCatalogo() {
 }
 
 // ============================================================
-// 9. ABRIR MODAL DE PRODUCTO
+// 6. SUBIR IMAGEN A IMGBB
 // ============================================================
-window.abrirModalProducto = (producto = null) => {
-    const modal = document.getElementById('modalProducto');
-    const titulo = document.getElementById('modalProductoTitulo');
-
-    if (producto) {
-        titulo.textContent = '✏️ Editar Producto';
-        document.getElementById('productoId').value = producto.id;
-        document.getElementById('prodNombre').value = producto.nombre || '';
-        document.getElementById('prodCategoria').value = producto.categoria || 'zapatos';
-        document.getElementById('prodPrecio').value = producto.precio || '';
-        document.getElementById('prodCompra').value = producto.precioCompra || '';
-        document.getElementById('prodGarantia').value = producto.garantiaMeses || 6;
-        document.getElementById('prodStock').value = producto.stock || 10;
-        document.getElementById('prodImagen').value = producto.imagen || '';
-        // Mostrar tallas y colores si existen
-        document.getElementById('prodTallas').value = producto.tallas ? producto.tallas.join(', ') : '';
-        document.getElementById('prodColores').value = producto.colores ? producto.colores.join(', ') : '';
-        // Vista previa de imagen
-        const preview = document.getElementById('previewImagen');
-        if (producto.imagen) {
-            preview.src = producto.imagen;
-            preview.style.display = 'block';
-        } else {
-            preview.style.display = 'none';
-        }
-        document.getElementById('estadoSubida').innerHTML = producto.imagen ? '<span class="status-ok">✅ Imagen cargada</span>' : 'Sin imagen';
-        document.getElementById('prodDescripcion').value = producto.descripcion || '';
-    } else {
-        titulo.textContent = '🆕 Nuevo Producto';
-        document.getElementById('formProducto').reset();
-        document.getElementById('productoId').value = '';
-        document.getElementById('prodImagen').value = '';
-        document.getElementById('prodTallas').value = '';
-        document.getElementById('prodColores').value = '';
-        document.getElementById('previewImagen').style.display = 'none';
-        document.getElementById('estadoSubida').innerHTML = 'Sin imagen';
-        document.getElementById('prodGarantia').value = 6;
-        document.getElementById('prodStock').value = 10;
-    }
-
-    modal.classList.add('active');
-};
-
-// ============================================================
-// 10. CERRAR MODAL DE PRODUCTO
-// ============================================================
-window.cerrarModalProducto = () => {
-    document.getElementById('modalProducto').classList.remove('active');
-};
-
-document.getElementById('modalProducto').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) cerrarModalProducto();
-});
-
-// ============================================================
-// 11. SUBIR IMAGEN A IMGBB (MANTENEMOS LA LÓGICA QUE YA FUNCIONA)
-// ============================================================
-const IMGBB_API_KEY = 'cb12e6a76abb14df50fa90b78479a43c';
-const IMGBB_ENDPOINT = 'https://api.imgbb.com/1/upload';
-
 document.getElementById('btnSubirImgBB').addEventListener('click', async () => {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -331,15 +210,13 @@ document.getElementById('btnSubirImgBB').addEventListener('click', async () => {
         return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-        alert('La imagen es demasiado grande. El tamaño máximo es 5MB.');
-        return;
-    }
-
     const estadoDiv = document.getElementById('estadoSubida');
-    const preview = document.getElementById('previewImagen');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImg = document.getElementById('previewImagen');
+    const linkImg = document.getElementById('linkImagen');
 
-    estadoDiv.innerHTML = '<span class="status-loading">⏳ Subiendo imagen...</span>';
+    estadoDiv.innerHTML = `<span class="status-loading">⏳ Subiendo imagen...</span>`;
+    previewContainer.style.display = 'none';
 
     try {
         const formData = new FormData();
@@ -356,9 +233,12 @@ document.getElementById('btnSubirImgBB').addEventListener('click', async () => {
         if (data.success) {
             const url = data.data.url;
             document.getElementById('prodImagen').value = url;
-            estadoDiv.innerHTML = '<span class="status-ok">✅ Imagen subida con éxito</span>';
-            preview.src = url;
-            preview.style.display = 'block';
+            estadoDiv.innerHTML = `<span class="status-ok">✅ Imagen subida con éxito</span>`;
+            previewImg.src = url;
+            previewImg.style.display = 'block';
+            linkImg.href = url;
+            linkImg.textContent = '🔗 Ver en ImgBB';
+            previewContainer.style.display = 'block';
         } else {
             throw new Error(data.error?.message || 'Error desconocido de ImgBB');
         }
@@ -370,24 +250,65 @@ document.getElementById('btnSubirImgBB').addEventListener('click', async () => {
 });
 
 // ============================================================
-// 12. GUARDAR PRODUCTO (Crear o Actualizar)
+// 7. ABRIR / CERRAR MODAL PRODUCTO
+// ============================================================
+window.abrirModalProducto = (producto = null) => {
+    const modal = document.getElementById('modalProducto');
+    const titulo = document.getElementById('modalProductoTitulo');
+
+    if (producto) {
+        titulo.textContent = '✏️ Editar Producto';
+        document.getElementById('productoId').value = producto.id;
+        document.getElementById('prodNombre').value = producto.nombre || '';
+        document.getElementById('prodCategoria').value = producto.categoria || 'zapatos';
+        document.getElementById('prodPrecio').value = producto.precio || '';
+        document.getElementById('prodCompra').value = producto.precioCompra || '';
+        document.getElementById('prodGarantia').value = producto.garantiaMeses || 6;
+        document.getElementById('prodStock').value = producto.stock || 10;
+        document.getElementById('prodImagen').value = producto.imagen || '';
+        document.getElementById('estadoSubida').innerHTML = producto.imagen ? '✅ Imagen cargada' : 'Sin imagen';
+        if (producto.imagen) {
+            const preview = document.getElementById('previewImagen');
+            preview.src = producto.imagen;
+            document.getElementById('previewContainer').style.display = 'block';
+            document.getElementById('linkImagen').href = producto.imagen;
+        }
+        document.getElementById('prodDescripcion').value = producto.descripcion || '';
+    } else {
+        titulo.textContent = '🆕 Nuevo Producto';
+        document.getElementById('formProducto').reset();
+        document.getElementById('productoId').value = '';
+        document.getElementById('prodImagen').value = '';
+        document.getElementById('estadoSubida').innerHTML = 'Sin imagen';
+        document.getElementById('previewContainer').style.display = 'none';
+        document.getElementById('prodGarantia').value = 6;
+        document.getElementById('prodStock').value = 10;
+    }
+
+    modal.classList.add('active');
+};
+
+window.cerrarModalProducto = () => {
+    document.getElementById('modalProducto').classList.remove('active');
+};
+
+document.getElementById('modalProducto').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) cerrarModalProducto();
+});
+
+// ============================================================
+// 8. GUARDAR PRODUCTO (CREAR O ACTUALIZAR)
 // ============================================================
 document.getElementById('formProducto').addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const id = document.getElementById('productoId').value;
-    const imagenUrl = document.getElementById('prodImagen').value.trim();
+    const imagenURL = document.getElementById('prodImagen').value.trim();
 
-    if (!imagenUrl) {
+    if (!imagenURL) {
         alert('⚠️ Debes subir una imagen primero usando el botón "Subir imagen a ImgBB".');
         return;
     }
-
-    // Procesar tallas y colores
-    const tallasRaw = document.getElementById('prodTallas').value.trim();
-    const coloresRaw = document.getElementById('prodColores').value.trim();
-    const tallas = tallasRaw ? tallasRaw.split(',').map(t => t.trim()) : [];
-    const colores = coloresRaw ? coloresRaw.split(',').map(c => c.trim()) : [];
 
     const data = {
         nombre: document.getElementById('prodNombre').value.trim(),
@@ -396,9 +317,7 @@ document.getElementById('formProducto').addEventListener('submit', async (e) => 
         precioCompra: parseFloat(document.getElementById('prodCompra').value) || 0,
         garantiaMeses: parseInt(document.getElementById('prodGarantia').value) || 6,
         stock: parseInt(document.getElementById('prodStock').value) || 10,
-        imagen: imagenUrl,
-        tallas: tallas,
-        colores: colores,
+        imagen: imagenURL,
         descripcion: document.getElementById('prodDescripcion').value.trim(),
         proveedorId: 'admin',
         fechaRegistro: new Date().toLocaleDateString()
@@ -418,9 +337,6 @@ document.getElementById('formProducto').addEventListener('submit', async (e) => 
     }
 });
 
-// ============================================================
-// 13. EDITAR / ELIMINAR PRODUCTO
-// ============================================================
 window.editarProducto = async (id) => {
     const prod = productosCache.find(p => p.id === id);
     if (prod) {
@@ -441,7 +357,7 @@ window.eliminarProducto = async (id) => {
 };
 
 // ============================================================
-// 14. GESTIÓN DE USUARIOS
+// 9. GESTIÓN DE USUARIOS
 // ============================================================
 function cargarUsuarios() {
     onSnapshot(collection(db, "usuarios_registrados"), (snapshot) => {
@@ -467,7 +383,7 @@ function cargarUsuarios() {
 }
 
 // ============================================================
-// 15. GESTIÓN DE GARANTÍAS
+// 10. GESTIÓN DE GARANTÍAS
 // ============================================================
 function cargarGarantias() {
     onSnapshot(collection(db, "garantias"), (snapshot) => {
@@ -501,9 +417,6 @@ function cargarGarantias() {
     });
 }
 
-// ============================================================
-// 16. ASIGNAR REPARADOR Y ELIMINAR GARANTÍA
-// ============================================================
 window.asignarReparador = async (id) => {
     const nuevoReparador = prompt('Ingresa el ID o email del reparador a asignar:');
     if (nuevoReparador) {
@@ -528,14 +441,5 @@ window.eliminarGarantia = async (id) => {
         }
     }
 };
-
-// ============================================================
-// 17. CERRAR MODAL DE DETALLE DE PEDIDO
-// ============================================================
-document.getElementById('modalDetallePedido').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) {
-        document.getElementById('modalDetallePedido').classList.remove('active');
-    }
-});
 
 console.log('🔥 Panel JADI Admin cargado correctamente.');
