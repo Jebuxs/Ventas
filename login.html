@@ -1,40 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JADI · Iniciar Sesión</title>
+
+    <!-- Google Fonts (opcional) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
         body {
             background: #f8f5f0;
-            font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding: 1rem;
         }
         .login-container {
-            background: #fff;
+            background: #ffffff;
             border-radius: 1.5rem;
             padding: 2.5rem;
             max-width: 420px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         }
         .logo {
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: 700;
             color: #e85d04;
             text-align: center;
-            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
         }
         .subtitle {
             text-align: center;
             color: #6b6b6b;
             font-size: 0.9rem;
-            margin-bottom: 2rem;
+            margin-top: 0.25rem;
+            margin-bottom: 1.8rem;
         }
         .btn-google {
             display: flex;
@@ -43,16 +55,16 @@
             gap: 0.75rem;
             width: 100%;
             background: #fff;
-            border: 1px solid #ddd;
+            border: 1px solid #d1d5db;
             border-radius: 0.5rem;
-            padding: 0.7rem;
+            padding: 0.7rem 1rem;
             font-weight: 600;
-            color: #1a1a1a;
+            color: #1f2937;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
         }
         .btn-google:hover {
-            background: #f8f5f0;
+            background: #f9fafb;
             border-color: #e85d04;
         }
         .divider {
@@ -60,14 +72,15 @@
             align-items: center;
             gap: 1rem;
             margin: 1.5rem 0;
-            color: #aaa;
+            color: #9ca3af;
             font-size: 0.8rem;
         }
-        .divider::before, .divider::after {
+        .divider::before,
+        .divider::after {
             content: "";
             flex: 1;
             height: 1px;
-            background: #ddd;
+            background: #e5e7eb;
         }
         .btn-primary {
             background: #e85d04;
@@ -78,27 +91,30 @@
             border: none;
             width: 100%;
             cursor: pointer;
-            transition: 0.2s;
+            transition: background 0.2s;
         }
         .btn-primary:hover {
             background: #d35400;
         }
         input {
             width: 100%;
-            padding: 0.7rem;
+            padding: 0.7rem 0.8rem;
             background: #f8f5f0;
-            border: 1px solid #ddd;
+            border: 1px solid #d1d5db;
             border-radius: 0.5rem;
-            margin-bottom: 1rem;
             font-size: 0.9rem;
+            transition: border-color 0.2s;
+            margin-bottom: 1rem;
+            box-sizing: border-box;
         }
         input:focus {
             outline: none;
             border-color: #e85d04;
+            box-shadow: 0 0 0 3px rgba(232, 93, 4, 0.15);
         }
         .toggle-link {
             text-align: center;
-            margin-top: 1rem;
+            margin-top: 1.2rem;
             font-size: 0.85rem;
             color: #6b6b6b;
         }
@@ -115,28 +131,44 @@
             display: none !important;
         }
         .whatsapp-field {
-            background: #fef3c7;
+            background: #fffbeb;
             border-color: #fcd34d;
-        }
-        .whatsapp-field:focus {
-            border-color: #e85d04;
         }
         .error-message {
             background: #fee2e2;
             color: #991b1b;
-            padding: 0.5rem;
+            padding: 0.6rem 1rem;
             border-radius: 0.5rem;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             margin-bottom: 1rem;
             display: none;
+            border-left: 4px solid #dc2626;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
 <body>
+
     <div class="login-container">
         <div class="logo">JADI</div>
         <div class="subtitle">Panel de Control · Inicia sesión</div>
 
+        <!-- Mensaje de error -->
         <div id="errorMessage" class="error-message"></div>
 
         <!-- Botón Google -->
@@ -168,23 +200,59 @@
         </div>
     </div>
 
+    <!-- ============================================================ -->
+    <!-- SCRIPTS (TODO DENTRO DEL MISMO ARCHIVO)                      -->
+    <!-- ============================================================ -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase-app": "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js",
+                "firebase-auth": "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js",
+                "firebase-firestore": "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js"
+            }
+        }
+    </script>
+
     <script type="module">
         // ============================================================
-        // IMPORTS
+        // 1. IMPORTAR FIREBASE
         // ============================================================
-        import { 
-            iniciarSesion, 
-            registrarUsuario, 
-            iniciarSesionConGoogle, 
-            esAdmin,
-            guardarUsuario,
-            obtenerRol,
-            auth 
-        } from "./core/auth.js";
-        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        import { initializeApp } from "firebase-app";
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            signInWithPopup,
+            GoogleAuthProvider,
+            signOut
+        } from "firebase-auth";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc
+        } from "firebase-firestore";
 
         // ============================================================
-        // REFERENCIAS
+        // 2. CONFIGURACIÓN DE FIREBASE
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
+            authDomain: "ventas-dcc22.firebaseapp.com",
+            projectId: "ventas-dcc22",
+            storageBucket: "ventas-dcc22.firebasestorage.app",
+            messagingSenderId: "789904237680",
+            appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        // ============================================================
+        // 3. REFERENCIAS AL DOM
         // ============================================================
         const form = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
@@ -200,24 +268,91 @@
         let esRegistro = false;
 
         // ============================================================
-        // VERIFICAR SESIÓN ACTIVA (redirigir según rol)
+        // 4. FUNCIONES AUXILIARES
+        // ============================================================
+
+        // Mostrar mensaje de error
+        function mostrarError(mensaje) {
+            errorDiv.textContent = mensaje;
+            errorDiv.style.display = 'block';
+        }
+
+        // Ocultar error
+        function ocultarError() {
+            errorDiv.style.display = 'none';
+        }
+
+        // Verificar si un usuario es administrador (desde Firestore)
+        async function esAdmin(user) {
+            if (!user) return false;
+            try {
+                const docRef = doc(db, "usuarios_registrados", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().rol === "admin") {
+                    return true;
+                }
+                // Fallback por email (tu correo de admin)
+                if (user.email && user.email.toLowerCase() === "villjebuxs@gmail.com") {
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error("Error al verificar rol:", error);
+                return false;
+            }
+        }
+
+        // Guardar o actualizar usuario en Firestore (sin sobrescribir rol)
+        async function guardarUsuario(user, datos = {}) {
+            if (!user) return;
+            const docRef = doc(db, "usuarios_registrados", user.uid);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                // Si ya existe, solo actualizamos campos que no sean el rol
+                const dataActual = docSnap.data();
+                await setDoc(docRef, {
+                    ...dataActual,
+                    ...datos,
+                    rol: dataActual.rol || "cliente"
+                }, { merge: true });
+            } else {
+                // Si no existe, lo creamos con rol "cliente" por defecto
+                await setDoc(docRef, {
+                    clienteEmail: user.email,
+                    nombre: datos.nombre || user.displayName || "Cliente",
+                    whatsapp: datos.whatsapp || "",
+                    rol: "cliente",
+                    fechaRegistro: new Date().toLocaleDateString()
+                });
+            }
+        }
+
+        // Redirigir según rol
+        async function redirigirSegunRol(user) {
+            if (!user) return;
+            const admin = await esAdmin(user);
+            if (admin) {
+                window.location.href = "admin/admin.html";
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+
+        // ============================================================
+        // 5. VERIFICAR SESIÓN ACTIVA (redirigir si ya está logueado)
         // ============================================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const admin = await esAdmin(user);
-                if (admin) {
-                    window.location.href = "admin/admin.html";
-                } else {
-                    window.location.href = "index.html";
-                }
+                await redirigirSegunRol(user);
             }
         });
 
         // ============================================================
-        // ALTERNAR REGISTRO / LOGIN
+        // 6. ALTERNAR REGISTRO / LOGIN
         // ============================================================
         toggleLink.addEventListener('click', () => {
             esRegistro = !esRegistro;
+            ocultarError();
             if (esRegistro) {
                 toggleText.textContent = '¿Ya tienes cuenta?';
                 toggleLink.textContent = 'Inicia sesión';
@@ -231,89 +366,124 @@
                 whatsappWrapper.classList.add('hidden');
                 whatsappInput.required = false;
             }
-            errorDiv.style.display = 'none';
         });
 
         // ============================================================
-        // MOSTRAR ERROR
-        // ============================================================
-        function mostrarError(mensaje) {
-            errorDiv.textContent = mensaje;
-            errorDiv.style.display = 'block';
-        }
-
-        // ============================================================
-        // ENVIAR FORMULARIO (LOGIN / REGISTRO)
+        // 7. ENVIAR FORMULARIO (LOGIN / REGISTRO)
         // ============================================================
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            errorDiv.style.display = 'none';
+            ocultarError();
 
             const email = emailInput.value.trim();
             const password = passwordInput.value;
             const whatsapp = whatsappInput.value.trim();
 
+            // Validaciones básicas
+            if (!email || !password) {
+                mostrarError('Completa todos los campos.');
+                return;
+            }
+            if (esRegistro && !whatsapp) {
+                mostrarError('El número de WhatsApp es obligatorio para registrarse.');
+                return;
+            }
+
+            // Deshabilitar botón para evitar múltiples envíos
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<span class="spinner"></span> Procesando...';
+
             try {
                 if (esRegistro) {
-                    // REGISTRO
-                    if (!whatsapp) {
-                        mostrarError('El número de WhatsApp es obligatorio para registrarse.');
-                        return;
-                    }
-                    const user = await registrarUsuario(email, password, { whatsapp });
-                    // El rol ya se asignó como "cliente" en auth.js
-                    alert('✅ Registro exitoso. Ahora inicia sesión.');
-                    // Limpiar campos y cambiar a modo login
+                    // ----- REGISTRO -----
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    // Guardar en Firestore con rol "cliente"
+                    await guardarUsuario(user, { whatsapp });
+                    alert('✅ Registro exitoso. Ahora inicia sesión con tus credenciales.');
+                    // Cambiar a modo login automáticamente
                     esRegistro = false;
-                    toggleLink.click(); // Vuelve a modo login
+                    toggleLink.click(); // Simula clic para cambiar el texto
+                    // Limpiar campos
+                    emailInput.value = '';
+                    passwordInput.value = '';
+                    whatsappInput.value = '';
+                    btnSubmit.disabled = false;
+                    btnSubmit.textContent = 'Ingresar';
                 } else {
-                    // LOGIN
-                    const user = await iniciarSesion(email, password);
-                    // Verificar si es admin
-                    const admin = await esAdmin(user);
-                    if (admin) {
-                        window.location.href = "admin/admin.html";
-                    } else {
-                        window.location.href = "index.html";
-                    }
+                    // ----- LOGIN -----
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+                    // Redirigir según rol
+                    await redirigirSegunRol(user);
                 }
             } catch (error) {
                 console.error('Error:', error);
                 let mensaje = 'Error al procesar la solicitud.';
-                if (error.code === 'auth/user-not-found') {
-                    mensaje = 'No existe una cuenta con este correo. Regístrate primero.';
-                } else if (error.code === 'auth/wrong-password') {
-                    mensaje = 'Contraseña incorrecta.';
-                } else if (error.code === 'auth/email-already-in-use') {
-                    mensaje = 'Este correo ya está registrado. Inicia sesión.';
-                } else if (error.code === 'auth/weak-password') {
-                    mensaje = 'La contraseña debe tener al menos 6 caracteres.';
-                } else if (error.message) {
-                    mensaje = error.message;
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        mensaje = 'No existe una cuenta con este correo. Regístrate primero.';
+                        break;
+                    case 'auth/wrong-password':
+                        mensaje = 'Contraseña incorrecta.';
+                        break;
+                    case 'auth/email-already-in-use':
+                        mensaje = 'Este correo ya está registrado. Inicia sesión.';
+                        break;
+                    case 'auth/weak-password':
+                        mensaje = 'La contraseña debe tener al menos 6 caracteres.';
+                        break;
+                    case 'auth/invalid-email':
+                        mensaje = 'El correo no es válido.';
+                        break;
+                    case 'auth/too-many-requests':
+                        mensaje = 'Demasiados intentos. Espera un momento y vuelve a intentarlo.';
+                        break;
+                    default:
+                        mensaje = error.message || 'Error desconocido.';
                 }
                 mostrarError(mensaje);
+                btnSubmit.disabled = false;
+                btnSubmit.textContent = esRegistro ? 'Registrarme' : 'Ingresar';
             }
         });
 
         // ============================================================
-        // INICIAR SESIÓN CON GOOGLE
+        // 8. INICIAR SESIÓN CON GOOGLE
         // ============================================================
         btnGoogle.addEventListener('click', async () => {
-            errorDiv.style.display = 'none';
+            ocultarError();
+            btnGoogle.disabled = true;
+            btnGoogle.innerHTML = '<span class="spinner"></span> Conectando...';
+
             try {
-                const user = await iniciarSesionConGoogle();
-                // Guardar usuario en Firestore (sin sobrescribir rol)
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                // Guardar/actualizar usuario en Firestore (sin sobrescribir rol)
                 await guardarUsuario(user);
-                // Verificar si es admin
-                const admin = await esAdmin(user);
-                if (admin) {
-                    window.location.href = "admin/admin.html";
-                } else {
-                    window.location.href = "index.html";
-                }
+                // Redirigir según rol
+                await redirigirSegunRol(user);
             } catch (error) {
                 console.error('Error con Google:', error);
-                mostrarError('Error al iniciar sesión con Google. Intenta de nuevo.');
+                let mensaje = 'Error al iniciar sesión con Google.';
+                if (error.code === 'auth/popup-closed-by-user') {
+                    mensaje = 'Ventana de Google cerrada antes de completar el inicio.';
+                } else if (error.code === 'auth/account-exists-with-different-credential') {
+                    mensaje = 'Ya existe una cuenta con este correo usando otro método. Inicia sesión con tu contraseña.';
+                } else {
+                    mensaje = error.message || 'Error desconocido.';
+                }
+                mostrarError(mensaje);
+                btnGoogle.disabled = false;
+                btnGoogle.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Ingresar con Google
+                `;
             }
         });
     </script>
