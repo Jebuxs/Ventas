@@ -1,139 +1,243 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JADI · Tienda</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #f8f5f0; font-family: 'Inter', sans-serif; }
-        .card-producto { background: #fff; border-radius: 1rem; border: 1px solid #e5e0d8; padding: 1rem; transition: transform 0.2s; }
-        .card-producto:hover { transform: scale(1.02); }
-        .btn-primary { background: #e85d04; color: #fff; font-weight: 600; padding: 0.5rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; }
-        .btn-primary:hover { background: #d35400; }
-        .btn-secondary { background: #6b7280; color: #fff; font-weight: 600; padding: 0.5rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; }
-        .btn-secondary:hover { background: #4b5563; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; }
-        .modal-overlay.active { display: flex; }
-        .modal-box { background: #fff; border-radius: 1.2rem; padding: 2rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-box input, .modal-box select { width: 100%; padding: 0.6rem 0.8rem; background: #f8f5f0; border: 1px solid #ddd; border-radius: 0.5rem; margin-bottom: 0.8rem; }
-        .modal-box label { display: block; font-size: 0.75rem; color: #6b6b6b; font-weight: 600; margin-bottom: 0.2rem; }
-        .filtro-btn { background: #fff; border: 1px solid #e5e0d8; padding: 0.4rem 1.2rem; border-radius: 9999px; cursor: pointer; transition: 0.2s; }
-        .filtro-btn:hover { background: #e85d04; color: #fff; border-color: #e85d04; }
-        .filtro-btn.active { background: #e85d04; color: #fff; border-color: #e85d04; }
-        .badge-estado { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
-        .badge-pendiente_pago { background: #fef3c7; color: #92400e; }
-        .badge-pagado { background: #d1fae5; color: #065f46; }
-        .badge-enviado { background: #dbeafe; color: #1e3a8a; }
-        .badge-entregado { background: #d1fae5; color: #065f46; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f5f0;
+        }
+        .btn-primary {
+            background: #e85d04;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #d35400;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e85d04;
+            color: #e85d04;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-outline:hover {
+            background: #e85d04;
+            color: #fff;
+        }
+        .product-card {
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            border: 1px solid #e5e0d8;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
+        .badge-category {
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+        .filter-btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            border: 1px solid #d1d5db;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn.active {
+            background: #e85d04;
+            color: white;
+            border-color: #e85d04;
+        }
+        .filter-btn:hover:not(.active) {
+            background: #f3f4f6;
+        }
+        .cart-item {
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .logout-btn {
+            background: #b91c1c;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-box select, .modal-box input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
-    <nav class="bg-white shadow-md p-4 sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center">
+    <!-- NAVBAR -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-orange-600">JADI</h1>
             <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-600" id="usuarioEmail">Invitado</span>
-                <a href="login.html" class="btn-primary text-sm">Ingresar</a>
-                <button onclick="verCarrito()" class="btn-secondary text-sm">🛒 Carrito (<span id="carritoCount">0</span>)</button>
+                <!-- Zona de usuario no autenticado -->
+                <div id="usuario-anonimo" class="block">
+                    <a href="login.html" class="btn-primary text-sm">Ingresar / Crear Cuenta</a>
+                </div>
+                <!-- Zona de usuario autenticado -->
+                <div id="usuario-autenticado" class="hidden flex items-center gap-3">
+                    <span id="email-usuario" class="text-sm font-medium text-gray-700"></span>
+                    <button id="btnCerrarSesion" class="logout-btn">Cerrar Sesión</button>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- Filtros -->
-    <div class="container mx-auto p-4 flex gap-2 flex-wrap">
-        <button class="filtro-btn active" data-categoria="todos">Todos</button>
-        <button class="filtro-btn" data-categoria="zapatos">👟 Zapatos</button>
-        <button class="filtro-btn" data-categoria="ropa">👕 Ropa</button>
-        <button class="filtro-btn" data-categoria="bolsos">👜 Bolsos</button>
-        <button class="filtro-btn" data-categoria="accesorios">⌚ Accesorios</button>
+    <!-- BANNER DE OFERTA -->
+    <div class="bg-amber-500 text-white text-center py-2.5 px-4 text-sm font-bold shadow-inner">
+        🔥 BENEFICIO EXCLUSIVO: ¡Mantenimiento gratis a los 3 meses y ajuste de costuras a los 4 meses! 🔥
     </div>
 
-    <!-- Catálogo -->
-    <main class="container mx-auto p-4">
-        <div id="catalogo" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <p class="col-span-full text-center text-gray-500">Cargando productos...</p>
-        </div>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="container mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- CATÁLOGO -->
+        <section class="lg:col-span-2">
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button class="filter-btn active" data-categoria="todos">Todos</button>
+                <button class="filter-btn" data-categoria="zapatos">Zapatos</button>
+                <button class="filter-btn" data-categoria="ropa">Ropa</button>
+                <button class="filter-btn" data-categoria="bolsos">Bolsos</button>
+                <button class="filter-btn" data-categoria="accesorios">Accesorios</button>
+            </div>
+            <div id="contenedor-catalogo" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Los productos se cargarán aquí -->
+            </div>
+        </section>
+
+        <!-- CARRITO -->
+        <section class="bg-white p-6 rounded-lg shadow-md h-fit sticky top-24">
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Tu Orden de Compra</h2>
+            <p id="alerta-login-carrito" class="text-sm text-amber-600 font-medium mb-4 bg-amber-50 p-2 rounded border border-amber-200">
+                ⚠️ Debes iniciar sesión para procesar tu pedido.
+            </p>
+            <div id="contenido-carrito" class="space-y-4 max-h-80 overflow-y-auto mb-4">
+                <p class="text-gray-500 text-center text-sm">No has agregado ningún modelo.</p>
+            </div>
+            <div class="border-t pt-4">
+                <div class="flex justify-between items-center text-lg font-bold text-gray-900 mb-4">
+                    <span>Total:</span>
+                    <span id="total-precio">$0.00</span>
+                </div>
+                <button id="btn-confirmar-pedido" class="w-full btn-primary py-3 rounded-lg opacity-50 cursor-not-allowed" disabled>
+                    Confirmar Pedido
+                </button>
+            </div>
+        </section>
     </main>
 
-    <!-- MODAL CARRITO -->
-    <div class="modal-overlay" id="modalCarrito">
+    <!-- ============================================================ -->
+    <!-- MODAL PARA SELECCIONAR TALLA Y COLOR ANTES DE AGREGAR       -->
+    <!-- ============================================================ -->
+    <div class="modal-overlay" id="modalTallaColor">
         <div class="modal-box">
-            <h2 class="text-2xl font-bold text-orange-600">🛒 Tu Carrito</h2>
-            <div id="contenidoCarrito" class="my-4">
-                <p class="text-gray-500">El carrito está vacío.</p>
-            </div>
-            <div id="resumenCarrito" class="hidden">
-                <div class="flex justify-between font-bold text-lg">
-                    <span>Total:</span>
-                    <span id="totalCarrito">$0.00</span>
-                </div>
-                <button onclick="procesarPedido()" class="btn-primary w-full mt-4">Confirmar Pedido</button>
-            </div>
-            <button onclick="cerrarModalCarrito()" class="btn-secondary w-full mt-2">Cerrar</button>
-        </div>
-    </div>
-
-    <!-- MODAL SELECCIÓN TALLA/COLOR -->
-    <div class="modal-overlay" id="modalSeleccion">
-        <div class="modal-box">
-            <h2 class="text-2xl font-bold text-orange-600">Selecciona talla y color</h2>
-            <div id="infoProductoSeleccion" class="mb-4">
-                <p><strong>Producto:</strong> <span id="seleccionNombre"></span></p>
-                <p><strong>Precio:</strong> $<span id="seleccionPrecio"></span></p>
-            </div>
-            <label>Talla</label>
-            <select id="seleccionTalla">
-                <option value="">Selecciona una talla</option>
-            </select>
-            <label>Color</label>
-            <select id="seleccionColor">
-                <option value="">Selecciona un color</option>
-            </select>
+            <h3 class="text-xl font-bold text-orange-600 mb-4" id="modalProductoNombre">Agregar producto</h3>
+            <label class="block text-sm font-medium text-gray-700">Talla</label>
+            <select id="modalTalla"></select>
+            <label class="block text-sm font-medium text-gray-700">Color</label>
+            <select id="modalColor"></select>
             <div class="flex gap-3 mt-4">
-                <button onclick="agregarAlCarritoConfirmado()" class="btn-primary flex-1">Agregar al carrito</button>
-                <button onclick="cerrarModalSeleccion()" class="btn-secondary flex-1">Cancelar</button>
+                <button id="modalAgregarCarrito" class="btn-primary flex-1">Agregar al carrito</button>
+                <button id="modalCancelar" class="btn-outline flex-1">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL PAGO (Transferencia) -->
-    <div class="modal-overlay" id="modalPago">
-        <div class="modal-box">
-            <h2 class="text-2xl font-bold text-orange-600">💳 Realizar Pago</h2>
-            <p class="text-sm text-gray-600 mb-4">Selecciona tu banco y realiza la transferencia. Luego ingresa el número de transacción.</p>
-            <label>Banco</label>
-            <select id="bancoSeleccionado" class="w-full p-2 border rounded">
-                <option value="">Selecciona un banco</option>
-                <option value="pichincha">Banco Pichincha</option>
-                <option value="solidario">Banco Solidario</option>
-                <option value="guayaquil">Banco Guayaquil</option>
-                <option value="pacifico">Banco Pacífico</option>
-                <option value="produbanco">Produbanco</option>
-                <option value="internacional">Banco Internacional</option>
-                <option value="bolivariano">Banco Bolivariano</option>
-                <option value="austro">Banco del Austro</option>
-                <option value="loja">Banco de Loja</option>
-                <option value="amazonas">Banco Amazonas</option>
-            </select>
-            <label>Número de Transacción</label>
-            <input type="text" id="numeroTransaccion" placeholder="Ej: 123456789" />
-            <div class="flex gap-3 mt-4">
-                <button onclick="confirmarPago()" class="btn-primary flex-1">Confirmar Pago</button>
-                <button onclick="cerrarModalPago()" class="btn-secondary flex-1">Cancelar</button>
-            </div>
-        </div>
-    </div>
+    <!-- ============================================================ -->
+    <!-- SCRIPTS (TODO EN UN SOLO ARCHIVO)                            -->
+    <!-- ============================================================ -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase-app": "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js",
+                "firebase-auth": "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js",
+                "firebase-firestore": "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js"
+            }
+        }
+    </script>
 
-    <!-- SCRIPTS -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
+        // ============================================================
+        // 1. IMPORTAR FIREBASE
+        // ============================================================
+        import { initializeApp } from "firebase-app";
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signOut
+        } from "firebase-auth";
+        import {
+            getFirestore,
+            collection,
+            onSnapshot,
+            addDoc,
+            doc,
+            getDoc
+        } from "firebase-firestore";
 
-        // Configuración Firebase
+        // ============================================================
+        // 2. CONFIGURACIÓN DE FIREBASE
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
             authDomain: "ventas-dcc22.firebaseapp.com",
@@ -144,271 +248,274 @@
         };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        let productos = [];
+        // ============================================================
+        // 3. REFERENCIAS AL DOM
+        // ============================================================
+        const contenedorCatalogo = document.getElementById('contenedor-catalogo');
+        const contenidoCarrito = document.getElementById('contenido-carrito');
+        const totalPrecio = document.getElementById('total-precio');
+        const btnConfirmar = document.getElementById('btn-confirmar-pedido');
+        const alertaLogin = document.getElementById('alerta-login-carrito');
+        const usuarioAnonimo = document.getElementById('usuario-anonimo');
+        const usuarioAutenticado = document.getElementById('usuario-autenticado');
+        const emailUsuario = document.getElementById('email-usuario');
+        const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+
+        const modalTallaColor = document.getElementById('modalTallaColor');
+        const modalProductoNombre = document.getElementById('modalProductoNombre');
+        const modalTalla = document.getElementById('modalTalla');
+        const modalColor = document.getElementById('modalColor');
+        const modalAgregarCarrito = document.getElementById('modalAgregarCarrito');
+        const modalCancelar = document.getElementById('modalCancelar');
+
+        // ============================================================
+        // 4. VARIABLES GLOBALES
+        // ============================================================
+        let productosDisponibles = [];
         let carrito = [];
         let usuarioActual = null;
-        let categoriaActual = 'todos';
+        let productoSeleccionado = null; // para el modal
 
         // ============================================================
-        // AUTENTICACIÓN
+        // 5. AUTENTICACIÓN
         // ============================================================
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 usuarioActual = user;
-                document.getElementById('usuarioEmail').textContent = user.email;
+                usuarioAnonimo.classList.add('hidden');
+                usuarioAutenticado.classList.remove('hidden');
+                emailUsuario.textContent = user.email;
+                alertaLogin.classList.add('hidden');
+                // Verificar si es admin (por si acaso)
+                const docRef = doc(db, "usuarios_registrados", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().rol === "admin") {
+                    // Si es admin, mostramos un enlace al panel
+                    // (opcional: puedes agregar un botón "Ir al Panel")
+                }
             } else {
                 usuarioActual = null;
-                document.getElementById('usuarioEmail').textContent = 'Invitado';
+                usuarioAnonimo.classList.remove('hidden');
+                usuarioAutenticado.classList.add('hidden');
+                alertaLogin.classList.remove('hidden');
+                carrito = [];
+            }
+            actualizarCarrito();
+            actualizarBotonConfirmar();
+        });
+
+        // Cerrar sesión
+        btnCerrarSesion.addEventListener('click', async () => {
+            if (confirm('¿Seguro que deseas cerrar sesión?')) {
+                await signOut(auth);
+                window.location.reload();
             }
         });
 
         // ============================================================
-        // FILTROS POR CATEGORÍA
+        // 6. CARGAR CATÁLOGO CON FILTROS
         // ============================================================
-        document.querySelectorAll('.filtro-btn').forEach(btn => {
+        let categoriaActual = 'todos';
+
+        // Escuchar clics en los filtros
+        document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 categoriaActual = btn.dataset.categoria;
-                renderizarProductos();
+                renderizarCatalogo();
             });
         });
 
-        // ============================================================
-        // CARGAR PRODUCTOS DESDE FIRESTORE
-        // ============================================================
-        function cargarProductos() {
-            onSnapshot(collection(db, "calzado"), (snapshot) => {
-                productos = [];
-                snapshot.forEach(doc => {
-                    productos.push({ id: doc.id, ...doc.data() });
-                });
-                renderizarProductos();
+        // Escuchar cambios en Firestore
+        onSnapshot(collection(db, "calzado"), (snapshot) => {
+            productosDisponibles = [];
+            snapshot.forEach(doc => {
+                productosDisponibles.push({ id: doc.id, ...doc.data() });
             });
-        }
+            renderizarCatalogo();
+        });
 
-        function renderizarProductos() {
-            const catalogo = document.getElementById('catalogo');
-            catalogo.innerHTML = '';
-
-            let productosFiltrados = productos;
+        function renderizarCatalogo() {
+            contenedorCatalogo.innerHTML = '';
+            let productosFiltrados = productosDisponibles;
             if (categoriaActual !== 'todos') {
-                productosFiltrados = productos.filter(p => p.categoria === categoriaActual);
+                productosFiltrados = productosDisponibles.filter(p => p.categoria === categoriaActual);
             }
-
             if (productosFiltrados.length === 0) {
-                catalogo.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay productos en esta categoría.</p>';
+                contenedorCatalogo.innerHTML = '<p class="text-gray-500 col-span-2 text-center py-8">No hay productos en esta categoría.</p>';
                 return;
             }
-
             productosFiltrados.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'card-producto';
-                card.innerHTML = `
-                    <img src="${prod.imagen || 'https://via.placeholder.com/150'}" class="w-full h-48 object-cover rounded-lg mb-3" />
-                    <h3 class="font-bold text-lg">${prod.nombre}</h3>
-                    <p class="text-sm text-gray-500">${prod.descripcion || ''}</p>
-                    <p class="text-xl font-bold text-orange-600 mt-2">$${prod.precio.toFixed(2)}</p>
-                    <button onclick="abrirModalSeleccion('${prod.id}')" class="btn-primary w-full mt-3">Agregar al carrito</button>
+                const div = document.createElement('div');
+                div.className = "product-card p-4 flex flex-col justify-between";
+                div.innerHTML = `
+                    <img src="${prod.imagen || 'https://via.placeholder.com/300'}" class="w-full h-48 object-cover rounded-lg mb-3" />
+                    <div>
+                        <div class="flex justify-between items-start mb-1">
+                            <h3 class="font-bold text-lg text-gray-900">${prod.nombre}</h3>
+                            <span class="badge-category">${prod.categoria || 'General'}</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-3">${prod.descripcion || ''}</p>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xl font-extrabold text-orange-600">$${parseFloat(prod.precio).toFixed(2)}</span>
+                        <button data-id="${prod.id}" class="btn-agregar btn-primary text-sm px-3 py-2">Añadir al Carrito</button>
+                    </div>
                 `;
-                catalogo.appendChild(card);
+                contenedorCatalogo.appendChild(div);
+            });
+
+            // Asignar eventos a los botones de agregar
+            document.querySelectorAll('.btn-agregar').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = btn.dataset.id;
+                    const producto = productosDisponibles.find(p => p.id === id);
+                    if (producto) {
+                        abrirModalTallaColor(producto);
+                    }
+                });
             });
         }
 
         // ============================================================
-        // SELECCIÓN DE TALLA Y COLOR (MODAL)
+        // 7. MODAL PARA TALLA Y COLOR
         // ============================================================
-        let productoSeleccionadoId = null;
+        function abrirModalTallaColor(producto) {
+            productoSeleccionado = producto;
+            modalProductoNombre.textContent = producto.nombre;
 
-        window.abrirModalSeleccion = (productoId) => {
-            const prod = productos.find(p => p.id === productoId);
-            if (!prod) return;
+            // Llenar tallas (si no tiene, usar opciones por defecto)
+            modalTalla.innerHTML = '';
+            const tallas = producto.tallas || ['36', '37', '38', '39', '40', '41', '42'];
+            tallas.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = t;
+                opt.textContent = t;
+                modalTalla.appendChild(opt);
+            });
 
-            productoSeleccionadoId = productoId;
-            document.getElementById('seleccionNombre').textContent = prod.nombre;
-            document.getElementById('seleccionPrecio').textContent = prod.precio.toFixed(2);
+            // Llenar colores (si no tiene, usar opciones por defecto)
+            modalColor.innerHTML = '';
+            const colores = producto.colores || ['Negro', 'Blanco', 'Café', 'Azul', 'Rojo'];
+            colores.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c;
+                modalColor.appendChild(opt);
+            });
 
-            // Llenar tallas
-            const tallaSelect = document.getElementById('seleccionTalla');
-            tallaSelect.innerHTML = '<option value="">Selecciona una talla</option>';
-            if (prod.tallas && prod.tallas.length) {
-                prod.tallas.forEach(t => {
-                    tallaSelect.innerHTML += `<option value="${t}">${t}</option>`;
-                });
-            } else {
-                tallaSelect.innerHTML += `<option value="Única">Única</option>`;
-            }
+            modalTallaColor.classList.add('active');
+        }
 
-            // Llenar colores
-            const colorSelect = document.getElementById('seleccionColor');
-            colorSelect.innerHTML = '<option value="">Selecciona un color</option>';
-            if (prod.colores && prod.colores.length) {
-                prod.colores.forEach(c => {
-                    colorSelect.innerHTML += `<option value="${c}">${c}</option>`;
-                });
-            } else {
-                colorSelect.innerHTML += `<option value="Estándar">Estándar</option>`;
-            }
+        modalCancelar.addEventListener('click', () => {
+            modalTallaColor.classList.remove('active');
+            productoSeleccionado = null;
+        });
 
-            document.getElementById('modalSeleccion').classList.add('active');
-        };
-
-        window.cerrarModalSeleccion = () => {
-            document.getElementById('modalSeleccion').classList.remove('active');
-        };
-
-        window.agregarAlCarritoConfirmado = () => {
-            const talla = document.getElementById('seleccionTalla').value;
-            const color = document.getElementById('seleccionColor').value;
-
-            if (!talla || !color) {
-                alert('Selecciona una talla y un color.');
-                return;
-            }
-
-            const prod = productos.find(p => p.id === productoSeleccionadoId);
-            if (!prod) return;
-
+        modalAgregarCarrito.addEventListener('click', () => {
+            if (!productoSeleccionado) return;
+            const talla = modalTalla.value;
+            const color = modalColor.value;
             carrito.push({
-                id: prod.id,
-                nombre: prod.nombre,
-                precio: prod.precio,
+                id: productoSeleccionado.id,
+                nombre: productoSeleccionado.nombre,
+                precio: productoSeleccionado.precio,
                 talla: talla,
                 color: color,
                 cantidad: 1
             });
-
-            cerrarModalSeleccion();
-            actualizarCarritoUI();
-        };
+            modalTallaColor.classList.remove('active');
+            productoSeleccionado = null;
+            actualizarCarrito();
+        });
 
         // ============================================================
-        // CARRITO
+        // 8. CARRITO
         // ============================================================
-        function actualizarCarritoUI() {
-            document.getElementById('carritoCount').textContent = carrito.length;
+        function actualizarCarrito() {
+            contenidoCarrito.innerHTML = '';
+            if (carrito.length === 0) {
+                contenidoCarrito.innerHTML = '<p class="text-gray-500 text-center text-sm">El carrito está vacío.</p>';
+                totalPrecio.textContent = '$0.00';
+                return;
+            }
+            let total = 0;
+            carrito.forEach((item, index) => {
+                total += item.precio * item.cantidad;
+                const div = document.createElement('div');
+                div.className = "cart-item text-xs";
+                div.innerHTML = `
+                    <div class="flex justify-between items-center font-bold text-gray-900">
+                        <span>${item.nombre}</span>
+                        <button class="text-red-500 font-bold text-base" data-index="${index}">&times;</button>
+                    </div>
+                    <div class="flex gap-2 text-gray-600">
+                        <span>Talla: ${item.talla}</span>
+                        <span>Color: ${item.color}</span>
+                        <span>Cant: ${item.cantidad}</span>
+                    </div>
+                    <div class="text-orange-600 font-semibold">$${(item.precio * item.cantidad).toFixed(2)}</div>
+                `;
+                contenidoCarrito.appendChild(div);
+            });
+
+            // Eventos para eliminar items
+            contenidoCarrito.querySelectorAll('button[data-index]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.index);
+                    carrito.splice(idx, 1);
+                    actualizarCarrito();
+                });
+            });
+
+            totalPrecio.textContent = `$${total.toFixed(2)}`;
+            actualizarBotonConfirmar();
         }
 
-        window.verCarrito = () => {
-            const modal = document.getElementById('modalCarrito');
-            const contenido = document.getElementById('contenidoCarrito');
-            const resumen = document.getElementById('resumenCarrito');
-
-            if (carrito.length === 0) {
-                contenido.innerHTML = '<p class="text-gray-500">El carrito está vacío.</p>';
-                resumen.classList.add('hidden');
+        function actualizarBotonConfirmar() {
+            if (usuarioActual && carrito.length > 0) {
+                btnConfirmar.disabled = false;
+                btnConfirmar.classList.remove('opacity-50', 'cursor-not-allowed');
             } else {
-                let html = '';
-                let total = 0;
-                carrito.forEach((item, index) => {
-                    total += item.precio * item.cantidad;
-                    html += `
-                        <div class="flex justify-between items-center border-b py-2">
-                            <div>
-                                <p class="font-bold">${item.nombre}</p>
-                                <p class="text-xs text-gray-500">Talla: ${item.talla} | Color: ${item.color}</p>
-                            </div>
-                            <div>
-                                <span class="font-bold">$${item.precio.toFixed(2)}</span>
-                                <button onclick="eliminarDelCarrito(${index})" class="text-red-500 ml-2">🗑️</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                contenido.innerHTML = html;
-                document.getElementById('totalCarrito').textContent = `$${total.toFixed(2)}`;
-                resumen.classList.remove('hidden');
+                btnConfirmar.disabled = true;
+                btnConfirmar.classList.add('opacity-50', 'cursor-not-allowed');
             }
-
-            modal.classList.add('active');
-        };
-
-        window.cerrarModalCarrito = () => {
-            document.getElementById('modalCarrito').classList.remove('active');
-        };
-
-        window.eliminarDelCarrito = (index) => {
-            carrito.splice(index, 1);
-            actualizarCarritoUI();
-            // Si el carrito está abierto, refrescar la vista
-            if (document.getElementById('modalCarrito').classList.contains('active')) {
-                verCarrito();
-            }
-        };
+        }
 
         // ============================================================
-        // PROCESAR PEDIDO (con pago)
+        // 9. CONFIRMAR PEDIDO
         // ============================================================
-        window.procesarPedido = () => {
+        btnConfirmar.addEventListener('click', async () => {
             if (!usuarioActual) {
-                alert('Debes iniciar sesión para realizar un pedido.');
+                alert('Debes iniciar sesión primero.');
                 return;
             }
-
-            if (carrito.length === 0) {
-                alert('El carrito está vacío.');
-                return;
-            }
-
-            cerrarModalCarrito();
-            document.getElementById('modalPago').classList.add('active');
-        };
-
-        window.cerrarModalPago = () => {
-            document.getElementById('modalPago').classList.remove('active');
-        };
-
-        window.confirmarPago = async () => {
-            const banco = document.getElementById('bancoSeleccionado').value;
-            const numeroTransaccion = document.getElementById('numeroTransaccion').value.trim();
-
-            if (!banco) {
-                alert('Selecciona un banco.');
-                return;
-            }
-
-            if (!numeroTransaccion) {
-                alert('Ingresa el número de transacción.');
-                return;
-            }
-
-            const total = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
-
-            const pedido = {
-                clienteEmail: usuarioActual.email,
-                articulos: carrito.map(item => ({
-                    nombre: item.nombre,
-                    talla: item.talla,
-                    color: item.color,
-                    cantidad: item.cantidad,
-                    precio: item.precio
-                })),
-                total: total,
-                fecha: new Date().toLocaleString(),
-                estado: 'pendiente_pago',
-                banco: banco,
-                numeroTransaccion: numeroTransaccion
-            };
+            if (carrito.length === 0) return;
 
             try {
-                await addDoc(collection(db, "pedidos"), pedido);
-                alert('✅ Pedido confirmado. Espera la validación del pago.');
+                await addDoc(collection(db, "pedidos"), {
+                    clienteEmail: usuarioActual.email,
+                    articulos: carrito,
+                    total: carrito.reduce((acc, item) => acc + (item.precio * item.cantidad), 0),
+                    fecha: new Date().toLocaleString(),
+                    estado: "pendiente"
+                });
+                alert('✅ Pedido guardado con éxito. Te contactaremos para coordinar el pago.');
                 carrito = [];
-                actualizarCarritoUI();
-                cerrarModalPago();
-            } catch (error) {
-                alert('Error al procesar el pedido: ' + error.message);
+                actualizarCarrito();
+            } catch (err) {
+                alert('Error al procesar el pedido: ' + err.message);
             }
-        };
+        });
 
         // ============================================================
-        // INICIALIZAR
+        // 10. INICIO
         // ============================================================
-        cargarProductos();
-        console.log('🔥 Tienda JADI cargada correctamente.');
+        console.log('🔥 JADI Tienda cargada correctamente.');
     </script>
 </body>
 </html>
