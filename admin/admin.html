@@ -4,47 +4,153 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JADI · Panel de Administración</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #f8f5f0; font-family: 'Inter', sans-serif; }
+        body {
+            background: #f8f5f0;
+            font-family: 'Inter', sans-serif;
+        }
         .sidebar {
-            width: 260px; background: #fff; border-right: 1px solid #e5e0d8;
-            height: 100vh; position: fixed; top: 0; left: 0; overflow-y: auto;
-            transition: transform 0.3s ease; z-index: 50;
+            width: 260px;
+            background: #fff;
+            border-right: 1px solid #e5e0d8;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 50;
         }
         .sidebar-brand { padding: 1.5rem; border-bottom: 1px solid #e5e0d8; }
         .sidebar-brand h1 { font-size: 1.8rem; font-weight: 700; color: #e85d04; }
         .sidebar .nav-item {
-            display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem;
-            color: #4a4a4a; font-weight: 500; cursor: pointer; border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: #4a4a4a;
+            font-weight: 500;
+            cursor: pointer;
+            border-left: 3px solid transparent;
         }
-        .sidebar .nav-item:hover, .sidebar .nav-item.active {
-            background: #f8f5f0; color: #e85d04; border-left-color: #e85d04;
+        .sidebar .nav-item:hover,
+        .sidebar .nav-item.active {
+            background: #f8f5f0;
+            color: #e85d04;
+            border-left-color: #e85d04;
         }
-        .main-content { margin-left: 260px; padding: 2rem; min-height: 100vh; }
-        .card { background: #fff; border-radius: 1rem; border: 1px solid #e5e0d8; padding: 1.5rem; margin-bottom: 1.5rem; }
-        .card-title { font-size: 1.2rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
-        .btn-primary { background: #e85d04; color: #fff; font-weight: 600; padding: 0.5rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; }
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .card {
+            background: #fff;
+            border-radius: 1rem;
+            border: 1px solid #e5e0d8;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .btn-primary {
+            background: #e85d04;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
         .btn-primary:hover { background: #d35400; }
-        .btn-secondary { background: #6b7280; color: #fff; font-weight: 600; padding: 0.5rem 1.2rem; border-radius: 0.5rem; border: none; cursor: pointer; }
+        .btn-secondary {
+            background: #6b7280;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+        }
         .btn-secondary:hover { background: #4b5563; }
-        .btn-danger { background: #b91c1c; color: #fff; border: none; padding: 0.3rem 0.8rem; border-radius: 0.4rem; font-size: 0.75rem; cursor: pointer; }
+        .btn-danger {
+            background: #b91c1c;
+            color: #fff;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
         .btn-danger:hover { background: #dc2626; }
-        .badge { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; text-transform: uppercase; }
-        .badge-pendiente_pago { background: #fef3c7; color: #92400e; }
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 9999px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-pendiente { background: #fef3c7; color: #92400e; }
         .badge-pagado { background: #d1fae5; color: #065f46; }
         .badge-enviado { background: #dbeafe; color: #1e3a8a; }
         .badge-entregado { background: #d1fae5; color: #065f46; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 999; }
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
         .modal-overlay.active { display: flex; }
-        .modal-box { background: #fff; border-radius: 1.2rem; padding: 2rem; max-width: 700px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-box input, .modal-box select, .modal-box textarea { width: 100%; padding: 0.6rem 0.8rem; background: #f8f5f0; border: 1px solid #ddd; border-radius: 0.5rem; margin-bottom: 0.8rem; }
-        .modal-box label { display: block; font-size: 0.75rem; color: #6b6b6b; font-weight: 600; margin-bottom: 0.2rem; }
+        .modal-box {
+            background: #fff;
+            border-radius: 1.2rem;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-box input, .modal-box select, .modal-box textarea {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            background: #f8f5f0;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .modal-box label {
+            display: block;
+            font-size: 0.75rem;
+            color: #6b6b6b;
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+        }
         .img-preview { max-width: 100%; max-height: 200px; border-radius: 0.5rem; border: 1px solid #ddd; margin-top: 0.5rem; display: none; }
         .status-ok { background: #d1fae5; color: #065f46; padding: 0.3rem 0.8rem; border-radius: 0.5rem; }
         .status-error { background: #fee2e2; color: #991b1b; padding: 0.3rem 0.8rem; border-radius: 0.5rem; }
         .status-loading { background: #fef3c7; color: #92400e; padding: 0.3rem 0.8rem; border-radius: 0.5rem; }
-        .logout-header { background: #b91c1c; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+        .logout-header {
+            background: #b91c1c;
+            color: #fff;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
         .logout-header:hover { background: #dc2626; }
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         table th { text-align: left; padding: 0.75rem 0.5rem; color: #6b6b6b; font-weight: 600; text-transform: uppercase; font-size: 0.65rem; border-bottom: 1px solid #e5e0d8; }
@@ -60,7 +166,6 @@
     </style>
 </head>
 <body>
-
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand"><h1>JADI</h1><small>Panel de Control</small></div>
@@ -161,19 +266,17 @@
                 <input type="number" id="prodGarantia" value="6" />
                 <label>Stock</label>
                 <input type="number" id="prodStock" value="10" />
-                
-                <label>Tallas (separadas por comas)</label>
-                <input type="text" id="prodTallas" placeholder="36, 37, 38, 39, 40" />
-                <label>Colores (separados por comas)</label>
-                <input type="text" id="prodColores" placeholder="Negro, Blanco, Rojo" />
 
-                <!-- IMAGEN: Subida con ImgBB (mantener lógica) -->
-                <label>Subir imagen (formatos: JPG, PNG, GIF, WebP, etc.)</label>
+                <!-- IMAGEN: Subida con ImgBB -->
+                <label>Subir imagen</label>
                 <input type="file" id="fileInput" accept="image/*" />
                 <button type="button" id="btnSubirImgBB" class="btn-primary mt-2 w-full">⬆️ Subir imagen a ImgBB</button>
                 <div id="estadoSubida" class="mt-2 text-xs text-gray-500">Sin imagen</div>
                 <input type="hidden" id="prodImagen" required />
-                <img id="previewImagen" class="img-preview" src="#" alt="Vista previa" />
+                <div id="previewContainer" style="display:none; margin-top: 0.5rem;">
+                    <img id="previewImagen" class="img-preview" style="display:block;" />
+                    <a id="linkImagen" href="#" target="_blank" class="text-orange-600 underline text-sm">Ver imagen en ImgBB</a>
+                </div>
 
                 <label>Descripción corta</label>
                 <textarea id="prodDescripcion" rows="2"></textarea>
@@ -186,18 +289,6 @@
         </div>
     </div>
 
-    <!-- MODAL DETALLE PEDIDO -->
-    <div class="modal-overlay" id="modalDetallePedido">
-        <div class="modal-box">
-            <h2 class="text-2xl font-bold text-orange-600 mb-4">📋 Detalle del Pedido</h2>
-            <div id="contenidoDetallePedido"></div>
-            <div class="mt-4 flex justify-end">
-                <button onclick="document.getElementById('modalDetallePedido').classList.remove('active')" class="btn-secondary">Cerrar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPTS -->
     <script type="module" src="admin.js"></script>
 </body>
 </html>
