@@ -54,21 +54,6 @@
         .btn-secondary:hover {
             background: #4b5563;
         }
-        .combinacion-item {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            padding: 0.8rem;
-            margin-bottom: 0.8rem;
-        }
-        .combinacion-item select,
-        .combinacion-item input {
-            padding: 0.3rem 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.3rem;
-            font-size: 0.85rem;
-            width: 100%;
-        }
         .nav-link {
             color: #4a4a4a;
             padding: 0.5rem 1rem;
@@ -97,11 +82,41 @@
             border-radius: 9999px;
             font-size: 0.7rem;
         }
-        .grid-cols-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
         .grid-cols-4 {
             grid-template-columns: repeat(4, 1fr);
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            background: #f9fafb;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #e85d04;
+        }
+        .color-block {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        .color-block .grid {
+            gap: 0.5rem;
         }
     </style>
 </head>
@@ -153,13 +168,21 @@
                     </div>
                 </div>
 
-                <!-- COMBINACIONES POR TALLA Y COLOR (MEJORADO) -->
+                <!-- TALLAS DISPONIBLES (Checkboxes) -->
                 <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">📊 Stock por Talla y Color</label>
-                    <div id="combinacionesContainer">
-                        <!-- Bloque inicial (se genera con JS) -->
+                    <label class="block text-sm font-medium text-gray-700 mb-2">📏 Tallas disponibles</label>
+                    <div class="checkbox-group" id="tallasContainer">
+                        <!-- Se genera con JavaScript -->
                     </div>
-                    <button type="button" id="agregarCombinacion" class="btn-secondary mt-2">➕ Agregar talla/color</button>
+                </div>
+
+                <!-- COLORES DISPONIBLES (Bloques con Color 1, Color 2, Color 3, Color 4) -->
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">🎨 Colores disponibles</label>
+                    <div id="coloresContainer">
+                        <!-- Se genera con JavaScript -->
+                    </div>
+                    <button type="button" id="agregarColor" class="btn-secondary mt-2">➕ Agregar color</button>
                 </div>
 
                 <!-- FICHA TÉCNICA -->
@@ -199,7 +222,7 @@
                     </div>
                     <div class="mt-2">
                         <label class="text-xs text-gray-500">Descripción adicional (opcional)</label>
-                        <textarea id="descripcion" rows="2" class="w-full p-2 border rounded" placeholder="Detalles extra del producto..."></textarea>
+                        <textarea id="descripcion" rows="2" class="w-full p-2 border rounded" placeholder="Detalles extra..."></textarea>
                     </div>
                 </div>
 
@@ -280,12 +303,13 @@
         const forro = document.getElementById('forro');
         const suela = document.getElementById('suela');
         const descripcion = document.getElementById('descripcion');
-        const combinacionesContainer = document.getElementById('combinacionesContainer');
-        const agregarCombinacion = document.getElementById('agregarCombinacion');
+        const tallasContainer = document.getElementById('tallasContainer');
+        const coloresContainer = document.getElementById('coloresContainer');
+        const agregarColor = document.getElementById('agregarColor');
         const listaProductos = document.getElementById('listaProductos');
 
         // ============================================================
-        // 4. AUTENTICACIÓN (solo admin)
+        // 4. AUTENTICACIÓN
         // ============================================================
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
@@ -300,67 +324,117 @@
         };
 
         // ============================================================
-        // 5. AGREGAR COMBINACIÓN (talla + color + cantidad + imagen)
+        // 5. GENERAR TALLAS (Checkboxes)
         // ============================================================
-        function crearCombinacion(index) {
-            const div = document.createElement('div');
-            div.className = 'combinacion-item';
-            div.dataset.index = index;
-
-            // Generar opciones de talla desde 20 hasta 42
-            let tallasOptions = '';
-            for (let i = 20; i <= 42; i++) {
-                const selected = i === 36 ? 'selected' : '';
-                tallasOptions += `<option value="${i}" ${selected}>${i}</option>`;
+        function generarTallas() {
+            tallasContainer.innerHTML = '';
+            for (let i = 15; i <= 45; i++) {
+                const label = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'talla-checkbox';
+                checkbox.value = i;
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(i));
+                tallasContainer.appendChild(label);
             }
+        }
+        generarTallas();
 
+        // ============================================================
+        // 6. GENERAR BLOQUE DE COLOR (Color 1, Color 2, Color 3, Color 4)
+        // ============================================================
+        const coloresDisponibles = [
+            'Negro', 'Blanco', 'Rojo', 'Azul', 'Verde', 'Amarillo',
+            'Naranja', 'Morado', 'Rosa', 'Café', 'Gris', 'Plateado',
+            'Dorado', 'Beige', 'Marrón', 'Turquesa', 'Lima', 'Fucsia'
+        ];
+
+        function generarOpcionesColor(selected = '') {
+            return coloresDisponibles.map(c => 
+                `<option value="${c}" ${c === selected ? 'selected' : ''}>${c}</option>`
+            ).join('');
+        }
+
+        function crearBloqueColor(index) {
+            const div = document.createElement('div');
+            div.className = 'color-block';
+            div.dataset.index = index;
             div.innerHTML = `
                 <div class="grid grid-cols-4 gap-2">
                     <div>
-                        <label class="text-xs text-gray-500">Talla</label>
-                        <select class="talla-select w-full p-1 border rounded">
-                            ${tallasOptions}
+                        <label class="text-xs text-gray-500">Color Principal</label>
+                        <select class="color-principal w-full p-1 border rounded">
+                            <option value="">Seleccionar...</option>
+                            ${generarOpcionesColor()}
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs text-gray-500">Color</label>
-                        <input type="text" class="color-input w-full p-1 border rounded" placeholder="blanco-negro" />
+                        <label class="text-xs text-gray-500">Color Secundario</label>
+                        <select class="color-secundario w-full p-1 border rounded">
+                            <option value="">Seleccionar...</option>
+                            ${generarOpcionesColor()}
+                        </select>
                     </div>
                     <div>
-                        <label class="text-xs text-gray-500">Cantidad</label>
-                        <input type="number" class="cantidad-input w-full p-1 border rounded" placeholder="Ej: 10" min="0" />
+                        <label class="text-xs text-gray-500">Color Terciario</label>
+                        <select class="color-terciario w-full p-1 border rounded">
+                            <option value="">Seleccionar...</option>
+                            ${generarOpcionesColor()}
+                        </select>
                     </div>
                     <div>
-                        <label class="text-xs text-gray-500">Imagen</label>
-                        <input type="file" class="imagen-input w-full p-1 border rounded" accept="image/*" />
-                        <div class="preview-container"></div>
+                        <label class="text-xs text-gray-500">Color Cuarto (opcional)</label>
+                        <select class="color-cuarto w-full p-1 border rounded">
+                            <option value="">Seleccionar...</option>
+                            ${generarOpcionesColor()}
+                        </select>
                     </div>
                 </div>
-                <button type="button" class="btn-danger eliminar-combinacion text-xs px-2 py-1 mt-2">❌ Eliminar</button>
+                <div class="mt-2">
+                    <label class="text-xs text-gray-500">Imagen para esta combinación de colores</label>
+                    <input type="file" class="imagen-color w-full p-1 border rounded" accept="image/*" />
+                    <div class="preview-container mt-1"></div>
+                </div>
+                <button type="button" class="btn-danger eliminar-color text-xs px-2 py-1 mt-2">❌ Eliminar color</button>
             `;
             return div;
         }
 
-        // Agregar combinación al hacer clic en el botón
-        agregarCombinacion.addEventListener('click', () => {
-            const index = combinacionesContainer.children.length;
-            const nueva = crearCombinacion(index);
-            combinacionesContainer.appendChild(nueva);
-            // Asignar evento al botón eliminar
-            nueva.querySelector('.eliminar-combinacion').addEventListener('click', () => {
-                if (combinacionesContainer.children.length > 1) {
-                    nueva.remove();
+        // Inicializar con un bloque de color
+        function inicializarColores() {
+            coloresContainer.innerHTML = '';
+            const primero = crearBloqueColor(0);
+            coloresContainer.appendChild(primero);
+            primero.querySelector('.eliminar-color').addEventListener('click', () => {
+                if (coloresContainer.children.length > 1) {
+                    primero.remove();
                 } else {
-                    alert('Debe haber al menos una combinación.');
+                    alert('Debe haber al menos un bloque de color.');
+                }
+            });
+        }
+        inicializarColores();
+
+        // Agregar bloque de color
+        agregarColor.addEventListener('click', () => {
+            const index = coloresContainer.children.length;
+            const nuevo = crearBloqueColor(index);
+            coloresContainer.appendChild(nuevo);
+            nuevo.querySelector('.eliminar-color').addEventListener('click', () => {
+                if (coloresContainer.children.length > 1) {
+                    nuevo.remove();
+                } else {
+                    alert('Debe haber al menos un bloque de color.');
                 }
             });
         });
 
         // Vista previa de imágenes
-        combinacionesContainer.addEventListener('change', (e) => {
-            if (e.target.classList.contains('imagen-input')) {
+        coloresContainer.addEventListener('change', (e) => {
+            if (e.target.classList.contains('imagen-color')) {
                 const file = e.target.files[0];
-                const previewContainer = e.target.closest('.combinacion-item').querySelector('.preview-container');
+                const previewContainer = e.target.closest('.color-block').querySelector('.preview-container');
                 previewContainer.innerHTML = '';
                 if (file) {
                     const reader = new FileReader();
@@ -376,7 +450,7 @@
         });
 
         // ============================================================
-        // 6. SUBIR IMAGEN A FIREBASE STORAGE
+        // 7. SUBIR IMAGEN A FIREBASE STORAGE
         // ============================================================
         async function subirImagen(file, path) {
             if (!file) return null;
@@ -387,7 +461,7 @@
         }
 
         // ============================================================
-        // 7. GUARDAR PRODUCTO
+        // 8. GUARDAR PRODUCTO
         // ============================================================
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -398,52 +472,77 @@
                 return;
             }
 
-            // Recolectar combinaciones
-            const combinaciones = [];
-            const items = combinacionesContainer.querySelectorAll('.combinacion-item');
-            for (const item of items) {
-                const talla = item.querySelector('.talla-select').value;
-                const color = item.querySelector('.color-input').value.trim();
-                const cantidad = parseInt(item.querySelector('.cantidad-input').value) || 0;
-                const fileInput = item.querySelector('.imagen-input');
+            // 1. Obtener tallas seleccionadas
+            const tallasSeleccionadas = [];
+            document.querySelectorAll('.talla-checkbox:checked').forEach(cb => {
+                tallasSeleccionadas.push(cb.value);
+            });
+
+            if (tallasSeleccionadas.length === 0) {
+                alert('Selecciona al menos una talla.');
+                return;
+            }
+
+            // 2. Obtener colores y imágenes
+            const coloresData = [];
+            const bloques = coloresContainer.querySelectorAll('.color-block');
+            for (const bloque of bloques) {
+                const principal = bloque.querySelector('.color-principal').value;
+                const secundario = bloque.querySelector('.color-secundario').value;
+                const terciario = bloque.querySelector('.color-terciario').value;
+                const cuarto = bloque.querySelector('.color-cuarto').value;
+                const fileInput = bloque.querySelector('.imagen-color');
                 const file = fileInput?.files[0] || null;
 
-                if (!color) {
-                    alert(`La combinación para talla ${talla} no tiene color definido.`);
+                if (!principal) {
+                    alert('Selecciona al menos un color principal en cada bloque.');
                     return;
                 }
 
                 let imagenUrl = null;
                 if (file) {
                     try {
-                        const path = `productos/${modelo.value.trim()}_${talla}_${color}_${Date.now()}`;
+                        const path = `productos/${modelo.value.trim()}_${principal}_${Date.now()}`;
                         imagenUrl = await subirImagen(file, path);
                     } catch (err) {
                         console.error('Error al subir imagen:', err);
-                        alert(`Error al subir imagen para talla ${talla}: ${err.message}`);
+                        alert(`Error al subir imagen para el color ${principal}: ${err.message}`);
                         return;
                     }
                 }
 
-                combinaciones.push({
-                    talla,
-                    color,
-                    cantidad,
+                coloresData.push({
+                    principal,
+                    secundario: secundario || null,
+                    terciario: terciario || null,
+                    cuarto: cuarto || null,
                     imagen: imagenUrl
                 });
             }
 
-            // Construir objeto stock
+            // 3. Construir objeto stock (stock por talla y color)
             const stock = {};
-            combinaciones.forEach(c => {
-                if (!stock[c.talla]) stock[c.talla] = {};
-                stock[c.talla][c.color] = {
-                    cantidad: c.cantidad,
-                    imagen: c.imagen
-                };
+            tallasSeleccionadas.forEach(talla => {
+                stock[talla] = {};
+                coloresData.forEach(color => {
+                    // Creamos un identificador único para la combinación de colores
+                    const key = [color.principal, color.secundario, color.terciario, color.cuarto]
+                        .filter(c => c)
+                        .join('-');
+                    stock[talla][key] = {
+                        colores: {
+                            principal: color.principal,
+                            secundario: color.secundario,
+                            terciario: color.terciario,
+                            cuarto: color.cuarto
+                        },
+                        cantidad: 0, // Se actualizará manualmente después
+                        imagen: color.imagen
+                    };
+                });
             });
 
-            // Construir ficha técnica
+            // 4. Construir ficha técnica
             const fichaTecnica = {
                 capellada: capellada.value,
                 forro: forro.value,
@@ -451,30 +550,28 @@
                 descripcion: descripcion.value.trim()
             };
 
-            // Guardar en Firestore
+            // 5. Guardar en Firestore
             try {
                 await addDoc(collection(db, "productos"), {
                     modelo: modelo.value.trim(),
                     categoria: categoria.value,
                     precioCompra: parseFloat(precioCompra.value) || 0,
                     precioVenta: parseFloat(precioVenta.value),
+                    tallas: tallasSeleccionadas,
+                    colores: coloresData,
                     stock: stock,
                     fichaTecnica: fichaTecnica,
                     fechaRegistro: new Date().toLocaleDateString()
                 });
                 alert('✅ Producto guardado con éxito.');
                 form.reset();
-                // Reiniciar combinaciones
-                combinacionesContainer.innerHTML = '';
-                const primera = crearCombinacion(0);
-                combinacionesContainer.appendChild(primera);
-                primera.querySelector('.eliminar-combinacion').addEventListener('click', () => {
-                    if (combinacionesContainer.children.length > 1) {
-                        primera.remove();
-                    } else {
-                        alert('Debe haber al menos una combinación.');
-                    }
-                });
+                // Resetear tallas
+                document.querySelectorAll('.talla-checkbox').forEach(cb => cb.checked = false);
+                // Resetear colores
+                inicializarColores();
+                // Resetear imágenes
+                document.querySelectorAll('.imagen-color').forEach(input => input.value = '');
+                document.querySelectorAll('.preview-container').forEach(el => el.innerHTML = '');
             } catch (err) {
                 console.error('Error al guardar:', err);
                 alert('Error al guardar el producto: ' + err.message);
@@ -482,7 +579,7 @@
         });
 
         // ============================================================
-        // 8. LISTAR PRODUCTOS
+        // 9. LISTAR PRODUCTOS
         // ============================================================
         onSnapshot(collection(db, "productos"), (snapshot) => {
             listaProductos.innerHTML = '';
@@ -508,11 +605,11 @@
                             <div class="text-xs text-gray-500 mt-1">
                                 Precio: $${data.precioVenta?.toFixed(2) || '0'}
                             </div>
+                            <div class="text-xs text-gray-400 mt-1">
+                                Tallas: ${(data.tallas || []).join(', ')}
+                            </div>
                         </div>
                         <button onclick="eliminarProducto('${id}')" class="btn-danger text-xs px-2 py-1">🗑️</button>
-                    </div>
-                    <div class="text-xs text-gray-400 mt-1">
-                        Tallas: ${Object.keys(data.stock || {}).join(', ')}
                     </div>
                 `;
                 listaProductos.appendChild(div);
@@ -528,19 +625,6 @@
                 }
             }
         };
-
-        // ============================================================
-        // 9. INICIALIZAR CON UNA COMBINACIÓN
-        // ============================================================
-        const primeraCombinacion = crearCombinacion(0);
-        combinacionesContainer.appendChild(primeraCombinacion);
-        primeraCombinacion.querySelector('.eliminar-combinacion').addEventListener('click', () => {
-            if (combinacionesContainer.children.length > 1) {
-                primeraCombinacion.remove();
-            } else {
-                alert('Debe haber al menos una combinación.');
-            }
-        });
 
         console.log('🔥 Módulo de Inventario cargado correctamente.');
     </script>
