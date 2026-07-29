@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JADI · Iniciar Sesión</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -15,65 +15,111 @@
             min-height: 100vh;
             margin: 0;
         }
-        .login-card {
+        .login-container {
             background: #fff;
-            padding: 2rem;
-            border-radius: 1.2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-            max-width: 400px;
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            max-width: 420px;
             width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
         }
-        .login-card h1 {
-            color: #e85d04;
+        .logo {
             font-size: 2rem;
             font-weight: 700;
+            color: #e85d04;
             text-align: center;
             margin-bottom: 0.5rem;
         }
-        .login-card p {
+        .subtitle {
             text-align: center;
             color: #6b6b6b;
             font-size: 0.9rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
-        .login-card input {
+        .btn-google {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
             width: 100%;
-            padding: 0.6rem 0.8rem;
-            background: #f8f5f0;
+            background: #fff;
             border: 1px solid #ddd;
             border-radius: 0.5rem;
-            margin-bottom: 0.8rem;
-            font-size: 0.9rem;
+            padding: 0.7rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            cursor: pointer;
+            transition: 0.2s;
         }
-        .login-card input:focus {
-            outline: none;
+        .btn-google:hover {
+            background: #f8f5f0;
             border-color: #e85d04;
         }
-        .login-card .btn-primary {
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            color: #aaa;
+            font-size: 0.8rem;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #ddd;
+        }
+        .btn-primary {
             background: #e85d04;
             color: #fff;
             font-weight: 600;
-            padding: 0.6rem;
-            border: none;
+            padding: 0.7rem;
             border-radius: 0.5rem;
+            border: none;
             width: 100%;
             cursor: pointer;
             transition: 0.2s;
         }
-        .login-card .btn-primary:hover {
+        .btn-primary:hover {
             background: #d35400;
         }
-        .login-card .register-link {
-            display: block;
+        input {
+            width: 100%;
+            padding: 0.7rem;
+            background: #f8f5f0;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        input:focus {
+            outline: none;
+            border-color: #e85d04;
+        }
+        .toggle-link {
             text-align: center;
             margin-top: 1rem;
             font-size: 0.85rem;
             color: #6b6b6b;
         }
-        .login-card .register-link a {
+        .toggle-link a {
             color: #e85d04;
             font-weight: 600;
+            cursor: pointer;
             text-decoration: underline;
+        }
+        .toggle-link a:hover {
+            color: #d35400;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .whatsapp-field {
+            background: #fef3c7;
+            border-color: #fcd34d;
+        }
+        .whatsapp-field:focus {
+            border-color: #e85d04;
         }
         .error-message {
             background: #fee2e2;
@@ -81,216 +127,195 @@
             padding: 0.5rem;
             border-radius: 0.5rem;
             font-size: 0.8rem;
-            margin-bottom: 0.8rem;
-            display: none;
-        }
-        .loading-message {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #92400e;
-            background: #fef3c7;
-            padding: 0.3rem;
-            border-radius: 0.5rem;
-            margin-top: 0.5rem;
+            margin-bottom: 1rem;
             display: none;
         }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <h1>JADI</h1>
-        <p>Inicia sesión para continuar</p>
+    <div class="login-container">
+        <div class="logo">JADI</div>
+        <div class="subtitle">Panel de Control · Inicia sesión</div>
 
-        <div id="error-message" class="error-message"></div>
-        <div id="loading-message" class="loading-message">⏳ Verificando...</div>
+        <div id="errorMessage" class="error-message"></div>
 
-        <form id="login-form">
+        <!-- Botón Google -->
+        <button id="btnGoogle" class="btn-google">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Ingresar con Google
+        </button>
+
+        <div class="divider">o</div>
+
+        <!-- Formulario -->
+        <form id="loginForm">
             <input type="email" id="email" placeholder="Correo electrónico" required />
             <input type="password" id="password" placeholder="Contraseña" required />
-            <button type="submit" class="btn-primary" id="btn-login">Ingresar</button>
+            <div id="whatsappWrapper" class="hidden">
+                <input type="tel" id="whatsapp" placeholder="Número de WhatsApp (Ej: +593999999999)" class="whatsapp-field" />
+            </div>
+            <button type="submit" id="btnSubmit" class="btn-primary">Ingresar</button>
         </form>
 
-        <div class="register-link">
-            ¿No tienes cuenta? <a href="#" id="link-registro">Regístrate aquí</a>
-        </div>
-
-        <!-- Formulario de registro (oculto por defecto) -->
-        <div id="registro-form" style="display: none; margin-top: 1.5rem; border-top: 1px solid #e5e0d8; padding-top: 1.5rem;">
-            <h3 class="text-lg font-bold text-gray-800 mb-2">Registro</h3>
-            <input type="text" id="reg-nombre" placeholder="Nombre completo" />
-            <input type="email" id="reg-email" placeholder="Correo electrónico" required />
-            <input type="password" id="reg-password" placeholder="Contraseña" required />
-            <input type="tel" id="reg-whatsapp" placeholder="WhatsApp (ej: +593999999999)" />
-            <button type="button" id="btn-registrar" class="btn-primary">Registrarme</button>
-            <button type="button" id="btn-volver-login" class="btn-secondary" style="margin-top: 0.5rem; background: #6b7280; color: #fff; font-weight: 600; padding: 0.6rem; border: none; border-radius: 0.5rem; width: 100%; cursor: pointer;">Volver al inicio de sesión</button>
+        <div class="toggle-link">
+            <span id="toggleText">¿No tienes cuenta?</span>
+            <a id="toggleLink">Regístrate aquí</a>
         </div>
     </div>
 
     <script type="module">
+        // ============================================================
+        // IMPORTS
+        // ============================================================
         import { 
-            auth, 
-            db,
             iniciarSesion, 
             registrarUsuario, 
-            obtenerRolUsuario,
-            esAdmin
+            iniciarSesionConGoogle, 
+            esAdmin,
+            guardarUsuario,
+            obtenerRol,
+            auth 
         } from "./core/auth.js";
         import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
         // ============================================================
-        // ELEMENTOS DEL DOM
+        // REFERENCIAS
         // ============================================================
-        const loginForm = document.getElementById('login-form');
+        const form = document.getElementById('loginForm');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const btnLogin = document.getElementById('btn-login');
-        const errorDiv = document.getElementById('error-message');
-        const loadingDiv = document.getElementById('loading-message');
-        const linkRegistro = document.getElementById('link-registro');
-        const registroForm = document.getElementById('registro-form');
-        const btnRegistrar = document.getElementById('btn-registrar');
-        const btnVolverLogin = document.getElementById('btn-volver-login');
-        const regNombre = document.getElementById('reg-nombre');
-        const regEmail = document.getElementById('reg-email');
-        const regPassword = document.getElementById('reg-password');
-        const regWhatsapp = document.getElementById('reg-whatsapp');
+        const whatsappWrapper = document.getElementById('whatsappWrapper');
+        const whatsappInput = document.getElementById('whatsapp');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const toggleLink = document.getElementById('toggleLink');
+        const toggleText = document.getElementById('toggleText');
+        const errorDiv = document.getElementById('errorMessage');
+        const btnGoogle = document.getElementById('btnGoogle');
+
+        let esRegistro = false;
 
         // ============================================================
-        // REDIRECCIÓN SEGÚN ROL
-        // ============================================================
-        async function redirigirSegunRol(user) {
-            if (!user) return;
-            const rol = await obtenerRolUsuario(user.uid);
-            console.log("Rol del usuario:", rol);
-            
-            if (rol === "admin") {
-                window.location.href = "admin/admin.html";
-            } else if (rol === "cliente" || rol === null) {
-                window.location.href = "index.html";
-            } else {
-                // Si no tiene rol, redirigir al index (por defecto)
-                window.location.href = "index.html";
-            }
-        }
-
-        // ============================================================
-        // VERIFICAR SESIÓN AL CARGAR LA PÁGINA
+        // VERIFICAR SESIÓN ACTIVA (redirigir según rol)
         // ============================================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Si ya está autenticado, redirigir según su rol
-                await redirigirSegunRol(user);
+                const admin = await esAdmin(user);
+                if (admin) {
+                    window.location.href = "admin/admin.html";
+                } else {
+                    window.location.href = "index.html";
+                }
             }
         });
 
         // ============================================================
-        // INICIAR SESIÓN
+        // ALTERNAR REGISTRO / LOGIN
         // ============================================================
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-
-            if (!email || !password) {
-                mostrarError('Por favor, completa todos los campos.');
-                return;
+        toggleLink.addEventListener('click', () => {
+            esRegistro = !esRegistro;
+            if (esRegistro) {
+                toggleText.textContent = '¿Ya tienes cuenta?';
+                toggleLink.textContent = 'Inicia sesión';
+                btnSubmit.textContent = 'Registrarme';
+                whatsappWrapper.classList.remove('hidden');
+                whatsappInput.required = true;
+            } else {
+                toggleText.textContent = '¿No tienes cuenta?';
+                toggleLink.textContent = 'Regístrate aquí';
+                btnSubmit.textContent = 'Ingresar';
+                whatsappWrapper.classList.add('hidden');
+                whatsappInput.required = false;
             }
-
-            // Mostrar loading
-            loadingDiv.style.display = 'block';
-            btnLogin.disabled = true;
             errorDiv.style.display = 'none';
-
-            try {
-                // Autenticar al usuario
-                const user = await iniciarSesion(email, password);
-                
-                // Verificar rol y redirigir
-                await redirigirSegunRol(user);
-                
-            } catch (error) {
-                console.error('Error al iniciar sesión:', error);
-                let mensaje = 'Error al iniciar sesión.';
-                if (error.code === 'auth/user-not-found') {
-                    mensaje = 'No existe una cuenta con este correo.';
-                } else if (error.code === 'auth/wrong-password') {
-                    mensaje = 'Contraseña incorrecta.';
-                } else if (error.code === 'auth/invalid-email') {
-                    mensaje = 'Correo electrónico inválido.';
-                } else {
-                    mensaje = error.message || 'Error desconocido.';
-                }
-                mostrarError(mensaje);
-            } finally {
-                loadingDiv.style.display = 'none';
-                btnLogin.disabled = false;
-            }
         });
 
         // ============================================================
-        // REGISTRO DE NUEVO USUARIO
-        // ============================================================
-        btnRegistrar.addEventListener('click', async () => {
-            const nombre = regNombre.value.trim();
-            const email = regEmail.value.trim();
-            const password = regPassword.value;
-            const whatsapp = regWhatsapp.value.trim();
-
-            if (!email || !password || !nombre) {
-                alert('Por favor, completa todos los campos obligatorios.');
-                return;
-            }
-
-            try {
-                const user = await registrarUsuario(email, password, {
-                    nombre: nombre,
-                    whatsapp: whatsapp
-                });
-                alert('✅ Registro exitoso. Ahora inicia sesión.');
-                // Limpiar y ocultar registro
-                registroForm.style.display = 'none';
-                loginForm.style.display = 'block';
-                linkRegistro.style.display = 'block';
-                // Redirigir al login (ya está autenticado, pero lo redirigimos al index)
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('Error al registrar:', error);
-                let mensaje = 'Error al registrar.';
-                if (error.code === 'auth/email-already-in-use') {
-                    mensaje = 'Este correo ya está registrado.';
-                } else if (error.code === 'auth/weak-password') {
-                    mensaje = 'La contraseña debe tener al menos 6 caracteres.';
-                } else {
-                    mensaje = error.message || 'Error desconocido.';
-                }
-                alert('❌ ' + mensaje);
-            }
-        });
-
-        // ============================================================
-        // MOSTRAR/OCULTAR FORMULARIOS
-        // ============================================================
-        linkRegistro.addEventListener('click', (e) => {
-            e.preventDefault();
-            loginForm.style.display = 'none';
-            registroForm.style.display = 'block';
-            linkRegistro.style.display = 'none';
-        });
-
-        btnVolverLogin.addEventListener('click', () => {
-            loginForm.style.display = 'block';
-            registroForm.style.display = 'none';
-            linkRegistro.style.display = 'block';
-        });
-
-        // ============================================================
-        // FUNCIÓN PARA MOSTRAR ERRORES
+        // MOSTRAR ERROR
         // ============================================================
         function mostrarError(mensaje) {
-            errorDiv.textContent = '❌ ' + mensaje;
+            errorDiv.textContent = mensaje;
             errorDiv.style.display = 'block';
         }
+
+        // ============================================================
+        // ENVIAR FORMULARIO (LOGIN / REGISTRO)
+        // ============================================================
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorDiv.style.display = 'none';
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const whatsapp = whatsappInput.value.trim();
+
+            try {
+                if (esRegistro) {
+                    // REGISTRO
+                    if (!whatsapp) {
+                        mostrarError('El número de WhatsApp es obligatorio para registrarse.');
+                        return;
+                    }
+                    const user = await registrarUsuario(email, password, { whatsapp });
+                    // El rol ya se asignó como "cliente" en auth.js
+                    alert('✅ Registro exitoso. Ahora inicia sesión.');
+                    // Limpiar campos y cambiar a modo login
+                    esRegistro = false;
+                    toggleLink.click(); // Vuelve a modo login
+                } else {
+                    // LOGIN
+                    const user = await iniciarSesion(email, password);
+                    // Verificar si es admin
+                    const admin = await esAdmin(user);
+                    if (admin) {
+                        window.location.href = "admin/admin.html";
+                    } else {
+                        window.location.href = "index.html";
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                let mensaje = 'Error al procesar la solicitud.';
+                if (error.code === 'auth/user-not-found') {
+                    mensaje = 'No existe una cuenta con este correo. Regístrate primero.';
+                } else if (error.code === 'auth/wrong-password') {
+                    mensaje = 'Contraseña incorrecta.';
+                } else if (error.code === 'auth/email-already-in-use') {
+                    mensaje = 'Este correo ya está registrado. Inicia sesión.';
+                } else if (error.code === 'auth/weak-password') {
+                    mensaje = 'La contraseña debe tener al menos 6 caracteres.';
+                } else if (error.message) {
+                    mensaje = error.message;
+                }
+                mostrarError(mensaje);
+            }
+        });
+
+        // ============================================================
+        // INICIAR SESIÓN CON GOOGLE
+        // ============================================================
+        btnGoogle.addEventListener('click', async () => {
+            errorDiv.style.display = 'none';
+            try {
+                const user = await iniciarSesionConGoogle();
+                // Guardar usuario en Firestore (sin sobrescribir rol)
+                await guardarUsuario(user);
+                // Verificar si es admin
+                const admin = await esAdmin(user);
+                if (admin) {
+                    window.location.href = "admin/admin.html";
+                } else {
+                    window.location.href = "index.html";
+                }
+            } catch (error) {
+                console.error('Error con Google:', error);
+                mostrarError('Error al iniciar sesión con Google. Intenta de nuevo.');
+            }
+        });
     </script>
 </body>
 </html>
