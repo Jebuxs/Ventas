@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JADI · Inventario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #f8f5f0;
+            font-family: 'Inter', sans-serif;
+        }
+        .card {
+            background: white;
+            border-radius: 1rem;
+            border: 1px solid #e5e0d8;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .btn-primary {
+            background: #e85d04;
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #d35400;
+        }
+        .btn-danger {
+            background: #b91c1c;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        .combinacion-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        .combinacion-item select,
+        .combinacion-item input {
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.3rem;
+            font-size: 0.85rem;
+            width: 100%;
+        }
+        .nav-link {
+            color: #4a4a4a;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .nav-link:hover {
+            background: #f3f4f6;
+        }
+        .nav-link.active {
+            background: #e85d04;
+            color: white;
+        }
+        .img-preview {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 0.3rem;
+            border: 1px solid #ddd;
+            margin-top: 0.3rem;
+        }
+        .badge-stock {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+        }
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-cols-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-orange-600">JADI · Inventario</h1>
+            <div class="flex items-center gap-4">
+                <a href="admin.html" class="nav-link">📦 Panel</a>
+                <a href="inventario.html" class="nav-link active">📊 Inventario</a>
+                <button onclick="cerrarSesion()" class="btn-danger">🚪 Salir</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <div class="container mx-auto p-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- FORMULARIO -->
+        <div class="card">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Agregar Producto</h2>
+            <form id="formProducto">
+                <!-- Datos básicos -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Modelo *</label>
+                        <input type="text" id="modelo" required class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Categoría *</label>
+                        <select id="categoria" class="w-full p-2 border rounded">
+                            <option value="zapatos">Zapatos</option>
+                            <option value="ropa">Ropa</option>
+                            <option value="bolsos">Bolsos</option>
+                            <option value="accesorios">Accesorios</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Precio Compra ($)</label>
+                        <input type="number" id="precioCompra" step="0.01" class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Precio Venta ($) *</label>
+                        <input type="number" id="precioVenta" step="0.01" required class="w-full p-2 border rounded" />
+                    </div>
+                </div>
+
+                <!-- COMBINACIONES POR TALLA Y COLOR -->
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">📊 Stock por Talla y Color</label>
+                    <div id="combinacionesContainer">
+                        <div class="combinacion-item" data-index="0">
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-xs text-gray-500">Talla</label>
+                                    <select class="talla-select w-full p-1 border rounded">
+                                        <option value="36">36</option>
+                                        <option value="37">37</option>
+                                        <option value="38" selected>38</option>
+                                        <option value="39">39</option>
+                                        <option value="40">40</option>
+                                        <option value="41">41</option>
+                                        <option value="42">42</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Color</label>
+                                    <input type="text" class="color-input w-full p-1 border rounded" placeholder="blanco-negro" />
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Cantidad</label>
+                                    <input type="number" class="cantidad-input w-full p-1 border rounded" value="0" min="0" />
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <label class="text-xs text-gray-500">Imagen para esta combinación</label>
+                                <input type="file" class="imagen-input w-full p-1 border rounded" accept="image/*" />
+                                <div class="preview-container"></div>
+                            </div>
+                            <button type="button" class="btn-danger eliminar-combinacion text-xs px-2 py-1 mt-2">❌ Eliminar</button>
+                        </div>
+                    </div>
+                    <button type="button" id="agregarCombinacion" class="btn-secondary mt-2">➕ Agregar talla/color</button>
+                </div>
+
+                <!-- FICHA TÉCNICA -->
+                <div class="mt-4 border-t pt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">🔧 Ficha Técnica</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label class="text-xs text-gray-500">Capellada</label>
+                            <select id="capellada" class="w-full p-2 border rounded">
+                                <option value="sintetico">Sintético</option>
+                                <option value="cuero">Cuero</option>
+                                <option value="textil">Textil</option>
+                                <option value="microfibra">Microfibra</option>
+                                <option value="piel">Piel</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Forro</label>
+                            <select id="forro" class="w-full p-2 border rounded">
+                                <option value="textil-poliéster">Textil / Poliéster</option>
+                                <option value="malla">Malla</option>
+                                <option value="nylon">Nylon</option>
+                                <option value="piel">Piel</option>
+                                <option value="sintetico">Sintético</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500">Suela</label>
+                            <select id="suela" class="w-full p-2 border rounded">
+                                <option value="eva">EVA</option>
+                                <option value="caucho">Caucho</option>
+                                <option value="pvc">PVC</option>
+                                <option value="poliuretano">Poliuretano</option>
+                                <option value="goma">Goma</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="text-xs text-gray-500">Descripción adicional (opcional)</label>
+                        <textarea id="descripcion" rows="2" class="w-full p-2 border rounded" placeholder="Detalles extra del producto..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary w-full mt-4">💾 Guardar Producto</button>
+            </form>
+        </div>
+
+        <!-- LISTA DE PRODUCTOS -->
+        <div class="card">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">📦 Productos Registrados</h2>
+            <div id="listaProductos" class="space-y-3 max-h-[600px] overflow-y-auto">
+                <p class="text-gray-500 text-center">Cargando productos...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SCRIPTS                                                       -->
+    <!-- ============================================================ -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase-app": "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js",
+                "firebase-auth": "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js",
+                "firebase-firestore": "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js",
+                "firebase-storage": "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        // ============================================================
+        // 1. IMPORTS
+        // ============================================================
+        import { initializeApp } from "firebase-app";
+        import { getAuth, onAuthStateChanged, signOut } from "firebase-auth";
+        import {
+            getFirestore,
+            collection,
+            onSnapshot,
+            addDoc,
+            doc,
+            deleteDoc
+        } from "firebase-firestore";
+        import {
+            getStorage,
+            ref,
+            uploadBytes,
+            getDownloadURL
+        } from "firebase-storage";
+
+        // ============================================================
+        // 2. CONFIGURACIÓN
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2p4mFewLlKojEAAfMfNi76U9K3HiIiAo",
+            authDomain: "ventas-dcc22.firebaseapp.com",
+            projectId: "ventas-dcc22",
+            storageBucket: "ventas-dcc22.firebasestorage.app",
+            messagingSenderId: "789904237680",
+            appId: "1:789904237680:web:45b32dd8e211193e1e40b5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // ============================================================
+        // 3. REFERENCIAS
+        // ============================================================
+        const form = document.getElementById('formProducto');
+        const modelo = document.getElementById('modelo');
+        const categoria = document.getElementById('categoria');
+        const precioCompra = document.getElementById('precioCompra');
+        const precioVenta = document.getElementById('precioVenta');
+        const capellada = document.getElementById('capellada');
+        const forro = document.getElementById('forro');
+        const suela = document.getElementById('suela');
+        const descripcion = document.getElementById('descripcion');
+        const combinacionesContainer = document.getElementById('combinacionesContainer');
+        const agregarCombinacion = document.getElementById('agregarCombinacion');
+        const listaProductos = document.getElementById('listaProductos');
+
+        // ============================================================
+        // 4. AUTENTICACIÓN (solo admin)
+        // ============================================================
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = "../login.html";
+                return;
+            }
+            // Verificar que sea admin (opcional, pero recomendado)
+        });
+
+        window.cerrarSesion = async () => {
+            await signOut(auth);
+            window.location.href = "../login.html";
+        };
+
+        // ============================================================
+        // 5. AGREGAR COMBINACIÓN (talla + color + cantidad)
+        // ============================================================
+        function crearCombinacion(index) {
+            const div = document.createElement('div');
+            div.className = 'combinacion-item';
+            div.dataset.index = index;
+            div.innerHTML = `
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="text-xs text-gray-500">Talla</label>
+                        <select class="talla-select w-full p-1 border rounded">
+                            <option value="36">36</option>
+                            <option value="37">37</option>
+                            <option value="38" selected>38</option>
+                            <option value="39">39</option>
+                            <option value="40">40</option>
+                            <option value="41">41</option>
+                            <option value="42">42</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">Color</label>
+                        <input type="text" class="color-input w-full p-1 border rounded" placeholder="blanco-negro" />
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">Cantidad</label>
+                        <input type="number" class="cantidad-input w-full p-1 border rounded" value="0" min="0" />
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <label class="text-xs text-gray-500">Imagen para esta combinación</label>
+                    <input type="file" class="imagen-input w-full p-1 border rounded" accept="image/*" />
+                    <div class="preview-container"></div>
+                </div>
+                <button type="button" class="btn-danger eliminar-combinacion text-xs px-2 py-1 mt-2">❌ Eliminar</button>
+            `;
+            return div;
+        }
+
+        // Agregar combinación al hacer clic en el botón
+        agregarCombinacion.addEventListener('click', () => {
+            const index = combinacionesContainer.children.length;
+            const nueva = crearCombinacion(index);
+            combinacionesContainer.appendChild(nueva);
+            // Asignar evento al botón eliminar
+            nueva.querySelector('.eliminar-combinacion').addEventListener('click', () => {
+                if (combinacionesContainer.children.length > 1) {
+                    nueva.remove();
+                } else {
+                    alert('Debe haber al menos una combinación.');
+                }
+            });
+        });
+
+        // Vista previa de imágenes
+        combinacionesContainer.addEventListener('change', (e) => {
+            if (e.target.classList.contains('imagen-input')) {
+                const file = e.target.files[0];
+                const previewContainer = e.target.closest('.combinacion-item').querySelector('.preview-container');
+                previewContainer.innerHTML = '';
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        const img = document.createElement('img');
+                        img.src = ev.target.result;
+                        img.className = 'img-preview';
+                        previewContainer.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+
+        // ============================================================
+        // 6. SUBIR IMAGEN A FIREBASE STORAGE
+        // ============================================================
+        async function subirImagen(file, path) {
+            if (!file) return null;
+            const storageRef = ref(storage, path);
+            await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(storageRef);
+            return url;
+        }
+
+        // ============================================================
+        // 7. GUARDAR PRODUCTO
+        // ============================================================
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validar campos obligatorios
+            if (!modelo.value.trim() || !precioVenta.value) {
+                alert('Completa los campos obligatorios (Modelo y Precio Venta).');
+                return;
+            }
+
+            // Recolectar combinaciones
+            const combinaciones = [];
+            const items = combinacionesContainer.querySelectorAll('.combinacion-item');
+            for (const item of items) {
+                const talla = item.querySelector('.talla-select').value;
+                const color = item.querySelector('.color-input').value.trim();
+                const cantidad = parseInt(item.querySelector('.cantidad-input').value) || 0;
+                const fileInput = item.querySelector('.imagen-input');
+                const file = fileInput?.files[0] || null;
+
+                if (!color) {
+                    alert(`La combinación para talla ${talla} no tiene color definido.`);
+                    return;
+                }
+
+                let imagenUrl = null;
+                if (file) {
+                    try {
+                        const path = `productos/${modelo.value.trim()}_${talla}_${color}_${Date.now()}`;
+                        imagenUrl = await subirImagen(file, path);
+                    } catch (err) {
+                        console.error('Error al subir imagen:', err);
+                        alert(`Error al subir imagen para talla ${talla}: ${err.message}`);
+                        return;
+                    }
+                }
+
+                combinaciones.push({
+                    talla,
+                    color,
+                    cantidad,
+                    imagen: imagenUrl
+                });
+            }
+
+            // Construir objeto stock
+            const stock = {};
+            combinaciones.forEach(c => {
+                if (!stock[c.talla]) stock[c.talla] = {};
+                stock[c.talla][c.color] = {
+                    cantidad: c.cantidad,
+                    imagen: c.imagen
+                };
+            });
+
+            // Construir ficha técnica
+            const fichaTecnica = {
+                capellada: capellada.value,
+                forro: forro.value,
+                suela: suela.value,
+                descripcion: descripcion.value.trim()
+            };
+
+            // Guardar en Firestore
+            try {
+                await addDoc(collection(db, "productos"), {
+                    modelo: modelo.value.trim(),
+                    categoria: categoria.value,
+                    precioCompra: parseFloat(precioCompra.value) || 0,
+                    precioVenta: parseFloat(precioVenta.value),
+                    stock: stock,
+                    fichaTecnica: fichaTecnica,
+                    fechaRegistro: new Date().toLocaleDateString()
+                });
+                alert('✅ Producto guardado con éxito.');
+                form.reset();
+                // Reiniciar combinaciones
+                combinacionesContainer.innerHTML = '';
+                const primera = crearCombinacion(0);
+                combinacionesContainer.appendChild(primera);
+                primera.querySelector('.eliminar-combinacion').addEventListener('click', () => {
+                    if (combinacionesContainer.children.length > 1) {
+                        primera.remove();
+                    } else {
+                        alert('Debe haber al menos una combinación.');
+                    }
+                });
+            } catch (err) {
+                console.error('Error al guardar:', err);
+                alert('Error al guardar el producto: ' + err.message);
+            }
+        });
+
+        // ============================================================
+        // 8. LISTAR PRODUCTOS
+        // ============================================================
+        onSnapshot(collection(db, "productos"), (snapshot) => {
+            listaProductos.innerHTML = '';
+            if (snapshot.empty) {
+                listaProductos.innerHTML = '<p class="text-gray-500 text-center">No hay productos registrados.</p>';
+                return;
+            }
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const id = doc.id;
+                const totalStock = Object.values(data.stock || {}).reduce((acc, talla) => {
+                    return acc + Object.values(talla).reduce((sum, c) => sum + (c.cantidad || 0), 0);
+                }, 0);
+
+                const div = document.createElement('div');
+                div.className = 'bg-gray-50 p-3 rounded-lg border border-gray-200';
+                div.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-bold text-gray-900">${data.modelo}</h3>
+                            <span class="badge-stock">${data.categoria}</span>
+                            <span class="text-sm text-gray-500 ml-2">Stock: ${totalStock} unidades</span>
+                            <div class="text-xs text-gray-500 mt-1">
+                                Precio: $${data.precioVenta?.toFixed(2) || '0'}
+                            </div>
+                        </div>
+                        <button onclick="eliminarProducto('${id}')" class="btn-danger text-xs px-2 py-1">🗑️</button>
+                    </div>
+                    <div class="text-xs text-gray-400 mt-1">
+                        Tallas: ${Object.keys(data.stock || {}).join(', ')}
+                    </div>
+                `;
+                listaProductos.appendChild(div);
+            });
+        });
+
+        window.eliminarProducto = async (id) => {
+            if (confirm('¿Eliminar este producto permanentemente?')) {
+                try {
+                    await deleteDoc(doc(db, "productos", id));
+                } catch (err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        };
+
+        // ============================================================
+        // 9. INICIALIZAR CON UNA COMBINACIÓN
+        // ============================================================
+        const primeraCombinacion = crearCombinacion(0);
+        combinacionesContainer.appendChild(primeraCombinacion);
+        primeraCombinacion.querySelector('.eliminar-combinacion').addEventListener('click', () => {
+            if (combinacionesContainer.children.length > 1) {
+                primeraCombinacion.remove();
+            } else {
+                alert('Debe haber al menos una combinación.');
+            }
+        });
+
+        console.log('🔥 Módulo de Inventario cargado correctamente.');
+    </script>
+</body>
+</html>
