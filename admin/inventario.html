@@ -54,6 +54,19 @@
         .btn-secondary:hover {
             background: #4b5563;
         }
+        .btn-success {
+            background: #16a34a;
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-success:hover {
+            background: #15803d;
+        }
         .nav-link {
             color: #4a4a4a;
             padding: 0.5rem 1rem;
@@ -115,6 +128,27 @@
         .color-block .grid {
             gap: 0.5rem;
         }
+        .status-ok {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.3rem;
+            font-size: 0.7rem;
+        }
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.3rem;
+            font-size: 0.7rem;
+        }
+        .status-loading {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.3rem;
+            font-size: 0.7rem;
+        }
     </style>
 </head>
 <body>
@@ -165,7 +199,7 @@
                     </div>
                 </div>
 
-                <!-- TALLAS DISPONIBLES (Checkboxes) -->
+                <!-- TALLAS DISPONIBLES -->
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">📏 Tallas disponibles</label>
                     <div class="checkbox-group" id="tallasContainer">
@@ -182,18 +216,23 @@
                     <button type="button" id="agregarColor" class="btn-secondary mt-2">➕ Agregar color</button>
                 </div>
 
-                <!-- FICHA TÉCNICA (MEJORADA) -->
+                <!-- FICHA TÉCNICA -->
                 <div class="mt-4 border-t pt-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">🔧 Ficha Técnica</label>
                     <div class="grid grid-cols-3 gap-3">
                         <div>
                             <label class="text-xs text-gray-500">Capellada</label>
                             <select id="capellada" class="w-full p-2 border rounded">
-                                <option value="sintetico">Sintético</option>
                                 <option value="cuero">Cuero</option>
-                                <option value="textil">Textil</option>
-                                <option value="microfibra">Microfibra</option>
                                 <option value="piel">Piel</option>
+                                <option value="sintetico">Sintético</option>
+                                <option value="microfibra">Microfibra</option>
+                                <option value="textil">Textil</option>
+                                <option value="malla">Malla</option>
+                                <option value="nylon">Nylon</option>
+                                <option value="poliéster">Poliéster</option>
+                                <option value="gamuza">Gamuza</option>
+                                <option value="lona">Lona</option>
                             </select>
                         </div>
                         <div>
@@ -204,6 +243,11 @@
                                 <option value="nylon">Nylon</option>
                                 <option value="piel">Piel</option>
                                 <option value="sintetico">Sintético</option>
+                                <option value="algodon">Algodón</option>
+                                <option value="lana">Lana</option>
+                                <option value="microfibra">Microfibra</option>
+                                <option value="cuero">Cuero</option>
+                                <option value="poliuretano">Poliuretano</option>
                             </select>
                         </div>
                         <div>
@@ -216,6 +260,9 @@
                                 <option value="poliuretano">Poliuretano (PU)</option>
                                 <option value="goma">Goma</option>
                                 <option value="expanso">Expanso</option>
+                                <option value="tpr">TPR</option>
+                                <option value="tr">TR</option>
+                                <option value="tpu">TPU</option>
                             </select>
                         </div>
                     </div>
@@ -225,7 +272,12 @@
                     </div>
                 </div>
 
-                <button type="button" id="btnGuardar" class="btn-primary w-full mt-4">💾 Guardar Producto</button>
+                <!-- BOTONES DE ACCIÓN -->
+                <div class="flex gap-3 mt-4">
+                    <button type="button" id="btnSubirImagenes" class="btn-success flex-1">⬆️ Subir Imágenes</button>
+                    <button type="button" id="btnGuardar" class="btn-primary flex-1">💾 Guardar Producto</button>
+                </div>
+                <div id="estadoSubida" class="mt-2 text-xs text-gray-500">📌 Las imágenes se subirán al hacer clic en "Subir Imágenes".</div>
             </form>
         </div>
 
@@ -246,8 +298,7 @@
             "imports": {
                 "firebase-app": "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js",
                 "firebase-auth": "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js",
-                "firebase-firestore": "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js",
-                "firebase-storage": "https://www.gstatic.com/firebasejs/10.10.0/firebase-storage.js"
+                "firebase-firestore": "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js"
             }
         }
     </script>
@@ -266,12 +317,6 @@
             doc,
             deleteDoc
         } from "firebase-firestore";
-        import {
-            getStorage,
-            ref,
-            uploadBytes,
-            getDownloadURL
-        } from "firebase-storage";
 
         // ============================================================
         // 2. CONFIGURACIÓN
@@ -288,10 +333,16 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
 
         // ============================================================
-        // 3. REFERENCIAS
+        // 3. CONFIGURACIÓN DE IMGBB (IMPORTADA)
+        // ============================================================
+        // Esta es la misma API Key que tienes en config/imgbb-config.js
+        const IMGBB_API_KEY = "cb12e6a76abb14df50fa90b78479a43c";
+        const IMGBB_API_URL = "https://api.imgbb.com/1/upload";
+
+        // ============================================================
+        // 4. REFERENCIAS
         // ============================================================
         const modelo = document.getElementById('modelo');
         const categoria = document.getElementById('categoria');
@@ -306,9 +357,13 @@
         const agregarColor = document.getElementById('agregarColor');
         const listaProductos = document.getElementById('listaProductos');
         const btnGuardar = document.getElementById('btnGuardar');
+        const btnSubirImagenes = document.getElementById('btnSubirImagenes');
+        const estadoSubida = document.getElementById('estadoSubida');
+
+        let imagenesSubidas = {}; // Almacena las URLs de las imágenes subidas
 
         // ============================================================
-        // 4. AUTENTICACIÓN
+        // 5. AUTENTICACIÓN
         // ============================================================
         onAuthStateChanged(auth, async (user) => {
             if (!user) {
@@ -323,7 +378,7 @@
         };
 
         // ============================================================
-        // 5. GENERAR TALLAS (Checkboxes)
+        // 6. GENERAR TALLAS (Checkboxes)
         // ============================================================
         function generarTallas() {
             tallasContainer.innerHTML = '';
@@ -341,7 +396,7 @@
         generarTallas();
 
         // ============================================================
-        // 6. GENERAR BLOQUE DE COLOR
+        // 7. GENERAR BLOQUE DE COLOR
         // ============================================================
         const coloresDisponibles = [
             'Negro', 'Blanco', 'Rojo', 'Azul', 'Verde', 'Amarillo',
@@ -394,6 +449,7 @@
                     <label class="text-xs text-gray-500">Imagen para esta combinación de colores</label>
                     <input type="file" class="imagen-color w-full p-1 border rounded" accept="image/*" />
                     <div class="preview-container mt-1"></div>
+                    <div class="status-imagen mt-1 text-xs"></div>
                 </div>
                 <button type="button" class="btn-danger eliminar-color text-xs px-2 py-1 mt-2">❌ Eliminar color</button>
             `;
@@ -449,18 +505,75 @@
         });
 
         // ============================================================
-        // 7. SUBIR IMAGEN A FIREBASE STORAGE
+        // 8. SUBIR IMÁGENES A IMGBB (MASIVO)
         // ============================================================
-        async function subirImagen(file, path) {
-            if (!file) return null;
-            const storageRef = ref(storage, path);
-            await uploadBytes(storageRef, file);
-            const url = await getDownloadURL(storageRef);
-            return url;
+        async function subirImagenAImgBB(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('key', IMGBB_API_KEY);
+
+            const response = await fetch(IMGBB_API_URL, {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                return data.data.url;
+            } else {
+                throw new Error(data.error?.message || 'Error al subir a ImgBB');
+            }
         }
 
+        btnSubirImagenes.addEventListener('click', async () => {
+            estadoSubida.innerHTML = '<span class="status-loading">⏳ Subiendo imágenes...</span>';
+            btnSubirImagenes.disabled = true;
+
+            try {
+                const bloques = coloresContainer.querySelectorAll('.color-block');
+                let subidas = 0;
+                let errores = 0;
+
+                for (const bloque of bloques) {
+                    const fileInput = bloque.querySelector('.imagen-color');
+                    const statusDiv = bloque.querySelector('.status-imagen');
+                    const file = fileInput?.files[0] || null;
+
+                    if (!file) {
+                        statusDiv.innerHTML = '<span class="status-error">❌ Sin imagen</span>';
+                        errores++;
+                        continue;
+                    }
+
+                    try {
+                        statusDiv.innerHTML = '<span class="status-loading">⏳ Subiendo...</span>';
+                        const url = await subirImagenAImgBB(file);
+                        // Guardar URL en el bloque
+                        bloque.dataset.imagenUrl = url;
+                        statusDiv.innerHTML = `<span class="status-ok">✅ Imagen subida</span>`;
+                        subidas++;
+                    } catch (err) {
+                        console.error('Error al subir imagen:', err);
+                        statusDiv.innerHTML = `<span class="status-error">❌ Error: ${err.message}</span>`;
+                        errores++;
+                    }
+                }
+
+                if (errores === 0) {
+                    estadoSubida.innerHTML = `<span class="status-ok">✅ Todas las imágenes subidas con éxito (${subidas} imágenes)</span>`;
+                } else {
+                    estadoSubida.innerHTML = `<span class="status-error">⚠️ ${subidas} imágenes subidas, ${errores} errores. Revisa los bloques con errores.</span>`;
+                }
+            } catch (err) {
+                console.error('Error en subida masiva:', err);
+                estadoSubida.innerHTML = `<span class="status-error">❌ Error: ${err.message}</span>`;
+            } finally {
+                btnSubirImagenes.disabled = false;
+            }
+        });
+
         // ============================================================
-        // 8. FUNCIÓN GUARDAR (USANDO BOTÓN CON CLICK)
+        // 9. FUNCIÓN GUARDAR PRODUCTO
         // ============================================================
         async function guardarProducto() {
             console.log('🔍 Iniciando guardado de producto...');
@@ -491,7 +604,7 @@
                     return;
                 }
 
-                // 2. Obtener colores y imágenes
+                // 2. Obtener colores y URLs de imágenes
                 const coloresData = [];
                 const bloques = coloresContainer.querySelectorAll('.color-block');
 
@@ -505,25 +618,16 @@
                     const secundario = bloque.querySelector('.color-secundario').value;
                     const terciario = bloque.querySelector('.color-terciario').value;
                     const cuarto = bloque.querySelector('.color-cuarto').value;
-                    const fileInput = bloque.querySelector('.imagen-color');
-                    const file = fileInput?.files[0] || null;
+                    const imagenUrl = bloque.dataset.imagenUrl || null;
 
                     if (!principal) {
                         alert('⚠️ Selecciona al menos un color principal en cada bloque.');
                         return;
                     }
 
-                    let imagenUrl = null;
-                    if (file) {
-                        try {
-                            const path = `productos/${modeloVal}_${principal}_${Date.now()}`;
-                            imagenUrl = await subirImagen(file, path);
-                            console.log('✅ Imagen subida:', imagenUrl);
-                        } catch (err) {
-                            console.error('Error al subir imagen:', err);
-                            alert(`Error al subir imagen para el color ${principal}: ${err.message}`);
-                            return;
-                        }
+                    if (!imagenUrl) {
+                        alert(`⚠️ La combinación de colores (${principal}) no tiene imagen subida. Haz clic en "Subir Imágenes" primero.`);
+                        return;
                     }
 
                     coloresData.push({
@@ -595,6 +699,8 @@
                 // Resetear imágenes
                 document.querySelectorAll('.imagen-color').forEach(input => input.value = '');
                 document.querySelectorAll('.preview-container').forEach(el => el.innerHTML = '');
+                document.querySelectorAll('.status-imagen').forEach(el => el.innerHTML = '');
+                estadoSubida.innerHTML = '📌 Las imágenes se subirán al hacer clic en "Subir Imágenes".';
 
             } catch (err) {
                 console.error('❌ Error al guardar:', err);
@@ -606,7 +712,7 @@
         btnGuardar.addEventListener('click', guardarProducto);
 
         // ============================================================
-        // 9. LISTAR PRODUCTOS
+        // 10. LISTAR PRODUCTOS
         // ============================================================
         onSnapshot(collection(db, "productos"), (snapshot) => {
             listaProductos.innerHTML = '';
@@ -654,7 +760,9 @@
         };
 
         console.log('🔥 Módulo de Inventario cargado correctamente.');
-        console.log('ℹ️ Haz clic en "Guardar Producto" para agregar un nuevo producto.');
+        console.log('ℹ️ 1. Llena el formulario y selecciona imágenes.');
+        console.log('ℹ️ 2. Haz clic en "Subir Imágenes" para subirlas a ImgBB.');
+        console.log('ℹ️ 3. Haz clic en "Guardar Producto" para guardar en Firestore.');
     </script>
 </body>
 </html>
