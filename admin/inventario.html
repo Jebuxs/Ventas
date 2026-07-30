@@ -335,7 +335,7 @@
         const db = getFirestore(app);
 
         // ============================================================
-        // 3. CONFIGURACIÓN DE IMGBB (API Key)
+        // 3. CONFIGURACIÓN DE IMGBB
         // ============================================================
         const IMGBB_API_KEY = "cb12e6a76abb14df50fa90b78479a43c";
         const IMGBB_API_URL = "https://api.imgbb.com/1/upload";
@@ -444,7 +444,8 @@
                 </div>
                 <div class="mt-2">
                     <label class="text-xs text-gray-500">Imagen para esta combinación de colores</label>
-                    <input type="file" class="imagen-color w-full p-1 border rounded" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp" />
+                    <!-- 🔥 INPUT CORREGIDO: usando image/* que es más compatible -->
+                    <input type="file" class="imagen-color w-full p-1 border rounded" accept="image/*" />
                     <div class="preview-container mt-1"></div>
                     <div class="status-imagen mt-1 text-xs"></div>
                 </div>
@@ -482,7 +483,7 @@
             });
         });
 
-        // Vista previa de imágenes
+        // Vista previa de imágenes (usando el evento change)
         coloresContainer.addEventListener('change', (e) => {
             if (e.target.classList.contains('imagen-color')) {
                 const file = e.target.files[0];
