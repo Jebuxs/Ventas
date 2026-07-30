@@ -335,9 +335,8 @@
         const db = getFirestore(app);
 
         // ============================================================
-        // 3. CONFIGURACIÓN DE IMGBB (IMPORTADA)
+        // 3. CONFIGURACIÓN DE IMGBB (API Key)
         // ============================================================
-        // Esta es la misma API Key que tienes en config/imgbb-config.js
         const IMGBB_API_KEY = "cb12e6a76abb14df50fa90b78479a43c";
         const IMGBB_API_URL = "https://api.imgbb.com/1/upload";
 
@@ -359,8 +358,6 @@
         const btnGuardar = document.getElementById('btnGuardar');
         const btnSubirImagenes = document.getElementById('btnSubirImagenes');
         const estadoSubida = document.getElementById('estadoSubida');
-
-        let imagenesSubidas = {}; // Almacena las URLs de las imágenes subidas
 
         // ============================================================
         // 5. AUTENTICACIÓN
@@ -447,7 +444,7 @@
                 </div>
                 <div class="mt-2">
                     <label class="text-xs text-gray-500">Imagen para esta combinación de colores</label>
-                    <input type="file" class="imagen-color w-full p-1 border rounded" accept="image/*" />
+                    <input type="file" class="imagen-color w-full p-1 border rounded" accept=".jpg,.jpeg,.png,.gif,.webp,.bmp" />
                     <div class="preview-container mt-1"></div>
                     <div class="status-imagen mt-1 text-xs"></div>
                 </div>
@@ -548,7 +545,6 @@
                     try {
                         statusDiv.innerHTML = '<span class="status-loading">⏳ Subiendo...</span>';
                         const url = await subirImagenAImgBB(file);
-                        // Guardar URL en el bloque
                         bloque.dataset.imagenUrl = url;
                         statusDiv.innerHTML = `<span class="status-ok">✅ Imagen subida</span>`;
                         subidas++;
