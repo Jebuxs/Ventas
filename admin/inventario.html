@@ -444,8 +444,8 @@
                 </div>
                 <div class="mt-2">
                     <label class="text-xs text-gray-500">Imagen para esta combinación de colores</label>
-                    <!-- 🔥 INPUT CORREGIDO: usando image/* que es más compatible -->
-                    <input type="file" class="imagen-color w-full p-1 border rounded" accept="image/*" />
+                    <!-- 🔥 SOLUCIÓN DEFINITIVA: accept="*/*" para evitar problemas de permisos -->
+                    <input type="file" class="imagen-color w-full p-1 border rounded" accept="*/*" />
                     <div class="preview-container mt-1"></div>
                     <div class="status-imagen mt-1 text-xs"></div>
                 </div>
