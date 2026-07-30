@@ -82,9 +82,6 @@
             border-radius: 9999px;
             font-size: 0.7rem;
         }
-        .grid-cols-4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
         .checkbox-group {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -461,119 +458,147 @@
         }
 
         // ============================================================
-        // 8. GUARDAR PRODUCTO
+        // 8. GUARDAR PRODUCTO (CORREGIDO)
         // ============================================================
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Validar campos obligatorios
-            if (!modelo.value.trim() || !precioVenta.value) {
-                alert('Completa los campos obligatorios (Modelo y Precio Venta).');
-                return;
-            }
+            // Mostrar mensaje de depuración
+            console.log('🔍 Iniciando guardado de producto...');
 
-            // 1. Obtener tallas seleccionadas
-            const tallasSeleccionadas = [];
-            document.querySelectorAll('.talla-checkbox:checked').forEach(cb => {
-                tallasSeleccionadas.push(cb.value);
-            });
+            try {
+                // Validar campos obligatorios
+                const modeloVal = modelo.value.trim();
+                const precioVentaVal = parseFloat(precioVenta.value);
 
-            if (tallasSeleccionadas.length === 0) {
-                alert('Selecciona al menos una talla.');
-                return;
-            }
-
-            // 2. Obtener colores y imágenes
-            const coloresData = [];
-            const bloques = coloresContainer.querySelectorAll('.color-block');
-            for (const bloque of bloques) {
-                const principal = bloque.querySelector('.color-principal').value;
-                const secundario = bloque.querySelector('.color-secundario').value;
-                const terciario = bloque.querySelector('.color-terciario').value;
-                const cuarto = bloque.querySelector('.color-cuarto').value;
-                const fileInput = bloque.querySelector('.imagen-color');
-                const file = fileInput?.files[0] || null;
-
-                if (!principal) {
-                    alert('Selecciona al menos un color principal en cada bloque.');
+                if (!modeloVal) {
+                    alert('⚠️ El campo "Modelo" es obligatorio.');
                     return;
                 }
 
-                let imagenUrl = null;
-                if (file) {
-                    try {
-                        const path = `productos/${modelo.value.trim()}_${principal}_${Date.now()}`;
-                        imagenUrl = await subirImagen(file, path);
-                    } catch (err) {
-                        console.error('Error al subir imagen:', err);
-                        alert(`Error al subir imagen para el color ${principal}: ${err.message}`);
-                        return;
-                    }
+                if (!precioVentaVal || precioVentaVal <= 0) {
+                    alert('⚠️ El campo "Precio Venta" debe ser un número mayor a 0.');
+                    return;
                 }
 
-                coloresData.push({
-                    principal,
-                    secundario: secundario || null,
-                    terciario: terciario || null,
-                    cuarto: cuarto || null,
-                    imagen: imagenUrl
+                // 1. Obtener tallas seleccionadas
+                const tallasSeleccionadas = [];
+                document.querySelectorAll('.talla-checkbox:checked').forEach(cb => {
+                    tallasSeleccionadas.push(cb.value);
                 });
-            }
 
-            // 3. Construir objeto stock (stock por talla y color)
-            const stock = {};
-            tallasSeleccionadas.forEach(talla => {
-                stock[talla] = {};
-                coloresData.forEach(color => {
-                    // Creamos un identificador único para la combinación de colores
-                    const key = [color.principal, color.secundario, color.terciario, color.cuarto]
-                        .filter(c => c)
-                        .join('-');
-                    stock[talla][key] = {
-                        colores: {
-                            principal: color.principal,
-                            secundario: color.secundario,
-                            terciario: color.terciario,
-                            cuarto: color.cuarto
-                        },
-                        cantidad: 0, // Se actualizará manualmente después
-                        imagen: color.imagen
-                    };
+                if (tallasSeleccionadas.length === 0) {
+                    alert('⚠️ Selecciona al menos una talla.');
+                    return;
+                }
+
+                // 2. Obtener colores y imágenes
+                const coloresData = [];
+                const bloques = coloresContainer.querySelectorAll('.color-block');
+
+                if (bloques.length === 0) {
+                    alert('⚠️ Agrega al menos un bloque de color.');
+                    return;
+                }
+
+                for (const bloque of bloques) {
+                    const principal = bloque.querySelector('.color-principal').value;
+                    const secundario = bloque.querySelector('.color-secundario').value;
+                    const terciario = bloque.querySelector('.color-terciario').value;
+                    const cuarto = bloque.querySelector('.color-cuarto').value;
+                    const fileInput = bloque.querySelector('.imagen-color');
+                    const file = fileInput?.files[0] || null;
+
+                    if (!principal) {
+                        alert('⚠️ Selecciona al menos un color principal en cada bloque.');
+                        return;
+                    }
+
+                    let imagenUrl = null;
+                    if (file) {
+                        try {
+                            const path = `productos/${modeloVal}_${principal}_${Date.now()}`;
+                            imagenUrl = await subirImagen(file, path);
+                            console.log('✅ Imagen subida:', imagenUrl);
+                        } catch (err) {
+                            console.error('Error al subir imagen:', err);
+                            alert(`Error al subir imagen para el color ${principal}: ${err.message}`);
+                            return;
+                        }
+                    }
+
+                    coloresData.push({
+                        principal,
+                        secundario: secundario || null,
+                        terciario: terciario || null,
+                        cuarto: cuarto || null,
+                        imagen: imagenUrl
+                    });
+                }
+
+                // 3. Construir objeto stock
+                const stock = {};
+                tallasSeleccionadas.forEach(talla => {
+                    stock[talla] = {};
+                    coloresData.forEach(color => {
+                        const key = [color.principal, color.secundario, color.terciario, color.cuarto]
+                            .filter(c => c)
+                            .join('-');
+                        stock[talla][key] = {
+                            colores: {
+                                principal: color.principal,
+                                secundario: color.secundario,
+                                terciario: color.terciario,
+                                cuarto: color.cuarto
+                            },
+                            cantidad: 0,
+                            imagen: color.imagen
+                        };
+                    });
                 });
-            });
 
-            // 4. Construir ficha técnica
-            const fichaTecnica = {
-                capellada: capellada.value,
-                forro: forro.value,
-                suela: suela.value,
-                descripcion: descripcion.value.trim()
-            };
+                // 4. Construir ficha técnica
+                const fichaTecnica = {
+                    capellada: capellada.value,
+                    forro: forro.value,
+                    suela: suela.value,
+                    descripcion: descripcion.value.trim()
+                };
 
-            // 5. Guardar en Firestore
-            try {
-                await addDoc(collection(db, "productos"), {
-                    modelo: modelo.value.trim(),
+                // 5. Datos finales
+                const datosProducto = {
+                    modelo: modeloVal,
                     categoria: categoria.value,
                     precioCompra: parseFloat(precioCompra.value) || 0,
-                    precioVenta: parseFloat(precioVenta.value),
+                    precioVenta: precioVentaVal,
                     tallas: tallasSeleccionadas,
                     colores: coloresData,
                     stock: stock,
                     fichaTecnica: fichaTecnica,
                     fechaRegistro: new Date().toLocaleDateString()
-                });
+                };
+
+                console.log('📦 Datos a guardar:', datosProducto);
+
+                // 6. Guardar en Firestore
+                const docRef = await addDoc(collection(db, "productos"), datosProducto);
+                console.log('✅ Producto guardado con ID:', docRef.id);
+
                 alert('✅ Producto guardado con éxito.');
                 form.reset();
+
                 // Resetear tallas
                 document.querySelectorAll('.talla-checkbox').forEach(cb => cb.checked = false);
+
                 // Resetear colores
                 inicializarColores();
+
                 // Resetear imágenes
                 document.querySelectorAll('.imagen-color').forEach(input => input.value = '');
                 document.querySelectorAll('.preview-container').forEach(el => el.innerHTML = '');
+
             } catch (err) {
-                console.error('Error al guardar:', err);
+                console.error('❌ Error al guardar:', err);
                 alert('Error al guardar el producto: ' + err.message);
             }
         });
